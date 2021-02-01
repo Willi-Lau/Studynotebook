@@ -1,0 +1,45 @@
+maven：
+    <!--        分页-->
+        <!--mybatis-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+        <!--mapper-->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-spring-boot-starter</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <!--pagehelper-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+
+application.yml:
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+
+在Controller层的实现
+
+ @RequestMapping(value = "/selectallclothes")
+    @ResponseBody
+    public List<Clothes> selectallclothes(@RequestParam(defaultValue = "1") int pageNo,    //第几页
+                                         @RequestParam(defaultValue = "6") int pageSize){    //每一页几个数据
+        //pageNo 是要查询的页数，现在每一页有6个数据
+        //根据传递进来的pageNo 返回数据
+        PageHelper.startPage(pageNo,pageSize);     //核心语句
+        return  adminService.selectallclothespage();        //执行的Service层语句，写在分页之后
+
+
+    }

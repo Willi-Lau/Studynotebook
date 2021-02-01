@@ -1,0 +1,183 @@
+
+简介：https://www.runoob.com/jsp/jsp-intro.html
+标签库：<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 引入标签库   使用JSPL标签库   c为标签的名字
+
+
+     获取当前项目路径：${pageContext.request.contextPath}
+                      
+                      或，
+                      
+                         request.getContextPath();
+
+    脚本程序
+            脚本程序可以包含任意量的Java语句、变量、方法或表达式，只要它们在脚本语言中是有效的。
+
+            脚本程序的语法格式：
+
+                    <% 代码片段 %>
+            或者，您也可以编写与其等价的XML语句，就像下面这样：
+
+                    <jsp:scriptlet>
+                    代码片段
+                    </jsp:scriptlet>
+            任何文本、HTML标签、JSP元素必须写在脚本程序的外面。
+
+            下面给出一个示例，同时也是本教程的第一个JSP示例：
+
+                    <html>
+                    <head><title>Hello World</title></head>
+                    <body>
+                    Hello World!<br/>
+                    <%
+                    out.println("Your IP address is " + request.getRemoteAddr());
+                    %>
+                    </body>
+                    </html>
+
+
+    * jsp文件可以实现输出JAVA,js,html,css
+
+                   jsp向servlet传值大致有这么几种情况。
+                        1.1第一种超链接，在href='servletAction?id=xxx'，使用超链接时前面应该加上项目名
+                        1.2第二种form表单提交，当点击submit时，action="servletAction" method='get/post'//注意这个可是要按提交按钮的
+                        1.3第三种就是利用ajax,url='servletActionz',当然了，这里也有get和post两种情况，get直接在url后面加问号传参，post会把参数放在实体内容里面。
+                        2.最后在servlet那边 用 request.getParameter("参数名")；就可以拿到了
+
+                   JSP里的<$   $>
+                         意思为输出，等同于out.println()
+                         <% request.getContextPath()%>    获取项目总地址，在JSP使用<a>跳转需要写项目总地址 
+
+                   接收信息
+                       ${key} 
+
+                   接受session信息    前面加sessionScope
+                       ${sessionScope.key}   
+                   接受request信息    前面加requestScope
+                       ${requestScope.key}  
+
+
+     JSP接受值
+
+                    <%--list 为循环的集合 var为循环标记 item里为要循环的集合--%>
+
+                        <c:forEach var="gb" items="${sessionScope.list}">
+                            0
+                            <tr>
+                                <td>${gb.id}</td>
+                                <td>${gb.name}</td>
+                                <td>${gb.phone}</td>
+                                <td>${gb.email}</td>
+                                <td>${gb.title}</td>
+                                <td>${gb.content}</td>
+                                <td>${gb.createdtime}</td>
+                                <td>
+                                    <form action="delete" method="post">
+                                    <a href="http://localhost:8080/JavaWebPro_war_exploded/manage?q=update&id=${gb.id}&name=${gb.name}&phone=${gb.phone}&email=${gb.email}&title=${gb.title}&content=${gb.content}" class="btn btn-primary"  >修改</a>
+                                    <a href="http://localhost:8080/JavaWebPro_war_exploded/delete?id=${gb.id}"   class="btn btn-danger" >删除</a>
+                                    </form>
+                                </td>
+                            </tr>
+                        </c:forEach>                      
+
+     JSP使用elelemt-ui 组件
+
+          需要把<script> 的 export default 改成new Vue() ，就可以正常使用了
+
+            例子： 
+            <%@ page contentType="text/html;charset=UTF-8" language="java" %> 
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <!-- import CSS -->
+                <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+                <style>
+                #app{
+                    width: 300px;
+                    height: 500px;
+                }
+                </style>
+            </head>
+            <body>
+            <div id="app">
+                <el-form ref="form" :model="form" label-width="80px">
+                    <el-form-item label="活动名称">
+                        <el-input v-model="form.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="活动区域">
+                        <el-select v-model="form.region" placeholder="请选择活动区域">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="活动时间">
+                        <el-col :span="11">
+                            <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+                        </el-col>
+                        <el-col class="line" :span="2">-</el-col>
+                        <el-col :span="11">
+                            <el-time-picker placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="即时配送">
+                        <el-switch v-model="form.delivery"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="活动性质">
+                        <el-checkbox-group v-model="form.type">
+                            <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
+                            <el-checkbox label="地推活动" name="type"></el-checkbox>
+                            <el-checkbox label="线下主题活动" name="type"></el-checkbox>
+                            <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="特殊资源">
+                        <el-radio-group v-model="form.resource">
+                            <el-radio label="线上品牌商赞助"></el-radio>
+                            <el-radio label="线下场地免费"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="活动形式">
+                        <el-input type="textarea" v-model="form.desc"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                        <el-button>取消</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            </body>
+
+            <!-- import Vue before Element -->
+            <script src="https://unpkg.com/vue/dist/vue.js"></script>
+            <!-- import JavaScript -->
+            <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+            <script>
+            
+                new Vue({                                                                     //这里需要更改，原来的是export default 
+                    el: '#app',
+                    data() {
+                        return {
+                            form: {
+                                name: '',
+                                region: '',
+                                date1: '',
+                                date2: '',
+                                delivery: false,
+                                type: [],
+                                resource: '',
+                                desc: ''
+                            }
+                        }
+                    },
+                    methods: {
+                        onSubmit() {
+                            console.log('submit!');
+                        }
+                    }
+                })
+            </script>
+            </html>
+
+
+

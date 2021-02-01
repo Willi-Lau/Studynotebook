@@ -1,0 +1,309 @@
+MySQL过程式数据库对象
+
+1.存储过程
+例1
+delimiter //
+drop procedure p_xs1;
+create procedure p_xs1(in xh char(6))
+begin 
+select  学号,姓名 from xs where 学号 =xh;
+end //
+delimiter ;
+
+call p_xs1('081101');
+  1
+优点：
+（1）存储过程在服务器端运行，执行速度快。
+（2）提高了系统性能：
+    存储过程执行一次后，其执行规划就驻留在高速缓冲存储器，在以后的操作中，只需从高速缓冲存储器中调用已编译好的二进制代码执行。
+（3）确保数据库安全。使用存储过程可以完成所有数据库操作，并可通过编程方式控制上述操作对数据库信息访问的权限。
+
+语句格式：
+create procedure 存储过程名([IN|OUT|INOUT 参数名 type])
+begin
+若干SQL语句 
+end
+
+
+存储过程主体:
+
+1.局部变量
+
+在存储过程开头就声明，只能在begin ...end之间声明，使用    @xh   @@version
+
+declare 变量名 [,...] type [default 值]
+
+例2
+declare num int(4);
+declare s1,s2 varchar(10);
+
+2．使用SET语句赋值
+
+SET  变量名 = 表达式 [, 变量名 = 表达式] ...
+
+例3
+set num=1, s1= 'hello';    例2例3无法单独执行 ？
+
+3．SELECT...INTO语句
+
+SELECT 列名[,...] INTO 变量名[,...]  from  表名...
+
+例4 
+在存储过程体中，将xs表中的学号为081101的学生姓名和专业名的值分别赋给变量name和project。
+
+select 姓名,专业名 into name, project 
+	from xs
+	where 学号=xh;
+
+
+
+delimiter //
+create procedure p_19()
+begin 
+declare name,project char(10) default null;
+select 姓名,专业名 into name, project 
+	from xs
+	where 性别=1;
+select name,project;
+end //
+delimiter ;
+
+无参数
+
+4．流程控制语句
+（1）IF语句
+IF-THEN-ELSE语句可根据不同的条件执行不同的操作。条件i成立，执行语句序列i
+
+IF 条件1 THEN 
+语句序列1
+[ELSEIF  条件2 THEN 
+语句序列2 ] 
+...
+[ELSE  
+语句序列0 ]
+END IF
+
+
+例5  创建存储过程，判断两个输入的参数哪一个更大。
+
+delimiter $$
+create procedure comp
+		(in k1 integer,in k2 integer,out k3 char(6) )
+begin
+	if k1>k2 then
+		set k3= '大于';
+	elseif k1=k2 then
+		set k3= '等于';
+	else 
+		set k3= '小于';
+	end if;
+end$$
+delimiter ;
+
+call comp(55,66,@result);
+select @d;
+
+（2）CASE语句
+
+格式1
+CASE 表达式
+    WHEN  值1  THEN 语句序列1
+    [WHEN 值2  THEN 语句序列2] 
+...
+    [ELSE 语句序列]
+END CASE
+
+格式2（推荐）
+CASE
+    WHEN  条件1 THEN 语句序列1
+    [WHEN 条件2 THEN 语句序列2] 
+...
+    [ELSE语句序列0]
+END CASE
+
+例6  创建一个存储过程，针对参数的不同，返回不同的结果。
+
+delimiter $$
+create procedure xscj.result
+		(in str varchar(4), out sex varchar(4) )
+begin
+ case str
+	when 'm' then set sex='男';
+	when 'f' then set sex='女';
+	else  set sex='无';
+ end case;
+end$$
+delimiter ;
+
+call result('m',@sex);
+
+用第二种格式的CASE语句
+case 
+	when str='m' then set sex='男';
+	when str='f' then set sex='女';
+	else  set sex='无';
+end case;
+
+（3）循环语句
+MySQL支持3条用来创建循环的语句：WHILE、REPEAT和LOOP语句。
+
+WHILE语句
+
+  [begin_label:] 
+   WHILE 条件  DO
+	语句序列
+   END WHILE [end_label]
+
+
+   例7  创建一个带WHILE循环的存储过程
+
+  delimiter $$
+  create procedure dowhile()
+  begin
+     declare v1 int default 5;
+     while  v1>0  do
+         set v1 = v1-1;
+         select v1;
+     end while;
+  end$$
+  delimiter ;
+
+REPEAT语句
+  [begin_label:] 
+  REPEAT
+       语句序列
+       UNTIL 条件
+  END REPEAT [end_label]
+
+  为真则停止循环，不为真则继续循环;
+
+
+  repeat 
+      set v1=v1-1;
+      until v1<1;
+  end repeat;
+  例8  
+修改：
+  delimiter $$
+  drop procedure if exists dowhile;
+  create procedure dowhile()
+  begin
+     declare v1 int default 5;
+     repeat 
+     select v1; 
+    set v1=v1-1;
+    until v1<1  end repeat;
+  end$$
+ delimiter ;
+
+LOOP语句：
+
+ [begin_label:] 
+ LOOP
+     语句序列
+ END LOOP [end_label]
+
+ LOOP允许某特定语句或语句群的重复执行，退出时通常伴随着一个LEAVE 语句
+
+ 例9  创建一个带LOOP语句的存储过程。
+  delimiter $$
+  drop procedure if exists doloop; 
+  create procedure doloop()
+  begin
+    set @a=10;
+    label: loop
+           select @a;
+          set @a=@a-1;
+         
+          if @a<0 then
+              leave label;
+          end if;
+    end loop label;
+  end$$
+  delimiter ;   while  ,repeat  until  条件 ,loop(leave)
+
+ 循环语句中还有一个ITERATE语句，它只可以出现在LOOP、REPEAT和WHILE语句内，意为“再次循环”,而LEAVE语句是离开循环。
+
+5．处理程序和条件
+  SQL语句在运行过程中会处错。
+  DECLARE HANDLER语句：
+  为错误代码声明了一个所谓的处理程序，它指明：对一条SQL语句的处理如果导致一条  错误消息，将会发生什么，如何去处理。
+  
+  例 10：
+  创建xscj数据库存储过程，向xs表插入一行数据（'081145', '王民', '计算机', 1,   '1994-02-10', 50 , NULL, NULL）。如果出现错误，程序继续进行。
+
+  use xscj;
+  delimiter $$
+  create procedure my_insert10()
+  begin 
+	declare exit handler for sqlstate '23000' set @t2=1;
+	set @t=1;
+	insert into xs values('081150', '王民', '计算机', 1, '1994-02-10',         50 , null, null);
+	set @t=2;
+        insert into xs values('081150', '李民', '计算机', 1, '1994-02-1',         50 , null, null);
+        set @t=3;
+  end$$
+  delimiter ; 
+
+  call my_insert10();
+  select @t,@t2;
+
+  
+  每一个错误消息都有一个唯一代码和一个SQLSTATE代码。例如，SQLSTATE 23000属于    如下的出错代码：
+  Error 1022, "Can't write;duplicate key in table"
+  Error 1048, "Column cannot be null"
+  Error 1052, "Column is ambiguous"
+  Error 1062, "Duplicate entry for key"
+ 
+  DECLARE  HANDLER 语句格式：
+  DECLARE handler_type HANDLER FOR condition_value[,...] sp_statement
+ 
+  handler_type类型：主要有三种：CONTINUE、EXIT和UNDO
+  condition_value：给出SQLSTATE的代码表示。
+ 
+  SQLSTATE [VALUE] sqlstate_value
+  |condition_name
+  |SQLWARNING
+  |NOT FOUND
+  |SQLEXCEPTION
+  |mysql_error_code
+
+condition_name：处理条件的名称。
+mysql_error_code：是具体的SQLSTATE代码。
+
+例：
+1)DECLARE CONTINUE HANDLER FOR SQLSTATE '42000' SET @X='ERROR';
+捕获SQLSTATE '42000'  ，包含5个字符的字符串错误值
+
+2)DECLARE CONTINUE HANDLER FOR 1048 SET @X='ERROR';
+捕获mysql_error_code 
+
+3) declare non_unique condition for sqlstate '23000';
+    declare continue handler for non_unique set @x='ERROR';
+
+4)DECLARE EXIT HANDLER FOR SQLWARNING SET @X='ERROR';
+
+SQLWARNING：捕获01开头的SQLSTATE 错误代码
+
+5)DECLARE EXIT HANDLER FOR NOT FOUND SET @X='ERROR';
+
+NOT FOUND：捕获02开头的SQLSTATE 错误代码
+
+6)DECLARE EXIT HANDLER FOR SQLEXCEPTION SET @X='ERROR';
+
+ SQLEXCEPTION： 匹配没有被SQLWARNING 或NOT FOUND捕获的SQLSTATE 错误代码
+
+
+为了提高可读性，可以使用DECLARE CONDITION语句为一个SQLSTATE或出错代码定义一个名字
+begin 
+    declare non_unique condition for sqlstate '23000';
+    declare continue handler for non_unique set @x2=1;
+    set @x=2;
+    insert into xs values('081101', '王民', '计算机', 1, '1994-02-10', 50 , null, null);
+    set @x=3;
+end;
+
+
+
+
+

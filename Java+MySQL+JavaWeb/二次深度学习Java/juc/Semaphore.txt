@@ -1,0 +1,87 @@
+Semaphore
+
+https://www.yuque.com/mengyingjie/java/uq2si4  
+
+https://www.cnblogs.com/itsoku123/p/11223837.html
+
+    （信号量）为多线程协作提供了更为强大的控制方法，前面的文章中我们学了synchronized和重入锁ReentrantLock，
+    这2种锁一次都只能允许一个线程访问一个资源，而信号量可以控制有多少个线程可以同时访问特定的资源。
+    信号量本身就是一个锁，不需要加synchronized 和lock等
+
+Semaphore常用场景：限流
+
+举个例子：
+
+    比如有个停车场，有5个空位，门口有个门卫，手中5把钥匙分别对应5个车位上面的锁，来一辆车，门卫会给司机一把钥匙
+    ，然后进去找到对应的车位停下来，出去的时候司机将钥匙归还给门卫。停车场生意比较好，同时来了100两车，门卫手中
+    只有5把钥匙，同时只能放5辆车进入，其他车只能等待，等有人将钥匙归还给门卫之后，才能让其他车辆进入。
+
+上面的例子中门卫就相当于Semaphore，车钥匙就相当于许可证，车就相当于线程。
+
+Semaphore主要方法
+
+    Semaphore(int permits)：构造方法，参数表示许可证数量，用来创建信号量
+
+    Semaphore(int permits,boolean fair)：构造方法，当fair等于true时，创建具有给定许可数的计数信号量并设置为公平信号量
+
+    void acquire() throws InterruptedException：从此信号量获取1个许可前线程将一直阻塞，相当于一辆车占了一个车位，此方法会响应线程中断，表示调用线程的interrupt方法，会使该方法抛出InterruptedException异常
+
+    void acquire(int permits) throws InterruptedException ：和acquire()方法类似，参数表示需要获取许可的数量；比如一个大卡车要入停车场，由于车比较大，需要申请3个车位才可以停放
+
+    void acquireUninterruptibly(int permits) ：和acquire(int permits) 方法类似，只是不会响应线程中断
+
+    boolean tryAcquire()：尝试获取1个许可，不管是否能够获取成功，都立即返回，true表示获取成功，false表示获取失败
+
+    boolean tryAcquire(int permits)：和tryAcquire()，表示尝试获取permits个许可
+
+    boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException：尝试在指定的时间内获取1个许可，获取成功返回true，指定的时间过后还是无法获取许可，返回false
+
+    boolean tryAcquire(int permits, long timeout, TimeUnit unit) throws InterruptedException：和tryAcquire(long timeout, TimeUnit unit)类似，多了一个permits参数，表示尝试获取permits个许可
+
+    void release()：释放一个许可，将其返回给信号量，相当于车从停车场出去时将钥匙归还给门卫
+
+    void release(int n)：释放n个许可
+
+    int availablePermits()：当前可用的许可数
+
+
+
+    线程间通信（最好用if 来回通信时防止卡死不停止）
+
+    class Foo {
+        /**
+        * Semaphore 是juc下一个线程工具，synchronized lock只能锁一个，Semaphore允许同一时间多个线程对其进行访问
+        * new Semaphore（num） 规定同时允许num个数量的线程同时访问
+        *                      如果num是0，就需要先使用release()对资源进行释放，在进行权限获取acquire()
+        * release() 释放一个许可 释放执行的许可  不一定获取了才能释放
+        * acquire() 获取一个许可 获取许可才可以执行
+        * */
+        // 现在许可证数量是0
+        public Semaphore sema_one = new Semaphore(0);
+        // 现在许可证数量是0
+        public Semaphore seam_two = new Semaphore(0);
+
+        public Foo() {
+
+        }
+
+        public void first(Runnable printFirst) throws InterruptedException {
+            printFirst.run();
+            //给sema_one 增加一个许可证数量，这样别人才可以获取
+            sema_one.release();
+        }
+
+        public void second(Runnable printSecond) throws InterruptedException {
+            //获取sema_one许可
+            sema_one.acquire();
+            printSecond.run();
+            //给sema_two 增加一个许可证数量，这样别人才可以获取
+            seam_two.release();
+        }
+
+        public void third(Runnable printThird) throws InterruptedException {
+            //获取sema_two许可
+            seam_two.acquire();
+            printThird.run();
+        }
+}

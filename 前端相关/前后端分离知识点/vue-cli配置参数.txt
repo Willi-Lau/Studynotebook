@@ -1,0 +1,20 @@
+
+搭建：
+        https://www.jianshu.com/p/b73af5fff845
+        
+运行依赖：
+        axiox
+        core-js
+        css-loader
+        font-awesome
+        qs
+        vue
+        vue-router
+
+开发依赖：
+        vue-template-compiler
+
+插件：
+         @vue/cli-servers
+         @vue/cli-plugin-bable
+         @vue/cli-plugin-router                

@@ -1,0 +1,6 @@
+
+
+获取下一个自增字段的值：
+databases:数据库名称
+table : 表名称
+SELECT auto_increment FROM information_schema.tables where table_schema="datebases" and table_name="table";

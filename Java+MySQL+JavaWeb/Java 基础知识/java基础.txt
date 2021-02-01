@@ -1,0 +1,1021 @@
+
+alt+shift+m  抽取方法
+抽象abstract
+ 继承extends
+
+接口interface
+ 继承 implements
+ 不能创建实例，可以声明引用变量类型，实现类（继承）可以new
+
+
+startWith()   开头
+endWith()     结尾
+Integer.parseInt 强转数字
+
+getBytes() 前只能加字符型变量  
+   数值型变量加""就是字符型
+   int n =123;    int型
+   (n+"")         String型
+
+
+获取本项目绝对路径（在这台计算机的绝对路径）：File f = new File(this.getClass().getResource("/").getPath());   
+
+instanceof 严格来说是Java中的一个双目运算符，用来测试一个对象是否为一个类的实例，用法为：
+
+
+    boolean result = obj instanceof Class
+    　　其中 obj 为一个对象，Class 表示一个类或者一个接口，当 obj 为 Class 的对象，或者是其直接或间接子类，或者是其接口的实现类，结果result 都返回 true，否则返回false。
+
+    　　注意：编译器会检查 obj 是否能转换成右边的class类型，如果不能转换则直接报错，如果不能确定类型，则通过编译，具体看运行时定。
+
+第一首先要是java的代码很乱的话。
+按shift+Ctrl+F可以进行整理。
+格式整理化：shift+Ctrl+F
+  IDEA 整理：ctrl + alt + L
+
+alt+1 自动不全类型
+
+随机数0-1  Math.random()
+最大值     Math.max()
+四舍五入   Math.round()
+返回以毫秒为单位的时间    System.currentTimeMillis()
+随机数 Random().nextInt(m)   随机0-m 的数字
+
+
+
+Java 8 Lambda 表达式
+Lambda 允许把函数作为一个方法的参数（函数作为参数传递进方法中）。
+使用 Lambda 表达式可以使代码变的更加简洁紧凑。
+
+lambda 表达式的语法格式如下：
+(parameters) -> expression
+或
+(parameters) ->{ statements; }
+参数-》执行语句
+可选类型声明：不需要声明参数类型，编译器可以统一识别参数值。 
+可选的参数圆括号：一个参数无需定义圆括号，但多个参数需要定义圆括号。 
+可选的大括号：如果主体包含了一个语句，就不需要使用大括号。 
+可选的返回关键字：如果主体只有一个表达式返回值则编译器会自动返回值，大括号需要指定明表达式返回了一个数值。 
+
+str1.startWith("a"):判断字符串是否以a开头
+
+
+
+
+
+集合（java.unit）
+Java集合如Map、Set、List等所有集合只能存放引用类型数据，它们都是存放引用类型数据的容器，不能存放如int、long、float、double等基础类型的数据，
+Boolean
+Byte
+Character
+Short
+Integer
+Long
+Float
+Double
+Void
+
+概念：存储任意类型对象，长度可变
+
+
+arraylist hashmap不安全
+单列集合Collection（Python 列表）
+      一次只能添加一个值
+      两个子接口 List   有序，可重复，有索引   接口：ArrayList(底层是数组，查询快，增删慢),LinkedList（底层是链表，双向循环列表结构，查询慢，增删快）
+                 Set    无序，不可重复，无索引 接口：Hashset（底层是哈希表+红黑树实现）,LinkedHashSet（底层哈希表+链表实现，有序）Treeset（底层二叉树实现，用于排序）
+双集合Map(Python 字典) （key,value）
+      一次添加两个值
+      key唯一，找key找到value
+      主要接口：HashMap(无序，k不可重复，v可重复 HashMap可以存储null键和null值。增删改查效率高),TreeMap（实现排序需自然排序 k 不可null v可以），Hashtable（父）,（子）Properties集合（线程安全，存放String）(无泛型)（可以和IO使用）
+**********************************************************************************************
+
+Collection可用方法：（list set都可用）
+
+带All对集合  不带对元素
+
+#创建集合对象(父类引用)
+      Collection <String(数据类型) > list1（集合名字） =new ArrayList <String>() 
+#为集合添加元素
+      list1.add(num)
+#为集合添加另一个集合所有元素
+      list1.addAll(list2)
+#清空集合
+      list1.clear()
+#删除指定元素
+      list1.remove(num)
+#删除集合1中所有集合2的元素
+      list1.removeAll(list2)
+#判断集合是否为空
+      boolean a =list1.isEmpty()
+#判断集合是否包含指定元素
+      boolean a = list.contains(num)
+#判断集合1是否包含集合2元素
+      boolean a = list1.contansAll(list2)
+#获取集合元素个数
+      int a = list1.size()
+
+************************************************************************************************88
+
+list专用方法：(list,ArrayList,LinkedList，vector可用)
+
+#创建集合对象(父类引用)
+      List <String(数据类型) > list1（集合名字） =new ArrayList <String>() 
+#指定索引处添加(插入)元素 
+       指定索引处若有元素，则插入，剩下元素依次向后串
+      list1.add(n,num)
+#指定索引处插入集合
+      list1,addAll(n,list)
+#返回指定索引处元素
+       String num=list1.get()
+#删除指定索引元素
+       String m=list.remove(0)
+#替换指定索引元素,将替换出来的返回
+       String m=list1.set(n,num)
+#返回对象num在集合首次出现的位置,找不到返回-1（python find）
+       int  n=list.indexOf(num)
+#返回对象num在集合最后出现的位置,找不到返回-1（python rfind）
+       int  n=list.lastIndexOf(num)  
+#返回从a(包括)到b(不包括)所有元素
+       List<String> list2=list.subList(a,b)
+#将集合转化为数组
+       Object[] arr1=list1.toArray();
+
+*************************************************************************************
+#Iterator 接口
+ 作用：遍历单列集合
+ 成员方法：
+         1：boolean hasNext();     判断迭代器中是否还有下一个元素
+         2：E next();              获取迭代器下一元素 
+         3：void remove();         从迭代器删除某个元素 (用迭代器对象进行删除，不能用集合本身对象进行删除)        
+
+
+
+
+   import java.util.Iterator
+   
+   #获取迭代器对象
+   Iterator<String> m1=list1.iterator();
+   
+   boolean m=m1.hasNext
+   或
+   while(m1.hasNext()){
+   Object e=m1.next();
+   Syso alt/(e)
+
+
+    }  
+#foreach（不能修改元素的值）
+ 格式 for(数据类型 变量名：容器对象名称){
+
+         循环体语句;
+   
+    } 
+    
+#forEach
+  格式 
+       容器对象名称.forEach((数据类型 变量名)-> {循环体语句})
+  迭代器对象方法
+       容器对象名称.forEachRemaining((数据类型 变量名)-> {循环体语句})
+
+*******************************************************************************************************
+#Hashset
+  通过添加实例化对象给Hashset时，使用时应调用hashCode(),equlas()才能保证存储进去的值不重复
+  加入元素 add()
+*******************************************************************************************************
+#Treeset
+  依次存入，小的向左，大的向右
+  输出默认升序排列
+  特有方法：  
+  Object first()                 返回集合首个元素
+  Object last()                  返回集合最后一个元素
+  Object lower(Object o)         返回集合中小于给定元素的最大元素，没有返回null
+  Object floor(Object o)         返回集合中小于或等于给定元素的最大元素，没有返回null
+  Object higher(Object o)        返回集合中大于给定元素的最大元素，没有返回null
+  Object ceiling(Object o)       返回集合中大于或等于给定元素的最大元素，没有返回null
+  Object pollFirst()             返回并移除集合的第一个元素
+  Object pollLast()              返回并移除集合的最后一个元素
+实现排序（自定义类必须实现）
+Java中大部分的类都实现了Comparable接口，并默认实现了接口中的方法。
+ 方法一：自然排序
+  1：重写接口 类+implements Comparable<类型>
+     Public class name implements Comparale <name>
+  2: 重写方法：重写compareTo方法
+               参数：要比较的对象
+               返回：负整数，0，正整数，根据此对象是小等于大于指定对象
+    public int compareTo(name p){
+      int m= this.age - p.age   this在前：升序
+      return m} 
+ 方法二：定制排序
+   1：在实现TreeSet()中实现Comparator
+   2: 重写方法
+    TreeSet<name> list_1 = new TreeSet<name>(new Comparator<name>(){;
+    public int compare(name t1,name,t2){
+        int m=t1.getAge()-t2.getAge();
+        return m;  }});
+    
+    
+     
+*************************************************************************************************8
+Map 双列集合：
+HashMap():
+TreeMap():
+
+ 存储元素原理：
+ 依赖hashCode()方法计算哈希值，通过哈希值找到存储位置，如果哈希值计算重复，则比较equals（）方法，
+ 如果equlas方法返回True ,将新值替换老值，并返回老值，若返回False,将后添加的元素放在之前元素的下列
+ 
+
+
+ #添加元素
+  list1.put(k,v)
+ #返回元素个数
+  int size()
+ #返回指定k映射的v
+  Object get(Object key)
+ #查看集合里是否右k
+  boolean containsKey(Object key)
+ #查看集合里是否右v
+  boolean containsValue(Object value)
+ #删除k,v 并返回指定k中的V
+  Object remove(object v)
+ #删除集合中k,v同时符合的元素
+  boolean remove(object k,object v)
+ #清空集合
+  void clear()
+ #替换key的v值为value
+  String replace(object key,object value)
+ #以Set 集合返回map中所有的k
+  Set keySet()
+ #以Collection集合形式返回Map v值
+  Collection values()
+ #将map转为存储元素类型为map 的set集合
+  Set<Map.Entry<Key,Value>>entrySet()
+ 通过传入一个函数式接口对Map集合元素进行遍历
+
+
+便利map
+ 1：Set<String>k=map1.keySet();
+  for(String i :k){
+   String v=map1.get(k);
+   Syso(k,v)}
+ 2:Set<Map.Entry<Key,Value>>m1=map1.entrySet()
+  Iterator<Map.Entry<Key,Value>> it=m1.iterator;
+  while(it.hasNext)
+ {Set<Map.Entry<Key,Value>> m2=it.next();
+ String key=m2.getKey();
+ String value=m2.getValue();
+ Syso(key,value) 
+ }
+ 3map.forEach((String k,String v)->(Syso(k,v)))
+ 
+**********************************************************************************
+Properties集合（无泛型）
+Properties类表示一个持久的属性集
+ #创建Properties 集合对象
+  Properties prop1=new Properties();
+ #添加数据 
+  prop1.setProperty("卢本伟"，"55开");
+ #获取数据
+  String usename=prpo1.getProperty("卢本伟")
+************************************************************
+
+Collections工具类（set,list,map）
+#向集合添加多个元素
+ Collections.addAll(list1,"a","b"...)
+#反转集合
+ Collections.reverse(list1)
+#打乱顺序
+ Collections.shuffle(list1)
+#排序(升序)
+ Collections.sort(list1)
+#交换指定元素位置
+ Collections.swap(list1,索引1，索引2)
+#使用二分查找找到元素在集合的索引位置
+ int index=Collections.binarySearch(list1,"b")
+#最大值
+ Collections.max()
+#最小值
+ Collections.min()
+#用新值替换老值
+ Collections.replaceAll(list,"b","d") (集合，老值，新值)
+
+***************************************************************
+Stream流（串行流）  不改变原来的集合数组，更新的变化保存到流中
+流对象用完就关闭，在想用需要再次调用
+对Stream流进行遍历，统计，收集等终结操作
+获取Stream流方法
+ 1：Collection集合可直接通过stream()获取Stream流对象
+    Stream<String> stm1=list.stream()
+ 2：通过Stream接口静态方法：of(数组)获取Stream流对象 可以获取基本类型包装类数组、引用类型数组和单个元素的Stream流对象
+    Stream<String> stm1=Stream.of("111","222")
+ 3:通过Arrays工具类静态方法：stream获取Stream流对象
+    Stream<Interger> stm1=Arrays.stream(数组名)
+
+Stream流方法
+ #过滤指定对象
+   stm1.filter(lambda表达式)
+ #排序
+   stm1.sorted()
+ #跳过n个字符串，从n+1开始计算
+   stm1.skip(n)   
+ #将流中元素按规则映射到另一个流中
+   map(lambda)
+ #删除重复元素
+   distinct()    
+ #截取流元素长度
+   limit(long maxSize)
+ #统计流中元素的个数
+   count()
+ #遍历
+   forEach(lambda)
+ #将流中元素收集到一个集合
+   collect(Collectors.toList())
+ #获取指定长度元素
+ limit(n)
+  
+
+并行流
+ Stream<String> stm1=list.stream()
+ Stream<String> stm2=stm1.parallel()
+或
+ Stream<String> stm3=list.parallelstream()
+ #判断是否并行流
+ isParallel()
+同一个对象先被串行流获取（stm1）再被并行流获取（stm2）
+这时stm1,stm2都是并行流
+********************************************************************************************************************************************************************
+********************************************************************************************************************************************************************
+********************************************************************************************************************************************************************
+Buffer(缓冲器)
+Buffer类底层是数组，可以保存多个类型相同的数据，主要用于和Channel通道配合，完成数据传输。
+Buffer是一个抽象类，子类有ByteBuffer,CharBuffer,DoubleBuffer,FloatBuffer,IntBuffer,LongBuffer,ShortBuffer
+Buffer以及子类无构造方法，不能直接new,需要通过allocate方法创建
+
+创建缓冲器
+  ByteBuffer buffer_1 =ByteBuffer.allocate(capacity)    capacity为容量值
+属性
+  capacity()      容量
+  limit()         可以操作到那个索引(界限)
+  position ()     当前准备操作的索引
+  / mark()          标记，用来记录当前position的值
+  \ reset()         必须有标记,如果Position值发生变化，那么 通道随reset可以反馈mark记录的那个值          
+  flip()          切换读写模式，limit变为position,position变为0
+  
+插入数据
+  buffer_1.put("abcde".getBytes())  插入"abcde"   
+读取数据(需要先切换到读写模式flip)
+  1:创建字节数组      byte [] arr=new byte[n]  n:每次读取数据长度
+  2:通过get方法获取   buffer_1.get(arr)
+  注意：get()操作读取数字到达缓冲区限制时，会报错     
+  3：输出             System.out.println(new String(arr));
+
+
+
+
+
+NIO
+核心 ：Selecter,Channel,Buffer
+NIO采用内存映射的方式来处理输入/输出，它将文件或文件的一段区域映射到内存中，这样就可以像访问内存一样来访问文件了。
+
+Channel(通道)
+不能直接读写数据，依赖缓冲流
+Channel读写是双向的
+Channel接口实现类
+  DategramChannel    UDP网络通信
+  FileChannel        文件读写数据
+  Pipe.SinkChannel Pipe.SourceChannel  线程之间的通信
+  ServerSocketChannel SocketChannel     TCP网络通信
+
+
+
+与RandomAccesseFile类使用
+
+获取通道 
+    FileChannel c1 = a.getChannel();
+写入数据
+    transferTo(开始下标，结束下标，写入位置文件)
+    a.transferTo(0,inChannel.size(),n)
+
+    
+
+
+
+*********************************************************************
+I/O
+java.io
+4个顶级类： InputStream和QutputStream,Reader和Writer（抽象类）
+
+
+字节流
+作用：数据传输  
+文件读写两个类：FileInputStream和FileQutputStream
+  
+  （读取）read 结束标记-1
+   FileInputStream f =new FileInputStream("d:\\abc.txt")     创建读取对象 括号里为文件位置
+   int i
+   while(( i=f.read())!= -1)                 主循环体
+   Syso((char)f.read())     一次读取一个字节，如果读取到文件末尾返回-1   读取值为ASCll码，转成中文加（char）
+   close()    关闭流释放资源
+  
+  （写入）write
+   特点：1:输出流写入数据，关联文件时，文件不存在，则自动创建
+         2:输出流写入数据默认是覆盖在原有数据上，如不覆盖就在构造方法后加true
+   FileQutputStream f =new FileQutputStream("d:\\abc.txt".true)
+   byte [] arr ="55开牛逼".getBytes();    写入文字
+   f.write(arr);
+   f.close();
+   /r/n 换行
+自定义缓冲流：
+       FileInputStream apple =new FileInputStream("source\\小苹果.mp3");
+       FileOutputStream apple_2 =new FileOutputStream("target\\小苹果.mp3");
+       
+       byte[] bytes = new byte [1024];
+       
+       int m;
+	while((m=apple.read(bytes))!= -1){
+		apple_2.write(bytes,0,m);
+
+
+字节缓冲流
+BufferedInputStream(InputStream接口)   字节缓冲输入流
+BufferedOutputStream(OutputStream接口)  字节缓冲输出流   
+
+创建字节缓冲输入输出：
+ BufferedInputStream a =new BufferedInputStream(new FileInputStream("d:\\python"))
+ BufferedOutputStream a =new BufferedOutputStream(new FileInputStream("d:\\java"))
+
+ 读取操作同 FileInputStream
+**********************************************
+字符流
+通过字节流+编码表读取 只能读文本文件
+FileReader
+FileWriter 使用方法同FileInputStream
+ FileInReader f =new FileReader("d:\\abc.txt")
+
+
+close   关闭文件释放资源
+flush   刷新文件，可以继续写入
+
+字符缓冲流
+
+BufferedReader a=new BufferedReader(new FileReader(d:\\abc.txt"))
+BufferedWriter b=new BufferedWriter(new FileWriter(d:\\abc.txt"))
+
+String c1=a.readLine()   一次读取一整行不读取换行符 /r/n
+a.newLine 写出回车换行
+while(a1.readLine() != null)   （结束标记 null）
+
+
+
+
+
+转换流
+ 作用：按照指定编码表转换数据
+
+字节流->字符流 
+InputStreamReader（InputStream,"UTF-8"）  字节流通向字符流桥梁，指定编码表
+InputStreamReader m =new InputStreamReader(new FileInputStream("d:\\"),"utf-8")
+
+（可以和字符缓冲流连用）
+BufferedReader a=new BufferedReader(new InputStreamReader（new FileInputStream(d:\\abc.txt"),"utf-8"))
+
+字符流 ->字节流
+OutputStreamReader（OutputStream,"UTF-8"）
+OutputStreamReader n =new OutputStreamReader(new FileOutputStream("d:\\"),"utf-8")
+
+( 可以和字符缓冲流连用）
+BufferedWriter a=new BufferedWriter(new OutputStreamReader（new FileOutputStream(d:\\abc.txt"),"utf-8"))
+
+getEncoding() 获取编码方法
+
+***************************************
+
+RandomAccesseFile类     filechannel 
+不属于流类，但具有读写文件数据的功能，可以随机从文件任何位置开始并以指定操作权限进行操作
+
+RandomAccesseFile(File file,String mode)
+参数mode取值
+r:只读
+rw:读写
+rws:读写，更新同步到底层存储设备
+rwd:读写，更新同步到底层存储设备
+
+readLine()        读取下一行内容
+write()           写入
+seek(long pos)    控制指针移动
+getFilePointer()  获取当前指针位置   
+skipBytes(int n)  跳过n个字符
+
+***************************************
+
+   面向对象和IO结合
+
+1：对象类实现接口    implements Serializable
+
+2: 对象输出流，将对象写入到文件
+        ObjectOutputStream          ObjectOutputStream a1=new ObjectOutputStream(new FileOutputStream("D:\\Java\\liu.txt"));
+3: 对象输入流,读取
+        ObjectInputStream           ObjectInputStream b1 =new ObjectInputStream(new FileInputStream("D:\\Java\\liu.txt"));
+          
+4: 写入对象
+        writeObject()            a1.writeObject(stu_1);
+5：读取对象
+        readObject()            Object o1=b1.readObject();
+
+序列化：
+     对象->转为二进制流->存储
+反序列化
+     存储-> 对象
+
+
+
+
+**********************************************************************************************************
+
+File类
+  实例化：File f =new File("d://python");
+  f.exists()        判断文件是否存在
+  f.delete()        删除文件
+  f.getName()       返回名称
+  f.getPath()       返回路径
+  f.getAbsolutePath 返回绝对路径
+  f.getParent()     返回父籍对象
+  f.canRead()       是否可读
+  f.canWrite()      是否可写
+  f.isFile()        是否是文件
+  f.isDirectory()   是否文件夹
+  f.creatNewFile()  创建文件
+  f.length()        返回文件长度
+  f.lastModified()  返回最后修改文件时间的毫秒值
+  String [] a = f.list()  返回当前文件夹下所有的文件和文件夹
+  String [] b = f.list(new FilenameFilter())   返回当前文件夹下所有的文件和文件夹,带有筛选效果，通过accept return 筛选
+  File [] c = f.listFiles();   返回当前文件夹下所有的文件和文件夹对象         
+
+delete 只能删除文件或空文件夹
+用 isFile() 和 isDirectory() 判断类型
+  
+ ********************************************************************
+Path 接口
+
+1.获取path对象
+ Path n1=Paths.get("d:\\abc.txt")
+2.获取根路径
+ n1.getRoot()
+3.获取父路径
+ n1.getParent()
+4.获取路径名称数（所在文件夹中第几层）
+ n1.getNmaeCount()
+5.获取路径名称
+ n1.getName()
+6.绝对路径
+ n1.getAbsolutePath 返回绝对路径
+
+******************************
+
+Files 工具类 （结合Path接口） 
+  
+ Files.createDirectories(path);     创建多级文件夹
+ Files.createFile(path)              创建文件
+ Files.write(path,list,StandardOpenOption.APPEND)   将集合写入文件
+ Files.readAllLines(path)            从文件读取所有行
+ Files.size(path)                    返回文件大小
+
+********************************************************************************************************************************************************8
+**********************************************************************************************************************************************************  
+*********************************************************************************************************************************************************   
+
+GUI
+
+Swing 
+ 顶级容器类：JApplet,JFrame,JDialog
+
+JFrame 不能放到别的容器中（大窗口）
+
+实例化：     JFrame jf=new JFrame();
+设置窗体可见     jf.setVisible(true)   ****  要放到最后写  ****
+设置标题         jf.setTitle("1231阿萨法发")
+设置默认关闭     jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE )
+设置窗口大小     jf.setSize(weight,hight)
+设置窗口起始位置 jf.setLocation(x,y)
+设置布局         jf.setLayout(new BorderLayout())
+设置位置及大小   jf.setBounds(x,y,weight,height) 
+
+多线程时不安全，需要重写方法，加入SwingUtilities.invokeLater(new Runnable())
+
+在run()中写入自己新建的方法
+
+	public static void main(String[] args) {
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				jf_1();}
+		});
+	}
+
+	private static void jf_1() {
+		JFrame jf = new JFrame("标题1");
+		jf.setVisible(true);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setSize(400, 800);
+	}
+
+      }
+     
+
+JDialog（提示框）
+模态对话框：用户需要处理完对话框才能与其他窗口交互
+非模态对话框：用户不需要处理完对话框才能与其他窗口交互
+
+实例化：JDialog dg =new JDialog(jf,"abc",true);  JFrame对象，标题名，模态否（true为模态）
+
+设置默认关闭     jf.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE )
+设置窗口大小     jf.setSize(weight,hight)
+设置窗体可见     jf.setVisible(true)        ****  要放到最后写  ****
+
+
+布局管理器
+BorderLayout:边界布局
+   设置当前窗口使用哪种布局 
+    jf.setLayout(new BorderLayout())
+
+  创建按钮组件（传入组件名字）
+    JButton bt1 =new JButton("PAGE_START");
+    JButton bt2 =new JButton("PAGE_END");
+    JButton bt3 =new JButton("LINE_START");
+    JButton bt4 =new JButton("LINE_END");
+    JButton bt5 =new JButton("CENTER");
+
+
+   添加到容器当中
+    jf.add(bt1,BorderLayout.PAGE_START);
+    jf.add(bt2,BorderLayout.PAGE_END);
+    jf.add(bt3,BorderLayout.LINE_START);
+    jf.add(bt4,BorderLayout.LINE_END);
+    jf.add(bt5,BorderLayout.CENTER);
+
+
+FlowLayout 流式布局管理器(****不需要指定组件位置)
+
+  1.在这种布局下，容器会将组件按照添加顺序从左向右放置，当达到容器边界时，
+    会自动将组件放到下一行开始位置
+  2.这些组件可以左对齐，居中对齐（默认），或者右对齐方式排列。
+
+
+ 构造方法：
+ FlowLayout()   默认居中，水平，垂直间距为5个单位
+ FlowLayout(FlowLayout.a)     指定组件对齐方式a，水平，垂直间距为5个单位   a:LEFT/RIGHT/CENTREs
+ FlowLayout(int a,int b,int c)  指定居中，水平，垂直间距  
+
+ 指定布局方式
+ jf.setLayout(new FlowLayout())
+   
+   传入方法
+    1：创建按钮组件（传入组件名字）（指定位置）
+      JButton bt1 =new JButton("PAGE_START");
+      JButton bt2 =new JButton("PAGE_END");
+      JButton bt3 =new JButton("LINE_START");
+      JButton bt4 =new JButton("LINE_END");
+      JButton bt5 =new JButton("CENTER");
+
+
+       添加到容器当中
+      jf.add(bt1,BorderLayout.PAGE_START);
+      jf.add(bt2,BorderLayout.PAGE_END);
+      jf.add(bt3,BorderLayout.LINE_START);
+      jf.add(bt4,BorderLayout.LINE_END);
+      jf.add(bt5,BorderLayout.CENTER);
+
+
+     2：不指定位置
+    jf.add(new JButton("1"))
+    jf.add(new JButton("2"))
+
+
+GridLayout网格布局管理器
+ 使用纵横线将容器分为n行m列网格，每个网格可添加一个组件
+ 添加组件从左向右，从上至下依次添加到网格中
+ 与FlowLayout不同的是，放置在GridLayout会走动占据网格整个区域
+
+ 构造方法
+ GirdLayout()   默认一行一列
+ GirdLayout（int x,int y）  x行y列
+ GirdLayout(int a,int b,int c,int d)  a行b列cd间距
+
+
+
+
+JDBC
+
+            输入基本信息
+                   Class.forName("com.mysql.jdbc.Driver");
+            获取SQL连接对象
+                     Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/lol?characterEncoding=UTF-8","root",
+                    "root");
+            获取执行者对象,书写SQL语句
+                    PreparedStatement preparedStatement = connection.prepareStatement("select * from all_player  ");
+            执行语句
+                     ResultSet resultSet = preparedStatement.executeQuery()    ;//查询,获取查询结果集
+                     preparedStatement.executeUpdate();      增删改都用这个        
+            处理结果
+                  next() 方法 将指针向下移动 用查询返回的结果集执行，有数据一直返回true 没有数据返回false
+                  getInt(num) 获取整数   num为索引或字段名称  下标从1开始  
+                  getString(num) 获取字符
+                  getDate(num) 获取日期
+            问号占位：
+             .setObject(下标,内容);  下标从1开始  
+             例子：
+                PreparedStatement prep = connection.prepareStatement("select * from all_player where name = ? ");
+                prep.setObject(1,"Faker");  
+            关闭资源
+                result.close()    
+                prep.close()
+                conn.close()
+
+            设置事务：
+               事务里的语句必须全部通过才会提交，有一个执行错了就不会提交 增删改执行事务，查询不用执行
+                c.setAutoCommit(false);   //设置手动提交  
+
+                    。。。                   //执行的sql语句
+
+                 c.commit();   //手动提交  
+                  
+
+       JAVA包库
+               https://mvnrepository.com/search?q=mysql  
+
+      
+      
+      
+      Java反射 
+
+              
+         Java中的反射机制（动态机制）：它是Java中非常重要的特性
+         反射的特点：
+            1.在程序运行时可以判断任意一个对象所属的类是哪一个
+            2.也可以在运行的时候获取到类的对象
+            3.可以获取到类所属的成员变量以及方法
+        
+         反射几种常用写法
+            1.Class.forName(String name);    返回与带有给定字符串名的类或接口相关联的 Class 对象。  name 为当前类具体的包位置
+                  Class<?> forName = Class.forName("com.foreknow.reflection.ReflectionDemo");   //获取类对象
+                  forName.getMethod(方法名，方法参数列表(Class类型));      //执行类对象方法
+            
+            2. 类名.class   或  接口名.class    返回指定类的具体的包的位置   返回值：com.foreknow.reflection.ReflectionDemo
+            
+            3. new 类名().getClass()    返回对象的类
+        
+        
+        
+         方法：
+            aClass为执行反射后获取到的对象
+            
+            aClass.getName() 获取方法名字
+            aClass.getSuperclass() 获取父类的名字
+            getClass()：取得当前对象所属的Class对象   
+            getClass().getClassLoader()：取得该Class对象的类装载器
+            getClass().getInterfaces()  获取目标对象实现的接口的类型
+
+
+        例子：
+            String name = "123";
+            Class<? extends String> aClass = name.getClass();       获取对象本身所处类型  返回值：java.lang.String
+                      
+            
+            Button button = new Button();       对实例化的对象进行反射操作
+            System.out.println(ReflectionDemo.class.getName());        返回值：com.foreknow.reflection.ReflectionDemo  实例化对象所在包
+            
+
+          反射调用方法：
+
+           public String testMethod(String str, Hashtable hashtable){
+
+                String returnStr = "这是我们要反悔的数据";
+                System.out.println(hashtable.get("name"));
+
+                return null;
+
+            }
+
+            
+
+          //        获取到类对象
+                  Class<?> forName = Class.forName("com.foreknow.reflection.ReflectionDemo");
+          //        方法参数列表 设置参数形参类型
+                  Class [] t1 = new Class[2];
+                  t1[0] = Class.forName("java.lang.String");
+                  t1[1] = Class.forName("java.util.Hashtable");
+
+          //        获取到当前对象中的方法名 testMethod，并且设置方法参数类型(形参)
+                  Method testMethod = forName.getMethod("testMethod", t1);     //方法名    参数类型
+
+          //        可以通过invoke 调用方法  invoke(对象名，参数(数组 Object 类型))
+                  Object[] args = new Object[2];
+                  args[0]="第一个值";
+                  Hashtable<String, Integer> Hashtable = new Hashtable<>();
+                  Hashtable.put("name",13);
+                  args[1]=Hashtable;
+
+          //        由指定方法调用对象并传参
+                  String str = (String) testMethod.invoke(new ReflectionDemo(),args);   //实例化类   传入参数
+                  System.out.println(str);
+        
+
+
+          DTO:
+              数据传输对象
+              作用：主要用于Controller 与Service 之间传递数据
+              好处：防止暴露表结构，提高安全性
+
+
+
+          Java 正则
+
+              String pattern = ".*Javaweb_demo1\\\\";                //表达式
+
+            
+              Pattern r = Pattern.compile(pattern);                   // 创建 Pattern 对象
+
+            
+              Matcher m = r.matcher(s);                            // 现在创建 matcher 对象
+
+              if (m.find( )) {                                     //有结果输出
+                  System.out.println("Found value: " + m.group(0) );     //m.group(0)    输出查询结果
+
+              } else {
+                  System.out.println("NO MATCH");
+              }
+              filePath = m.group(0)+"inf"+File.separator+"db.properties"; 
+
+          或：
+
+              Pattern.compile("正则表达式").matcher("目标语句");
+
+      Java 8 特性：        
+
+           Java lambda 实现接口：
+
+               https://blog.csdn.net/Mynewclass/article/details/80169476?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522160405476219195264737809%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=160405476219195264737809&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_v2~rank_v28-1-80169476.first_rank_ecpm_v3_pc_rank_v2&utm_term=java+lambda%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3&spm=1018.2118.3001.4449       
+
+               其实这里就是利用Lambda表达式实现实例化函数式接口的对象，比如我们自定义一个函数式接口，增加注解@FunctionalInterface，
+               也可以不用注解，只需要符合函数式接口的要求，否则会报错！
+
+                    @FunctionalInterface
+                    interface HelloWold {
+                        void print();
+                    }
+
+                      
+
+               定义好函数式接口之后，我们可以使用Lambda Expression了
+
+                    public static void main(String[] args) {
+                        //实现函数式接口的对象
+                        HelloWold test = ()->System.out.println("HelloWorld!");
+                        test.print();
+                    }
+
+          Java 8 函数式接口：
+           
+              函数式接口(Functional Interface)就是一个有且仅有一个抽象方法，但是可以有多个非抽象方法的接口。
+
+              函数式接口可以被隐式转换为 lambda 表达式。
+
+              Lambda 表达式和方法引用（实际上也可认为是Lambda表达式）上。
+
+              如定义了一个函数式接口如下：
+
+                  @FunctionalInterface
+                  interface GreetingService 
+                  {
+                      void sayMessage(String message);
+                  }
+
+              那么就可以使用Lambda表达式来表示该接口的一个实现(注：JAVA 8 之前一般是用匿名类实现的)：
+
+                  GreetingService greetService1 = message -> System.out.println("Hello " + message);
+
+
+
+         Java 自定义异常
+
+         1.新建类继承 Exception,实现有参无参构造         
+
+         2.在指定方法中定义异常触发的条件
+             
+             public void test02 (Study01 s) throws Num1Exception {        //必须throws 异常
+                  if(s.getName().equals("dsp")){ 
+                      throw new Num1Exception(s.name+"傻逼");           //执行异常
+                  }
+
+              }
+
+        3.获取异常原因
+           
+            try {
+                n.test02(n);
+            } catch (Num1Exception e) {
+               
+                System.out.println(e.getMessage());     //异常的原因
+                e.printStackTrace();
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

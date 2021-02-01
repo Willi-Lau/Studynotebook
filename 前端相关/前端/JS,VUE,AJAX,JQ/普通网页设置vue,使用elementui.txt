@@ -1,0 +1,32 @@
+<head> 里引入：
+        <!-- vue 引入 -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- ELEMENT UI -->
+            <!-- import CSS -->
+            <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+            
+            <!-- 引入组件库 -->
+            <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+
+<body>  里写：
+    <script>
+        // 创建Vue的对象
+        let vm = new Vue({                 //注意：这个一定写道body里
+			//绑定class
+            el:".container",
+			//具体方法
+            methods: {
+				open1() {
+						const h = this.$createElement;
+
+						this.$notify({
+						title: 'WELCOME',
+						message: h('i', { style: 'color: teal'}, '欢迎来到冰天美帝')
+						});
+				},
+	  }
+        })
+    </script>
+
+

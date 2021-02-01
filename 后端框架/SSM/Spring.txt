@@ -1,0 +1,183 @@
+Spring的IOC容器
+    IOC 控制反转：之前需要我们自己创建的对象现在交给IOC容器来实现
+    DI 依赖注入
+
+    https://www.w3cschool.cn/wkspring/
+    https://www.bilibili.com/video/BV1WZ4y1H7du?p=7&t=246
+
+Spring的目标：
+    1、可以令人方便愉快的使用Spring。
+    2、应用程序代码并不依赖于Spring APIs。
+    3、Spring不和现有的解决方案竞争，而是致力于将它们融合在一起。
+
+Spring的基本组成：
+    1、最完善的轻量级核心框架。
+    2、通用的事务管理抽象层。
+    3、JDBC抽象层。
+    4、集成了Toplink, Hibernate, JDO, and iBATIS SQL Maps。
+    5、AOP功能。
+    6、灵活的MVC Web应用框架。
+
+Spring框架由七个定义明确的模块组成（图1.1）。
+Spring框架图
+Spring框架图
+
+        如果作为一个整体，这些模块为你提供了开发企业应用所需的一切。但你不必将应用完全基于Spring框架。你可以自由地挑选适合你的应用的模块而忽略其余的模块。
+        就像你所看到的，所有的Spring模块都是在核心容器之上构建的。容器定义了Bean是如何创建、配置和管理的——更多的Spring细节。当你配置你的应用时，你会潜在地使用这些类。但是作为一名开发者，你最可能对影响容器所提供的服务的其它模块感兴趣。这些模块将会为你提供用于构建应用服务的框架，例如AOP和持久性。
+        核心容器
+        这是Spring框架最基础的部分，它提供了依赖注入（DependencyInjection）特征来实现容器对Bean的管理。这里最基本的概念是BeanFactory，它是任何Spring应用的核心。BeanFactory是工厂模式的一个实现，它使用IoC将应用配置和依赖说明从实际的应用代码中分离出来。
+        应用上下文（Context）模块
+        核心模块的BeanFactory使Spring成为一个容器，而上下文模块使它成为一个框架。这个模块扩展了BeanFactory的概念，增加了对国际化（I18N）消息、事件传播以及验证的支持。
+        另外，这个模块提供了许多企业服务，例如电子邮件、JNDI访问、EJB集成、远程以及时序调度（scheduling）服务。也包括了对模版框架例如Velocity和FreeMarker集成的支持。
+        Spring的AOP模块
+        Spring在它的AOP模块中提供了对面向切面编程的丰富支持。这个模块是在Spring应用中实现切面编程的基础。为了确保Spring与其它AOP框架的互用性，Spring的AOP支持基于AOP联盟定义的API。AOP联盟是一个开源项目，它的目标是通过定义一组共同的接口和组件来促进AOP的使用以及不同的AOP实现之间的互用性。通过访问他们的站点，你可以找到关于AOP联盟的更多内容。
+        Spring的AOP模块也将元数据编程引入了Spring。使用Spring的元数据支持，你可以为你的源代码增加注释，指示Spring在何处以及如何应用切面函数。
+        JDBC抽象和DAO模块
+        使用JDBC经常导致大量的重复代码，取得连接、创建语句、处理结果集，然后关闭连接。Spring的JDBC和DAO模块抽取了这些重复代码，因此你可以保持你的数据库访问代码干净简洁，并且可以防止因关闭数据库资源失败而引起的问题。
+        这个模块还在几种数据库服务器给出的错误消息之上建立了一个有意义的异常层。使你不用再试图破译神秘的私有的SQL错误消息！
+        另外，这个模块还使用了Spring的AOP模块为Spring应用中的对象提供了事务管理服务。
+        对象/关系映射集成模块
+        对那些更喜欢使用对象/关系映射工具而不是直接使用JDBC的人，Spring提供了ORM模块。Spring并不试图实现它自己的ORM解决方案，而是为几种流行的ORM框架提供了集成方案，包括Hibernate、JDO和iBATIS SQL映射。Spring的事务管理支持这些ORM框架中的每一个也包括JDBC。
+        Spring的Web模块
+        Web上下文模块建立于应用上下文模块之上，提供了一个适合于Web应用的上下文。另外，这个模块还提供了一些面向服务支持。例如：实现文件上传的multipart请求，它也提供了Spring和其它Web框架的集成，比如Struts、WebWork。
+        Spring的MVC框架
+        Spring为构建Web应用提供了一个功能全面的MVC框架。虽然Spring可以很容易地与其它MVC框架集成，例如Struts，但Spring的MVC框架使用IoC对控制逻辑和业务对象提供了完全的分离。
+        它也允许你声明性地将请求参数绑定到你的业务对象中，此外，Spring的MVC框架还可以利用Spring的任何其它服务，例如国际化信息与验证。
+
+Spring中的注入的方式
+1.构造器注入
+        <!--构造器注入   start        -->
+        <bean id="duke" class="com.moonlit.myspring.Juggler">
+            <constructor-arg name="beanBags" value="15"></constructor-arg>
+        </bean>
+
+        <bean id="sonnet29" class="com.moonlit.myspring.Sonnet29"></bean>
+        <bean id="poeticDuke" class="com.moonlit.myspring.ProjectJuggler">
+            <constructor-arg value="16"></constructor-arg>
+            <constructor-arg ref="sonnet29"></constructor-arg>
+        </bean>
+2.属性注入
+    <bean id="moonlightPoet" class="com.moonlit.myspring.MoonlightPoet">
+          <property name="name" value="moonlight"></property>
+          <property name="age" value="12"></property>
+          <property name="poem" ref="sonnet29"></property>
+          <property name="list">
+              <list>
+                  <value>hello</value>
+                  <value>tom</value>
+                  <value>tom</value>
+              </list>
+          </property>
+          <property name="map">
+              <map>
+                  <entry key="key1" value="value1"></entry>
+                  <entry key="key2" value="value2"></entry>
+                  <entry key="key3" value="value3"></entry>
+              </map>
+          </property>
+      </bean>
+3.Spring的自动装配
+
+4.自动检测
+    @Component通用的注解，表示该类为Spring的组件 设置id 被spring管理 可以带参数（）括号里写id值，也可以不带参数，没有括号，id值为类名首字母小写剩下的不变
+    @Co  ntroller 标识将该类定义为SpringMVC的Controller控制器
+    @Repository 表示dao 设置自己的id
+    @Resource(name = "user")   和Repository 对应使用，接受reposition的接口信息
+    @RequestMapping(value = "/admin/users",method = RequestMethod.GET) 设置路径以及获取方式
+    @Service 当前类为业务层，可以被Spring管理，后期就可以处理事物
+    @Autowired的用法和作用  这个注解就是spring可以自动帮你把bean里面引用的对象的setter/getter方法省略，它会自动帮你set/get。
+    @Qualifier("falchion")  private Weapon weapon;   两个实现类实现统一接口,那么可以使用Qualifier 选取你想用的接口（后面必须有一个私有属性值）
+    @Before：在被代理对象的方法前先调用，属于前置通知。
+    @AfterReturning：在被代理对象的方法正常返回后调用，属于返回通知（也等于后置通知）如果发生异常则不会被调用
+    @Around：在被代理对象的方法封装起来，并用环绕通知取代它，属于环绕通知，它将覆盖原有的方法，但是允许你通过反射调用原有方法。
+    环绕通知是Spring AOP中最强大的通知，它可以同时实现前置和后置的通知，它保留了调度被代理对象原有方法的功能，
+    所以它强大，又灵活。这个通知里有一个参数ProceedingJoinPoint,是Spring提供的一个参数，使它可以反射连接点。
+    当环绕通知使用pjp.proceed()方法后会先调用前置通知，然后反射切点方法，最后就是后置通知和返回（或者异常）通知。
+    @AfterThrowing：在被调用对象的方法抛出异常后调用，属于异常通知，要求被代理对象的方法执行过程中产生异常
+    @After：在被代理对象的方法后调用，属于后置通知
+
+AOP(面向切面编程)：Spring主要会利用AOP来处理事物，可以使用applicationContext文件进行对aop进行配制的，AOP的底层的
+实现原理是基于动态代理的设计模式来实现的。
+
+        代理的方式：1.静态代理   2.JDK API动态代理  3.Spring AOP中给我们提供好的动态代理CgLib
+
+        动态代理
+        JDK中生成代理对象的API
+        代理类所在包:java.lang.reflect.Proxy
+        JDK实现代理只需要使用newProxyInstance方法,但是该方法需要接收三个参数,完整的写法是:
+
+        static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces,InvocationHandler h )
+        注意该方法是在Proxy类中是静态方法,且接收的三个参数依次为:
+
+        ClassLoader loader,:指定当前目标对象使用类加载器,获取加载器的方法是固定的
+        Class<?>[] interfaces,:目标对象实现的接口的类型,使用泛型方式确认类型
+        InvocationHandler h:事件处理,执行目标对象的方法时,会触发事件处理器的方法,会把当前执行目标对象的方法作为参数传入
+
+
+        总结:
+        代理对象不需要实现接口,但是目标对象一定要实现接口,否则不能用动态代理
+        
+    
+Spring-idol.xml的配置 （核心文件）
+
+        <?xml version="1.0" encoding="UTF-8"?>
+        <beans xmlns="http://www.springframework.org/schema/beans"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:context="http://www.springframework.org/schema/context"
+            xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+        <!--    使用注解实现自动装配-->
+            <context:annotation-config/>
+        <!--    包位置 自动检测-->
+            <context:component-scan base-package="com.moonlity.myspring"/>   base-packing为要执行Spring 包所在的位置
+
+
+
+
+实现类：
+            //        配置核心spring文件所在位置
+                    ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring-idol.xml");
+            //        根据id获取到的接口
+                    ProjectJuggler performer = (ProjectJuggler) applicationContext.getBean("poeticDuke");
+            //        调用方法
+                    performer.perform();
+
+
+
+
+DTO:
+              数据传输对象
+              作用：主要用于Controller 与Service 之间传递数据
+              好处：防止暴露表结构，提高安全性   
+
+
+
+                               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+

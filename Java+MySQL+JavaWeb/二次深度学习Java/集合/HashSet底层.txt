@@ -1,0 +1,29 @@
+
+线程不安全
+线程安全替换：new CopyOnWriteArraySet<>();
+
+HashSet 底层就是 HashMap
+
+   在存储的时候 value 存储了一个默认的Object 静态常量，存取都是对key 的操作，所以看起来和list  一样
+
+
+   set集合不可存储重复值，重复值村不会存进去，可以用于除重复 
+
+
+
+
+
+线程不安全例子：
+
+        HashSet<String> hashSet = new HashSet<>();
+      
+
+        for (int i = 0; i < 10; i++) {
+            new Thread(()->{
+                arraySet.add(UUID.randomUUID().toString().substring(0,8));
+                System.out.println(Thread.currentThread().getName()+arraySet);
+            },"线程："+Integer.toString(i)).start();
+        }
+
+      //改正措施
+        CopyOnWriteArraySet<Object> arraySet = new CopyOnWriteArraySet<>();

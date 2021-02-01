@@ -1,0 +1,260 @@
+
+MySQL安全管理
+
+一  用户管理: 添加、删除
+1．添加用户
+
+CREATE USER 用户 [IDENTIFIED BY [PASSWORD] '密码']
+[, 用户 [IDENTIFIED BY [PASSWORD] '密码']] ...
+
+用户:'用户名'@ '主机名'    localhost本机，%表示任意IP地址
+
+CREATE USER用于创建新的MySQL账户。
+CREATE USER会在系统本身的mysql数据库的user表中添加一个新记录。
+要使用CREATE USER，必须拥有mysql数据库的全局CREATE USER权限或INSERT权限。
+如果账户已经存在，则出现错误。
+
+【例9.1】添加两个新的用户，king的密码为'king'，palo的密码为'palo'。
+
+create user
+    'king'@'localhost' identified by 'king', 
+    'palo' identified by 'palo';
+完成后可切换到mysql数据库，从user表中查到刚刚添加的两个用户记录：
+use mysql;
+show tables;
+select USER from user\G;
+
+2．删除用户
+DROP USER 用户 [, 用户名] ...
+
+DROP USER语句用于删除一个或多个MySQL账户，并取消其权限。要使用DROP USER，必须拥有mysql数据库的全局CREATE USER权限或DELETE权限。
+【例9.2】删除用户palo。
+drop user palo;
+delete from user where user='king';
+
+修改用户名、密码
+RENAME USER 老用户 TO 新用户,[, 老用户 TO 新用户] ...
+
+RENAME USER语句用于对原有MySQL账户进行重命名。要使用RENAME USER，必须拥有全局CREATE USER权限或mysql数据库UPDATE权限。如果旧账户不存在或者新账户已存在，则会出现错误。
+【例9.3】将用户king的名字修改为ken。
+rename user
+	'king'@'localhost' to ' kk'@'localhost';  引号不加也可以
+2．修改密码
+SET  PASSWORD [FOR 用户]= PASSWORD('新密码')
+说明：如果不加“FOR 用户”，表示修改当前用户的密码 
+
+【例9.4】将用户ken的密码修改为qen。
+set password for 'kk'@'localhost'=password('KK');
+
+mysql80:修改用户密码
+ 1)
+ALTER USER 'kk'@'localhost' IDENTIFIED WITH mysql_native_password by 'kk'; 
+ ALTER USER 'kkk'@'localhost' IDENTIFIED WITH mysql_native_password by 'kkk'; 
+
+2)
+
+mysqladmin 命令（需要在c:/documents and settings/administrator> 目录下进行修改）
+
+mysqladmin -u用户 -proot password  新密码；
+
+mysqladmin -uroot -proot password  1234；
+
+mysqladmin -upp -ppp password  kkk；
+
+课后练习：
+如何解决root用户密码丢失：（5.5版本）
+1.停止mysql服务
+（运行对话框中：net stop mysql  或者Windows服务中去停止）
+2.在’运行’对话框中：mysqld --skip-grant-tables
+
+ 在任务管理器中，停止MYSQLD.EXE进程
+3. 重新开一个‘运行’对话框，：mysql -u root
+4.使用UPDATE语句设置root用户密码
+update mysql.user set password=password('新密码') 
+where user='root' and host='localhost';
+5.加载权限表
+flush privileges;
+6.exit 退出，用新密码重新登录。
+
+MySQL 8.0 
+
+
+二 权限控制
+
+授予权限：（1）列权限：（2）表权限：（3）数据库权限：（4）用户权限：
+
+给某用户授予权限可以使用GRANT语句。使用SHOW GRANTS语句可以查看当前账户拥有什么权限
+
+GRANT  权限 [ (列名表) ] [, 权限 [(列名表)]] ...
+    ON [对象类型] {表名 | * | *.* | 数据库名.*}
+    TO 用户 [IDENTIFIED BY [PASSWORD] '密码']
+        [, 用户 [IDENTIFIED BY [PASSWORD] '密码']] ...
+    [WITH with_option [with_option] ...]
+
+对象类型：
+ TABLE
+| FUNCTION
+| PROCEDURE
+
+with_option ：
+GRANT OPTION
+| MAX_QUERIES_PER_HOUR count
+| MAX_UPDATES_PER_HOUR count
+| MAX_CONNECTIONS_PER_HOUR count
+| MAX_USER_CONNECTIONS count
+
+
+1. 授予表权限和列权限
+
+授予表权限时权限可以是以下值：
+SELECT：给予用户使用SELECT语句访问特定的表的权力。
+UPDATE：给予用户使用UPDATE语句修改特定表中值的权力。
+INSERT：给予用户使用INSERT语句向一个特定表中添加行的权力。
+DELETE：给予用户使用DELETE语句向一个特定表中删除行的权力。
+REFERENCES：给予用户创建一个外键来参照特定的表的权力。
+CREATE：给予用户使用特定的名字创建一个表的权力。
+DROP：给予用户删除表的权力。
+ALTER：给予用户使用ALTER TABLE语句修改表的权力。
+INDEX：给予用户在表上定义索引的权力。
+ALL或ALL PRIVILEGES：表示所有权限名。
+
+grant all privileges on *.* to root@localhost with grant option;
+
+【例9.5】授予用户ken在xs表上的SELECT权限。
+use xscj;
+grant select  on xs  to bb@localhost;
+
+【例9.6】用户liu和zhang不存在，授予它们在xs表上的SELECT和UPDATE权限。
+
+
+create user liu@localhost identified by 'liu',zhang@localhost identified by 'zhang';
+
+grant select,update on  xs to liu@localhost, zhang@localhost;
+
+对于列权限，priv_type的值只能取SELECT、INSERT和UPDATE。权限的后面需要加上列名column_list。
+
+【例9.7】授予kk在xs表上的学号列和姓名列的UPDATE权限。
+use xscj
+grant update(姓名, 学号)
+	on  xs
+	to  cc@'localhost';
+
+
+2. 授予数据库权限
+SELECT：        给予用户使用SELECT语句访问特定数据库中所有表和视图的权力。
+INSERT：        给予用户使用INSERT语句向特定数据库中所有表添加行的权力
+UPDATE：        给予用户使用UPDATE语句更新特定数据库中所有表的值的权力。
+REFERENCES：    给予用户创建指向特定的数据库中的表外键的权力
+DELETE：        给予用户使用DELETE语句删除特定数据库中所有表的行的权力
+CREATE：        给予用户使用CREATE TABLE语句在特定数据库中创建新表的权力。
+CREATE TEMPORARY TABLES：给予用户在特定数据库中创建临时表的权力。
+ALTER：         给予用户使用ALTER TABLE语句修改特定数据库中所有表的权力。
+CREATE VIEW：   给予用户在特定数据库中创建新的视图的权力。
+SHOW VIEW：     给予用户查看特定数据库中已有视图的视图定义的权力。
+INDEX：         给予用户在特定数据库中的所有表上定义和删除索引的权力。
+DROP：          给予用户删除特定数据库中所有表和视图的权力。
+LOCK TABLES：   给予用户锁定特定数据库的已有表的权力。
+CREATE ROUTINE：给予用户为特定的数据库创建存储过程和存储函数等权力。
+ALTER ROUTINE：给予用户更新和删除数据库中已有的存储过程和存储函数等权力。
+EXECUTE ROUTINE：给予用户调用特定数据库的存储过程和存储函数的权力。
+ALL或ALL PRIVILEGES：表示以上所有权限名。
+
+在GRANT语法格式中，授予数据库权限时ON关键字后面跟“*”和“db_name.*”。“*”表示当前数据库中的所有表；“db_name.*”表示某个数据库中的所有表。
+
+【例9.8】授予zhang在xscj数据库中的所有表的SELECT权限。
+grant select
+    on  xscj.* 
+    to  cc@localhost;
+
+【例9.9】授予kkk在xscj数据库中所有的数据库权限。
+use xscj;
+grant  all
+    on  *  to  cc@localhost;
+
+grant select   on  *.*  to  'zhang'@'localhost;
+3. 授予用户权限
+
+CREATE USER：给予用户创建和删除新用户的权力。
+SHOW DATABASES：给予用户使用SHOW DATABASES语句查看所有已有的数据库的定义的权利。
+
+在GRANT语法格式中，授予用户权限时ON子句中使用“*.*”，表示所有数据库的所有表
+
+例9.10】授予peter对所有数据库中的所有表的CREATE、ALTERT和DROP权限。
+
+
+grant  create ,alter ,drop   on  *.*   to  zhang@localhost;
+
+create user peter@localhost identified by 'peter';
+grant  create ,alter ,drop   on  *.*   to  peter@localhost;
+
+【例9.11】授予peter创建新用户的权力
+
+grant  create  user  on  *.*   to  peter@localhost;
+
+哪些级别授予某条SQL语句权限  表格(ppt23)
+
+
+二   权限转移和限制
+
+【例9.12】授予caddy在xs表上的SELECT权限，并允许其将该权限授予其他用户。
+首先在root用户下授予caddy用户SELECT权限：
+create user caddy@localhost identified by 'caddy';
+grant select
+   on  xscj.xs
+   to  caddy@localhost   with grant option;
+
+create user jim@localhost identified by 'jim';
+
+以caddy用户身份登录MySQL，登录方式为：
+
+mysql -hlocalhost -ucaddy -pcaddy
+
+登录后，caddy用户只有查询xscj数据库中xs表的权利，它可以把这个权限传递给其他用户，这里假设用户Jim已经创建：
+
+grant select
+    on  xscj.xs
+    to Jim@localhost;
+
+
+
+权限回收
+
+要从一个用户回收权限，但不从user表中删除该用户，可以使用REVOKE语句，这条语句和GRANT语句格式相似，但具有相反的效果。要使用REVOKE，用户必须拥有mysql数据库的全局CREATE USER权限或UPDATE权限。
+语法格式：
+REVOKE priv_type [(column_list)] [, priv_type [(column_list)]] ...
+    ON  {tbl_name | * | *.* | db_name.*}
+    FROM user [, user] ...
+或者：
+REVOKE ALL PRIVILEGES, GRANT OPTION FROM user [, user] ...
+【例9.14】回收用户caddy在xs表上的SELECT权限。
+use xscj
+revoke  select
+   on  xs
+   from  caddy@localhost;
+由于caddy用户对xs表的SELECT权限被回收了，那么包括直接或间接地依赖于它的所有权限也回收了，在这个例子中，Jim也失去了对xs表的SELECT权限。
+
+
+二   表维护语句
+1)
+一个索引列的可压缩性不是自动更新的。就是说，用户在某列创建了一个索引，而该列的可压缩性是不会立即计算出来的。这时需要使用ANALYZE TABLE语句来更新它
+
+ANALYZE [LOCAL | NO_WRITE_TO_BINLOG] TABLE 表名 [, 表名 ] ...
+
+在MySQL上执行的所有更新都将写入到一个二进制日志文件中。这里如果直接使用ANALYZE TABLE语句，结果数据也会写入日志文件中。如果指定了NO_ERITE_TO_BINLOG选项，则关闭这个功能（LOCAL是NO_ERITE_TO_BINLOG的同义词），这样ANALYZE TABLE语句也将会更快完成。
+【例9.15】更新表xs的索引的可压缩性，并随后显示。
+analyze table xs;
+show index from xs\G;
+ 2)CHECK TABLE语句
+【例9.16】检查xs表是否正确。  check table xs;
+3)CHECKSUM TABLE语句
+对于数据库中的每一个表，都可以使用CHECKSUM TABLE语句获得一个校验和。
+【例9.17】获得表xs的校验和的值。 checksum table xs;
+4)OPTIMIZE TABLE语句
+使用OPTIMIZE TABLE语句来重新利用未使用的空间，并整理数据文件的碎片。OPTIMIZE TABLE语句只对MyISAM、BDB和InnoDB表起作用。
+【例9.18】优化xs表。
+optimize table XS;
+5)REPAIR TABLE语句
+如果一个表或索引已经损坏，可以使用REPAIR TABLE语句尝试修复它
+REPAIR TABLE XS;
+
+https://www.cnblogs.com/mzxiaoze/p/10413399.html

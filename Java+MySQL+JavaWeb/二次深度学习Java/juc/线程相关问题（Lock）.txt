@@ -1,0 +1,155 @@
+
+
+
+Lambda 表达式实现 线程相关
+
+        一个资源类同时只能被一个线程访问。（加锁的时候）
+
+        在一个资源类里面，存在多个有锁的方法，当不同线程来访问该资源类里的不同方法时，不同线程不可能同时访问这个资源类，一定会有先来后到
+        的顺序，因为当一个线程访问这个资源类的方法时，方法上的锁就自动变成锁整个类的锁了，别的线程的请求无法进来。必须等这个线程
+        访问结束其他线程才能继续访问这个资源类。
+
+
+        一个对象里面如果有多个synchronized方法，某一个时刻内，只要某一个线程去调用其中的一个synchronized方法了，其他线程只能等待，
+        换句话说，某一个时刻内，只有唯一一个线程能够访问这些synchronized方法。
+
+        所得是当前对象this,被锁定后，其他的线程都不能进入到当前对象其他的synchronized方法中
+
+
+    锁：
+        synchronized 是Java内置的关键字，使用后会自动释放锁，
+
+        Lock是java.util.concurrent.Locks 包下的一个接口，必须要手动释放。特别是在发生异常时，需要在 finally 
+        块中进行手动释放，否则会发生死锁行为
+
+        我们可以在创建ReentrantLock对象时，通过以下方式来设置锁的公平性：
+
+        ReentrantLock lock = new ReentrantLock(true);
+
+        Lock lock = new ReentrantLock();    //新建锁
+        lock.lock();     //开启锁
+            try{
+                要执行的方法体
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            finally {
+                lock.unlock();   //关闭锁
+            }
+
+
+
+
+
+
+线程池创建：
+     Executor executor = Executors.newFixedThreadPool(COUNT);
+
+提交：
+    executor.execute(new ThreadTest.Task());
+
+
+
+使用synchronized 与Lock 区别
+
+    synchronized 使用wait() notify() notifyall() 等方法实现线程并行通信
+
+    lock 使用 Condition cut = lock.newCondition(); 获得一个 Condition 使用 await(); 获得线程执行权限，使用signal() 释放线程执行权限
+
+线程并行操作：
+    
+    步骤：
+        1.高内聚低耦合线程操作资源类
+        2.判断(while)  /   干活(操作Java)    /通知(notify()等)
+        3。防止虚假唤醒 (使用while 代替 if)
+
+
+    多线程并行通信避免虚假唤醒：
+
+        虚假唤醒：
+            当一个条件满足时，很多线程都被唤醒了，但是只有其中部分是有用的唤醒，其它的唤醒都是无用功
+            比如说买货，如果商品本来没有货物，突然进了一件商品，这是所有的线程都被唤醒了，但是只能一
+            个人买，所以其他人都是假唤醒，获取不到对象的锁
+
+        怎么产生虚假唤醒
+            把  while (product >=1) {}
+            换成   if (product >=1) {}
+            就会出现虚假唤醒
+
+    为什么 if会出现虚假唤醒
+            因为if只会执行一次，执行完会接着向下执行if（）外边的
+            而while不会，直到条件满足才会向下执行while（）外边的
+
+        
+        判断线程条件时用while() 判断，不要用if()判断，因为while可以二次判断
+
+        使用 notify() wait() 操作并行线程时最好用 while() 来判断条件避免虚假唤醒
+
+        在if块中使用wait方法，是非常危险的，因为一旦线程被唤醒，并得到锁，就不会再
+        判断if条件，而执行if语句块外的代码，所以建议，凡是先要做条件判断，再wait的
+        地方，都使用while循环来做
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

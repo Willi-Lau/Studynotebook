@@ -1,0 +1,258 @@
+pygame
+1、介绍：
+2d游戏开发工具包
+2、安装：
+pip install pygame
+import pygame
+3、帮助文档：
+https://www.pygame.org/docs/
+
+
+#引入相关包：
+           import pygame,sys等
+#初始化： 
+           pygame.init()
+#得到窗口
+           screen=pygame.display.set_mode((400,300)) #宽度400，高度300的区域(pygame.Surface对象)
+#游戏主循环
+           处理游戏事件
+           更新游戏状态
+           在屏幕上绘制
+#游戏事件
+           for event in pygame.event.get():
+           #退出游戏事件
+           if event.type == QUIT:
+           pygame.quit()
+           sys.exit()
+  
+
+#加载图片：
+           bg=pygame.image.load('by.png')
+#调用图片 （只有这个不在pygame 调用）
+           screen.blit(bg,bg.get_rect())(图片名称，位置)screen.blit(bg,(500,500))get_rect()不改变位置  （screen为自己起的屏幕名字）
+#颜色
+           num1=pygame.Color(0-255,0-255,0-255)
+
+
+#加载系统字体 
+           font=pygame.font.SysFont('华文隶书',32，True,True)   加粗，斜体
+#加载自己字体
+           font = pygame.font.Font('d:\python\***.ttf',40) 
+#输入加工字体
+           text=font.render('得分：0',True,RED,BLUE)     平滑，字体颜色，背景颜色
+#调用字体
+           screen.blit(text.text.get_rect())
+#查看字体种类
+           fonts=pygame.font.get_fonts()
+           print(fonts)
+
+
+#加载背景音乐
+           pygame.mixer.music.load('./bg_music.mp3')
+#无限循环播放
+           pygame.mixer.music.play(-1)
+#设置音量大小（0-1），值越小，音量越小
+           pygame.mixer.music.set_volume(0.2)
+
+#绘制背景屏幕
+           screen.fill(pygame.Color(255, 255, 255))
+
+#控制帧速率
+           clock=pygame.time.Clock()
+           clock.tick(num)  num为帧数 一般60
+
+
+
+#显示 Surface
+           pygame.display.flip()  —  更新整个待显示的  Surface 对象到屏幕上
+******draw类*************************************************************88
+ #线段
+           pygame.draw.line(Surface, color, （start_pos）, （end_pos）, width=1)   
+           width 宽度  start_pos起始坐标
+          
+ #矩形
+           pygame.draw.rect(Surface, color, （Rect）, width=0):
+           Rect((x, y), (width, height))  (x, y)表示矩形左上角坐标， (width, height)表示的是矩形的宽度和高度
+
+ #圆
+           pygame.draw.circle(Surface, color, （pos）, radius, width=0)
+           pos 圆心坐标 radius 半径
+
+ #多边形
+           pygame.draw.polygon(Surface, color, （pointlist）, width=0） 
+           pointlist是一个坐标点的列表，表示多边形的各个顶点。
+
+ #椭圆（矩形中画）
+           pygame.draw.ellipse(Surface, color, Rect, width=0):
+           Rect((x, y), (width, height))  (x, y)表示矩形左上角坐标， (width, height)表示的是矩形的宽度和高度
+
+ #直线段
+           pygame.draw.lines(Surface, color, closed, pointlist, width=1):
+           closed是一个布尔变量，如果closed为真，那么表示需要把第一点和最后一点连接起来
+           这些点来自pointlist，一个包含坐标点的列表
+ #平滑线段
+           pygame.draw.aaline(Surface, color, startpos, endpos, blend=1):
+ #平滑直线段
+           pygame.draw.aalines(Surface, color, closed, pointlist, blend=1)
+ #圆弧
+           pygame.draw.arc(Surface, color, Rect, start_angle, stop_angle, width=1):
+           start_angle是该段圆弧的起始角度，stop_angle是终止角度。
+
+********************************************************************************************************
+
+
+#碰撞检测
+   1、两个精灵之间的矩形检测
+         pygame.sprite.collide_rect(sprite_1, sprite_2)
+         pygame.sprite.collide_rect_ratio(0.5)(sprite_1, sprite_2)
+   2、两个精灵之间的圆形检测
+         pygame.sprite.collide_circle(sprite_1,sprite_2)
+   3、两个精灵之间的像素遮罩检测（两个飞机之间的碰撞）
+         pygame.sprite.collide_mask(sprite_1,sprite_2)
+   4、精灵和精灵组之间的碰撞检测
+         pygame.sprite.spritecollideany(aprite,sprite_group,boll)
+
+
+class Block(pygame.sprite.Sprite):
+
+# 构造函数。传入块的颜色及其x和y位置
+     def __init__(self, color, width, height, init_pos):   宽，长，起始点
+# 调用父类(Sprite)构造函数
+       pygame.sprite.Sprite.__init__(self)
+
+# 创建一个块的图像，并用一种颜色填充它。
+# 这也可以是从磁盘加载的图像。
+       self.image = pygame.Surface([width, height])
+       self.image.fill(color)
+
+# 获取具有图像尺寸的矩形对象
+# 设置此对象的位置
+       self.rect = self.image.get_rect() 
+       self.rect.topleft = init_pos
+     
+
+
+#实例化
+   sprite_1 = Block(pygame.Color(255, 0, 0),50, 50,(50, 50))
+   sprite_2 = Block(pygame.Color(0, 255, 0),50, 50,(150, 150))
+# 画出精灵对象
+   screen.blit(sprite_1.image, sprite_1.rect)
+   screen.blit(sprite_2.image, sprite_2.rect)
+
+
+
+
+
+#调取标题（设置矩形对象坐标）************
+      p_title=pygame.image.load(inf_home.H_1_p_title)
+      p_title_rect=p_title.get_rect()
+      p_title_rect.topleft=((width1-width_title)/2,(height1-height_title)/2-50)
+
+
+#获取总目录
+      H=os.path.dirname(os.path.abspath(__file__))
+
+#鼠标点击
+      event.type==pygame.MOUSEBUTTONDOWN:
+
+#键盘事件
+      event.type==pygame.MOUSEBUTTONDOWN
+      event.key  ==pygame.K_按键    指定监测某个按键
+
+
+
+#精灵组
+     建立 num=pygame.sprite.Group()
+     添加 精灵组名称.add(精灵对象)或
+          精灵对象.add(精灵组名称)
+          
+           
+     使用 实例化对象.精灵组名称.调用方法
+#删除精灵
+ self.kill()
+     
+
+
+
+#rect 
+     
+     top, left, bottom, right
+     topleft, bottomleft, topright, bottomright
+     midtop, midleft, midbottom, midright
+     center, centerx, centery
+      size, width, height
+
+#精灵核心思路
+
+   子弹：    
+             设置子弹与敌机碰撞检测，需要调用敌机精灵组
+   我放飞机：
+             建立打子弹的函数，并把子弹添加到子弹精灵组
+             建立飞行函数，设置我放飞机与敌方飞机精灵组碰撞检测
+
+   主模块：
+             把敌方飞机添加到敌方飞机精灵组里
+             键盘监听里设置指定按键打子弹
+             调用敌方飞机，我放飞机和子弹飞行函数，都通过精灵组掉飞行函数方式
+             
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

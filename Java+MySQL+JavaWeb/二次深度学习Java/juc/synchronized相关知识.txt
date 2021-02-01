@@ -1,0 +1,167 @@
+
+
+详解：  https://www.bilibili.com/video/BV1vE411D7KE?p=7
+
+synchronized是Java中的关键字，是一种同步锁。它修饰的对象有以下几种： 
+
+　　1. 修饰一个代码块，被修饰的代码块称为同步语句块，其作用的范围是大括号{}括起来的代码，作用的对象是调用这个代码块的对象； 
+　　2. 修饰一个方法，被修饰的方法称为同步方法，其作用的范围是整个方法，作用的对象是调用这个方法的对象； 
+　　3. 修改一个静态的方法，其作用的范围是整个静态方法，作用的对象是这个类的所有对象； 
+　　4. 修改一个类，其作用的范围是synchronized后面括号括起来的部分，作用的对象是这个类的所有对象。
+
+    相同的锁才会锁住线程，如果一个是类（ 或 static）锁另一个是对象锁（普通void）他俩互相不影响，或者一个线程操作一个synchonized
+    修饰void对象另一个操作他的普通方法他们俩也毫无关系
+
+    无论synchronized关键字加在方法上还是对象上，如果它作用的对象是非静态的，则它取得的锁是对象；
+    如果synchronized作用的对象是一个静态方法或一个类，则它取得的锁是对类，该类所有的对象同一把锁
+
+    解释synchronized 锁作用对象和锁作用类：
+
+      作用对象： 一般是synchronized 修饰普通方法和修饰代码块里面写的是this,作用对象就是说这个锁作用的范围是一个相同的对象，
+                 在此时相同实例化对象的不同线程中，同一时间只能有一个线程进入这个类操作synchroized修饰下的普通方法，其他线程必须等待
+                 此线程结束后才能进行操作。举个例子，相同实例化的对象一个操作线程1一个操作线程2，线程1操控资源类synchonized修饰的普
+                 通方法1，线程2操控资源类synchonized修饰的普通方法2，此时，假如线程1先启动（也可能是2，和JVM有关），去访问方法1，那么
+                 线程2必须等着，等待线程1访问完方法1在进行操作，即使线程2访问的资源和线程1不冲突也得等线程1访问完毕在进入。但是如果
+                 线程1访问的是synchonized修饰的普通方法，线程2访问的是普通方法，那么他们两个之间毫无关系，不发生冲突，可以同时进去操作
+                 这个资源类。
+      
+      作用类：  一般是synchronized修饰static 方法或 修饰代码块里面写的是类名.class,作用的是整个类对象，也就是这个类所有实例化出来的
+                对象都受这个锁约束，一个静态同步方法获取到锁（获取类锁），其他的静态同步方法必须等该锁释放才能获取新的锁，和上面一样
+                一个类一次只能进去一个，多了进不去，不过 静态同步方法获取到锁 和 非静态同步方法获取到锁两者不冲突，因为锁不一样。互相
+                没有影响。
+
+
+   1.修饰代码块：
+            public   void getemail() throws Exception{
+                synchronized(this){
+                        System.out.println("******getemail");
+                }
+            }
+
+            synchronized(object)、synchronized(this)、synchronized(类名.class) 等
+
+
+            synchronized(object)、baisynchronized(this) 用的对象是调用这个代码块的对象
+            synchronized(类名.class)   作用的对象是这个类的所有对象      
+
+   2.修饰一个方法：
+             public  synchronized void getemail() throws Exception{
+                System.out.println("******getemail");
+
+             
+             }
+
+             等同于：
+
+             public   void getemail() throws Exception{
+                synchronized(this){
+                        System.out.println("******getemail");
+                }
+            }
+
+
+
+
+   3.修饰静态方法
+            public  synchronized static void getemail() throws Exception{
+                System.out.println("******getemail");
+
+            }
+
+            等同于：
+
+            public   void getemail() throws Exception{
+                synchronized(类名.class){
+                        System.out.println("******getemail");
+                }
+            }
+
+
+    4.修饰一个类
+            
+            public   void getemail() throws Exception{
+                synchronized(类名.class){
+                        System.out.println("******getemail");
+                }
+            }
+
+
+
+    在定义接口方法时不能使用synchronized关键字。
+    构造方法不能使用synchronized关键字，但可以使用synchronized代码块来进行同步。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

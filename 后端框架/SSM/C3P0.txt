@@ -1,0 +1,115 @@
+
+数据库连接池（Connection pooling）是程序启动时建立足够的数据库连接，并将这些连接组成一个连接池，由程序动态地对池中的连接进行申请，使用，释放。
+
+    理解：创建数据库连接是一个很耗时的操作，也容易对数据库造成安全隐患。所以在程序初始化的时候，要集中创建多个数据库连接，并把他们集中管理，供程序使用，可以保证较快的数据库读写速度，还更加安全可靠。
+
+    数据库连接池的运行机制
+
+    （1）程序初始化时创建连接池
+
+    （2）使用时向连接池申请可用连接
+
+    （3）使用完毕，将连接返还给连接池
+
+    （4）程序退出时，断开所有连接，并释放资源
+
+为什么要使用C3P0连接池？
+
+    一般我们在项目中操作数据库的时候，都是每次需要操作数据库的时候就建立一个连接，操作完成后释放连接。也就是说他在每次操
+    作的时候都需要自己连接数据库，还需要关闭数据库，性能太差了。若使用C3P0连接池来池化连接，随时取用，则平均每次取用只需
+    要10-20毫秒。这在高并发随机访问数据库的时候对效率的提升有很大帮助。
+
+    C3P0连接池会根据你的配置来初始化N个数据库连接，空闲T时间后连接过期又会自动新建K个连接使得连接池总有空闲的数据库连接等
+    待被取用。我们只需通过dataSourse.getConnection()即可从线程池中取用一个已经连接好的空闲连接，执行数据库操作。然后“断开
+    ”（放回）这个连接，把这个连接的使用权放回连接池。真正的数据库连接的创建与释放是由C3P0在后台自动完成的，我们花的只是取用
+    与释放占用权的时间。
+
+
+范例：在src下建立一个database.properties文件
+
+    db.driver=com.mysql.cj.jdbc.Driver
+    db.url=jdbc:mysql://www.cjlly.com:3306/chen
+    db.user=user_chen
+    db.password=123456
+    pool.max=100
+    pool.min=10
+    pool.init=10
+    pool.idle=20
+
+    修改命名空间：
+
+而现在需要在spring-config.xml文件中取得这些配置的内容。
+
+    范例：修改xml文件,使用C3P0数据库连接池
+
+    beans 中添加工作空间： xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation 中添加 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+
+    <context:property-placeholder location="classpath:database.properties"/>      //抽取properties 文件
+    <!--    在本程序之中设置要导入的资源文件路径，直接通过classpath加载。—>
+
+  
+    </bean>
+<!--        这里的class 是找到 new ComboPooledDataSource() 右键选择 Path refenerce 得到的-->
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="${dataSource.url}"></property>
+        <property name="user" value="${dataSource.username}"></property>
+        <property name="password" value="${dataSource.password}"></property>
+        <!-- 每60秒检查所有连接池中的空闲连接。Default: 0 -->
+        <property name="idleConnectionTestPeriod" value="60" />
+        <!-- 初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="5" />
+        <!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="60" />
+		<!-- 连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="10" />
+		<!-- 连接池中保留的最小连接数。 -->
+        <property name="minPoolSize" value="5" />
+        <!-- JDBC的标准参数，用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements
+  		属于单个connection而不是整个连接池。所以设置这个参数需要考虑到多方面的因素。
+  		如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 0-->
+  		<property name="maxStatements" value="100" />
+		<!-- maxStatementsPerConnection定义了连接池内单个连接所拥有的最大缓存statements数。Default: 0  -->
+		<property name="maxStatementsPerConnection" value="3" />
+        <!-- 定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个显著提高测试速度。注意：
+  		测试的表必须在初始数据源的时候就存在。Default: null -->
+  		<property name="preferredTestQuery" value="select 1" />
+        <!-- 定义在从数据库获取新连接失败后重复尝试的次数。Default: 30-->
+		<property name="acquireRetryAttempts" value="3" />
+        <!-- 两次连接中间隔时间，单位毫秒。Default: 1000 -->
+        <property name="acquireRetryDelay" value="1000" />
+        <!-- 当连接池用完时客户端调用getConnection()后等待获取新连接的时间，超时后将抛出
+  		SQLException,如设为0则无限期等待。单位毫秒。Default: 0 -->
+  		<property name="checkoutTimeout" value="30000" />
+    </bean>
+
+现在就可以正常使用C3P0连接池了：
+    public static void main(String[] args) throws Exception {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-config.xml");
+        INewsDAO dao = ctx.getBean("newsDAOImpl", NewsDAOImpl.class);
+        News vo = new News();
+        vo.setTitle("天气炎热");
+        vo.setContent("今天注意身体");
+        vo.setPubdate(new Date());
+        System.out.println(dao.doCreate(vo));
+    }
+
+链接：https://www.jianshu.com/p/be3d30bbdad1
+
+
+手动实现c3p0：
+
+            //建立对象
+                ComboPooledDataSource source = new ComboPooledDataSource();
+                //配置数据库信息
+                source.setDriverClass("com.mysql.jdbc.Driver");
+                source.setJdbcUrl("jdbc:mysql://localhost:3306/fruit");
+                source.setUser("root");
+                source.setPassword("root");
+
+                //连接数据库
+                Connection connection = source.getConnection();
+                //打印连接信息，说明连接上了
+                System.out.println(connection);
+                connection.close();

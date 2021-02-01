@@ -1,0 +1,166 @@
+@Results用法总结
+
+版权
+  MyBatis中使用@Results注解来映射查询结果集到实体类属性。
+
+（1）@Results的基本用法。当数据库字段名与实体类对应的属性名不一致时，可以使用@Results映射来将其对应起来。column为数据库字段名，porperty为实体类属性名，jdbcType为数据库字段数据类型，id为是否为主键。
+
+        @Select({"select id, name, class_id from my_student"})
+        @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER)
+        })
+        List<Student> selectAll();
+        如上所示的数据库字段名class_id与实体类属性名classId，就通过这种方式建立了映射关系。名字相同的可以省略。
+
+（2）@ResultMap的用法。当这段@Results代码需要在多个方法用到时，为了提高代码复用性，我们可以为这个@Results注解设置id，然后使用@ResultMap注解来复用这段代码。
+
+        @Select({"select id, name, class_id from my_student"})
+        @Results(id="studentMap", value={
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER)
+        })
+        List<Student> selectAll();
+        
+        @Select({"select id, name, class_id from my_student where id = #{id}"})
+        @ResultMap(value="studentMap")
+        Student selectById(integer id);
+
+
+
+（3）@One的用法。当我们需要通过查询到的一个字段值作为参数，去执行另外一个方法来查询关联的内容，而且两者是一对一关系时，可以使用@One注解来便捷的实现。比如当我们需要查询学生信息以及其所属班级信息时，需要以查询到的class_id为参数，来执行ClassesMapper中的selectById方法，从而获得学生所属的班级信息。可以使用如下代码。
+
+        @Select({"select id, name, class_id from my_student"})
+        @Results(id="studentMap", value={
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="class_id", property="myClass", javaType=MyClass.class,
+                one=@One(select="com.example.demo.mapper.MyClassMapper.selectById"))
+        })
+        List<Student> selectAllAndClassMsg();
+
+
+
+（4）@Many的用法。与@One类似，只不过如果使用@One查询到的结果是多行，会抛出TooManyResultException异常，这种时候应该使用的是@Many注解，实现一对多的查询。比如在需要查询学生信息和每次考试的成绩信息时。
+
+        @Select({"select id, name, class_id from my_student"})
+        @Results(id="studentMap", value={
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER),
+            @Result(column="id", property="gradeList", javaType=List.class,
+                many=@Many(select="com.example.demo.mapper.GradeMapper.selectByStudentId"))
+        })
+        List<Student> selectAllAndGrade();
+
+
+
+（5）传递多个参数。首先我们给这张表增加age（年龄）和gender（性别）两个参数。当我们需要根据age和gender查询学生的午餐，这时需要改写column属性的格式。等号左侧的age和gender对应java接口的参数，右侧的对应数据库字段名。即将查到的my_student表中age和gender字段的值，分别赋给getLunchByAgeAndGender方法中的age和gender参数，去查询对应的name（午餐名）。
+
+        @Select("select id, name, age, gender from my_student")
+        @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER),
+            @Result(column="{age=age,gender=gender}", property="lunch", 
+                one=@One(select="com.example.demo.mapper.StudentMapper.getLunchByAgeAndGender")),
+            })
+        List<Student> selectAllAndLunch();
+        
+        @Select("select name from lunch where student_age = #{age} and student_gender = #{gender}")
+        String getLunchByAgeAndGender(@Param("age") int age, @Param("gender") int gender);
+ 
+
+ Mybatis 执行过程：
+
+    https://blog.csdn.net/qq_38270106/article/details/93398694
+
+    1、在Mybatis运行开始时，首先通过Resource类中的getResourceAsStream（resource）方法加载核心配置文件，通过该方法
+    ，首先会跳到SqlSessionFactoryBuilder类中的build(InputStream is)方法。在该方法中调用了该类中另一个build（Input
+    Stream inputStream, String environment, Properties properties)方法，在该方法中创建了一个XMLConfigBuilder对象
+    ，通过这个对象调用自身的parse（）方法对配置文件进行解析。在该parse（）方法中调用了parseConfiguration(XNode root)
+    方法，这个方法会对MyBatis.xml全局配置文件中的信息与SQL映射文件中的信息进行解析，并把对应的信息保存在Configuratio
+    n对象中。然后，通过XMLConfigBuilder类中的parse()方法返回，作为参数传递到SqlSessionFactory类中的build（Configur
+    ation config）方法。最后接着返回一个DefaultSqlSessionFactory对象。到这里，SqlSessionFactory对象就创建完成 了。
+
+    2、通过是factory.openSession()方法，即DefaultSqlSessionFactory类中的openSession()方法。在这个方法中调用了另一
+    个方法openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit)
+    ，在这个方法中通过TransactionFactory（事务工厂）接口创建Transaction（事务对象）接口对象， 并且 ，还需要创建核心
+    执行器Executor接口对象 （通过configuration.newExcutor(tx, execTypr)创建Executor对象）。Executor对象创建完成后
+    ，接着执行openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCom
+    mit)方法，接着向上一步返回，SqlSession对象创建完成。
+
+
+
+传入Map类型：（使用方法和传入对象一样）
+    mybatis更新sql语句：
+
+        <update id="publishT00_notice" parameterType="Map">
+        update test  
+        set createdate = #{createdate},
+        creator = #{creator}
+        where id in 
+        <foreach collection="ids" item="ids" separator="," open="(" close=")">
+        #{ids}
+        </foreach>
+        </update>
+
+    传入map参数类型：
+
+        HashMap<String,Object> map = new HashMap<String, Object>();
+        map.put("creator", "creator");
+        map.put("createdate", "createdate");
+        
+        String[] ids = {"1","2"};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

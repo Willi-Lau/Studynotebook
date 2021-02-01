@@ -1,0 +1,138 @@
+String s ="0123456789";
+System.out.println(s.substring(3,5));
+
+    >> 3 4   substring截取时左闭右开
+
+for (int i : Arrays.copyOfRange(arr, 3, 5)) {
+            System.out.print(i);
+        }
+
+    >> 3 4   Arrays.copyOfRange截取时左闭右开  Arrays.copyOfRange截取数组
+
+
+
+
+关于 Integer 和 int 的比较的延伸：
+
+    1、由于 Integer 变量实际上是对一个 Integer 对象的引用，所以两个通过 new 生成的 Integer 变量永远是不相等的，因为其内存地址是不同的；
+
+    2、Integer 变量和 int 变量比较时，只要两个变量的值是相等的，则结果为  true。因为包装类 Integer 和基本数据类型 int 类型进行比较时，
+     会自动拆包装类为 int，然后进行比较，实际上就是两个 int 型变量在进行比较；
+
+    3、非 new 生成的 Integer 变量和 new Integer() 生成的变量进行比较时，结果为 false。因为非 new 生成的 Integer 变量指向的是 Java 
+    常量池中的对象，而 new Integer() 生成的变量指向堆中新建的对象，两者在内存中的地址不同；
+
+    4、对于两个非 new 生成的 Integer 对象进行比较时，如果两个变量的值在区间 [-128, 127] 之间，则比较结果为 true，否则为 false。Java
+     在编译 Integer i = 100 时，会编译成 Integer i = Integer.valueOf(100)，而 Integer 类型的 valueOf 的源码如下所示：
+
+    5.两个Integer需要用.intValue()方法比较大小
+
+        Integer a1 = 999;
+        Integer a2 = 999;
+        System.out.println(a1 == a2);  // false
+
+
+        Integer a3 = 1;
+        Integer a4 = 1;
+        System.out.println(a3 == a4);   //true
+
+        Integer a5 =new Integer(15);
+        Integer a6 = new Integer(15);
+        System.out.println(a5 == a6);   //false
+
+
+        Integer a7 = new Integer(15);
+        Integer a8 = 15;
+        System.out.println(a7 == a8);   //false
+
+        Integer a5 =new Integer(15);
+        Integer a6 = new Integer(15);
+        System.out.println(a5.intValue() == a6.intValue());    //true
+
+
+
+
+//面湿资料
+https://blog.csdn.net/pcwl1206
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

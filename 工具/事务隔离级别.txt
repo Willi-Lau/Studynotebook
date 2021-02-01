@@ -1,0 +1,187 @@
+
+
+
+对于不同的事务，采用不同的隔离级别分别有不同的结果。不同的隔离级别有不同的现象。主要有下面3种现在：
+
+    1、脏读（dirty read）：一个事务可以读取另一个尚未提交事务的修改数据。
+    2、不可重复读（nonrepeatable read）：在同一个事务中，同一个查询在T1时间读取某一行，在T2时间重新读取这一行时候，这一行的数据已经
+                                        发生修改，可能被更新了（update），也可能被删除了（delete）。
+    3、幻像读（phantom read）：在同一事务中，同一查询多次进行时候，由于其他插入操作（insert）的事务提交，导致每次返回不同的结果集。
+
+
+    小结：不可重复读的和幻读很容易混淆，不可重复读侧重于修改，幻读侧重于新增或删除。解决不可重复读的问题只需锁住满足条件的行，解决幻
+          读需要锁表
+
+
+事务类型：Spring(isolation) 5  Mysql 4
+
+    DEFAULT 使用数据库设置的隔离级别 ( 默认 ) ，由 DBA 默认的设置来决定隔离级别 . Spring 
+
+    READ_UNCOMMITTED 会出现脏读、不可重复读、幻读 ( 隔离级别最低，并发性能高 )  Spring   Mysql
+
+    READ_COMMITTED  会出现不可重复读、幻读问题（锁定正在读取的行）  Spring   Mysql    *
+
+    REPEATABLE_READ 会出幻读（锁定所读取的所有行）   Spring   Mysql   repeatable_read
+
+    SERIALIZABLE 保证所有的情况不会发生（锁表）   Spring Mysql   serializable
+
+
+事务传播方式： Spring(propagation) Mysql
+
+    1、PROPAGATION_REQUIRED：如果当前没有事务，就创建一个新事务，如果当前存在事务，就加入该事务，该设置是最常用的设置。    *
+
+    2、PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作
+
+    3、PROPAGATION_SUPPORTS：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就以非事务执行。
+
+    4、PROPAGATION_MANDATORY：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就抛出异常。
+
+    5、PROPAGATION_REQUIRES_NEW：支持当前事务，创建新事务，无论当前存不存在事务，都创建新事务。
+
+    6、PROPAGATION_NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+
+    7、PROPAGATION_NEVER：以非事务方式执行，如果当前存在事务，则抛出异常。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

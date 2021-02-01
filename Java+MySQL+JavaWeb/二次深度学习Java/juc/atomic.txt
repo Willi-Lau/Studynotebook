@@ -1,0 +1,129 @@
+1:为什么会出现Atomic类
+
+　　在多线程或者并发环境中，我们常常会遇到这种情况 int i=0; i++ 稍有经验的同学都知道这种写法是线程不安全的。为了达到线程安全的目的，
+    我们通常会用synchronized来修饰对应的代码块。现在我们有了新的方法，就是使用J.U.C包下的atomic类。
+
+2:Atomic类的原理是什么呢
+
+　　一句话来说，atomic类是通过自旋CAS操作volatile变量实现的。
+
+　　CAS是compare and swap的缩写，即比较后(比较内存中的旧值与预期值)交换(将旧值替换成预期值)。它是sun.misc包下Unsafe类提供的功能，
+    需要底层硬件指令集的支撑。
+
+　　使用volatile变量是为了多个线程间变量的值能及时同步。
+
+3:为什么使用Atomic类
+
+　　按理来说，使用synchroized已经能满足功能需求了。为什么还会有这个类呢？那肯定是性能的问题了。
+
+　　在JDK1.6之前，synchroized是重量级锁，即操作被锁的变量前就对对象加锁，不管此对象会不会产生资源竞争。这属于悲观锁的一种实现方式。
+
+　　而CAS会比较内存中对象和当前对象的值是否相同，相同的话才会更新内存中的值，不同的话便会返回失败。这是乐观锁的一中实现方式。这种方式
+    就避免了直接使用内核状态的重量级锁。
+
+　　但是在JDK1.6以后，synchronized进行了优化，引入了偏向锁，轻量级锁，其中也采用了CAS这种思想，效率有了很大的提升。
+
+4:Atomic类的缺点
+　　ABA问题：
+
+　　　　对于一个旧的变量值A,线程2将A的值改成B又改成可A,此时线程1通过CAS看到A并没有变化，但实际A已经发生了变化，这就是ABA问题。
+    解决这个问题的方法很简单，记录一下变量的版本就可以了，在变量的值发生变化时对应的版本也做出相应的变化，然后CAS操作时比较一下版
+    本就知道变量有没有发生变化。atomic包下AtomicStampedReference类实现了这种思路。Mysql中Innodb的多版本并发锁也是这个原理。
+
+　　自旋问题：
+
+　　　　atomic类会多次尝试CAS操作直至成功或失败，这个过程叫做自旋。通过自旋的过程我们可以看出自旋操作不会将线程挂起，从而避免
+    了内核线程切换，但是自旋的过程也可以看做CPU死循环，会一直占用CPU资源。这种情形在单CPU的机器上是不能容忍的，因此自旋一般都会有
+    个次数限制，即超过这个次数后线程就会放弃时间片，等待下次机会。因此自旋操作在资源竞争不激烈的情况下确实能提高效率，但是在资源竞
+    争特别激烈的场景中，CAS操作会的失败率就会大大提高，这时使用中重量级锁的效率可能会更高。当前，也可以使用LongAdder类来替换，它
+    则采用了分段锁的思想来解决并发竞争的问题。
+
+
+
+AtomicInteger的常用方法如下：
+
+ int addAndGet(int delta) 
+          以原子方式将给定值与当前值相加。 
+ boolean compareAndSet(int expect, int update) 
+          如果当前值 == 预期值，则以原子方式将该值设置为给定的更新值。 
+ int decrementAndGet() 
+          以原子方式将当前值减 1。 
+ double doubleValue() 
+          以 double 形式返回指定的数值。 
+ float floatValue() 
+          以 float 形式返回指定的数值。 
+ int get() 
+          获取当前值。 
+ int getAndAdd(int delta) 
+          以原子方式将给定值与当前值相加。 
+ int getAndDecrement() 
+          以原子方式将当前值减 1。 
+ int getAndIncrement() 
+          以原子方式将当前值加 1。 
+ int getAndSet(int newValue) 
+          以原子方式设置为给定值，并返回旧值。 
+ int incrementAndGet() 
+          以原子方式将当前值加 1。 
+ int intValue() 
+          以 int 形式返回指定的数值。 
+ void lazySet(int newValue) 
+          最后设置为给定值。 
+ long longValue() 
+          以 long 形式返回指定的数值。 
+ void set(int newValue) 
+          设置为给定值。 
+ String toString() 
+          返回当前值的字符串表示形式。 
+ boolean weakCompareAndSet(int expect, int update) 
+          如果当前值 == 预期值，则以原子方式将该设置为给定的更新值。 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

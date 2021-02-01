@@ -1,0 +1,104 @@
+ArrayList:
+
+线程不安全
+线程安全替换：new CopyOnWriteArrayList<>();
+
+new ArrayList 底层是new 一个类型为Object 长度为10的数组,当没有值添加时长度为0，执行add方法时才会长度为10
+ArrayList相当于在没指定initialCapacity时就是会使用延迟分配对象数组空间，当第一次插入元素时才分配10个对象空间。
+
+java 8 中 ，ArrayList 每次扩容为当前空间的一半（取整），比如要存进去长度为25的值，第一次为10，
+扩容到15，发现不够再次扩容到22,然后再次扩容到33。每次扩容底层采用Arrays.copyOf() 方法传递参数。
+
+    10 -> 15 -> 22 -> 33 ->.... 每次增加原值的一半再取整
+
+扩容不是把原来容量为10的数组容量增加到15，因为数组的容量不可以变，定义多少就是多少，增加容量就是定义一个新数组，
+长度为15。使用Arrays.copyOf(老数组，新数组长度)，就可以返回一个新的数组，通过这种方式扩容，存放更多的数据
+
+    Arrays.copyOf:
+
+            int[] arr1 = {1, 2, 3, 4, 5}; 
+            int[] arr2 = Arrays.copyOf(arr1, 5);
+
+    ArrayList 扩容源码：
+
+        private void grow(int minCapacity) {
+            // overflow-conscious code
+            int oldCapacity = elementData.length;
+            int newCapacity = oldCapacity + (oldCapacity >> 1);    //>>表示带符号右移    >> 1 代表除以2
+            if (newCapacity - minCapacity < 0)
+                newCapacity = minCapacity;
+            if (newCapacity - MAX_ARRAY_SIZE > 0)
+                newCapacity = hugeCapacity(minCapacity);
+            // minCapacity is usually close to size, so this is a win:
+            elementData = Arrays.copyOf(elementData, newCapacity);            //采用 Arrays.copyOf 增加长度
+        }
+
+
+ArrayList 是线程不安全的  
+    
+    异常原因：
+             java.util.ConcurrentModificationException   并发修改异常
+
+    证明ArrayList 会出错的例子：
+
+        //ArayList 多线程不安全的例子
+        //  此程序是一共10个线程，每一个线程添加一个随机码，所以list里应该有不为null的随机码（里面的值有几个不一定看
+            线程抢东西的能力）,并且不报错
+                
+                List <String> list = new ArrayList();    //不安全
+                for (int i = 1; i <=10 ; i++) {           //开启十个线程
+                    new Thread(()->{
+                        list2.add(UUID.randomUUID().toString().substring(0,8)); //每一个线程往list 里添加一个随机代码
+                        System.out.println(Thread.currentThread().getName()+": "+list2);   //输出线程名字和随即代码
+                    },"线程"+Integer.toString(i)).start();
+                }
+    解决办法：
+
+               
+                List <String> list1 = Collections.synchronizedList(new ArrayList<>());    //解决办法1
+               
+                List <String> vector = new  Vector <>();     //解决办法2
+             
+                //新的线程安全实现类 JUC下
+                List<String> list2 = new CopyOnWriteArrayList<>();       //解决办法3  最好的办法  写时复制 CopyOnWrite 包
+
+
+                关于写时复制有图解
+
+
+    ArrayList .add() 方法源码：
+
+        public boolean add(E e) {
+                ensureCapacityInternal(size + 1);  //把长度加1
+                elementData[size++] = e;        //加1的位置写入新值  有线程安全问题
+                return true;
+            }
+  
+   CopyOnWhiteArrayList .add() 方法源码：
+
+        public boolean add(E e) {
+                final ReentrantLock lock = this.lock;
+                lock.lock();              //加锁
+                try {
+                    Object[] elements = getArray();
+                    int len = elements.length;
+                    Object[] newElements = Arrays.copyOf(elements, len + 1);     //将原容器复制给一个新容器再将长度加1 类似ArrayList扩容
+                    newElements[len] = e;  //写入新值
+                    setArray(newElements);
+                    return true;
+                } finally {
+                    lock.unlock();
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+

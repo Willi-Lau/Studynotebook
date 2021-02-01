@@ -1,0 +1,359 @@
+VS快捷键：
+      快捷生成基本网页构造  !+tab   
+      注释： ctrl+/
+HTML 结构 
+
+
+
+
+
+
+标签：<>  </>  一组
+<!doctype html>
+<html>  </html>   网页总体   网页所有的东西都写到这里
+<html lang="en">  <!--设置此页为英文   en   中文 zh -->
+<head>  </head>   不在网页中显示的，给浏览器读的,网页头部
+   <title> </title> 网页标题
+   <meta  charset='utf-8'>    设置字符既 meta 设置网页原数据
+    meta:主要用于设置网页中的一些元数据，元数据不是给用户看的
+          charset 指定网页的字符集
+          name 指定的数据名称  
+          content 指定的数据内容
+          keywords 表示网站的关键字，可以同时指定多个关键字 ，关键字用逗号隔开
+          <meta name='keywords' content='网购，HTML5,前端,CSS3'>
+    title 标签的内容会作为搜索结果的超链接的文字显示
+
+
+<body>  </body>   网页中现实的，网页中所有的可见内容
+   <h1> </h1> <h2> </h2> ...  标题，优先级顺序按数字
+   <p>  </p>  普通标签
+   <font 属性='值'> </font> 字体标签    举例： <font color = 'yellow'>   你好 <font>  （行内标签，需要换行符才能换行）
+      color  颜色    yellow,red
+      size   大小    1,2,3
+      background-color 背景颜色
+    <hgroup> </hgroup> 标题组 放h1 h2 标题 有联系的标题都放到这里
+    <!--   -->   注解    内容会被浏览器忽略
+    <em> </em> 一句话中某个字的语调加重，显示为斜体  （行内标签，需要换行符才能换行）
+    <strong></strong>  强调某些话，显示为加粗          （行内标签，需要换行符才能换行）
+     <blockquote></blockquote>  长引用效果，句子前加缩进符，有换行    
+     <q></q>  短引用，句子加上双引号，不换行      （行内标签，需要换行符才能换行）
+     <br>  换行符 <br>*3 三个换行（*几就几个）
+
+    <b> 加粗标签
+    文字粗细：font-weight: 700;  值100-900
+    行高：line-height
+    列表前的方块：list-style: square;    
+
+
+
+
+
+
+    *在浏览器中多个空格会被浏览器视为一个空格
+    如果我们需要在网页中书写这些特殊符号，则需要使用html中的实体（转义字符）
+    实体的语法：
+      &name;
+      空格：&nbsp;
+      大于号：&gt;
+      小于号：&lt;
+      版权符号：&copy;
+
+     布局标签：
+              <header></header>    网页头部
+              <main></main>    网页主体部分（一个页面只有一个）
+               <footer></footer>   网页底部
+               <nav></nav>  网页中的导航
+               <aside></aside> 和主题相关其他内容 （侧边栏）
+               <article></article> 一个独立的文章
+               <section></section>  表示一个独立的区块，上面的标签都不能使用时使用section
+             主流布局标签：  
+               <div></div>  没有语义，就表示一个区块，目前是主流
+               <span></span> 行内元素，没有任何语义，用于网页中选中文字
+
+
+
+   元素分类：
+            块元素：网页中进行页面布局
+            行内元素：包裹文字，对文字进行修饰(不能放块元素)
+
+
+   代码规范：<p> 中不能有任何块元素
+            书写不符合规范浏览器也会自动调整 ，按f12查看源码即可
+
+
+   列表：
+       无序标签：使用ul来创建一个定义列表，使用li表示列表项
+       有序标签：使用ol来创建一个定义列表，使用li表示列表项 
+                 
+               <ul>
+                 <li>卢本伟</li>
+                 <li>没有开挂</li>
+                 <li>克里斯就关下门</li>
+
+               </ul>
+
+                <ol>
+                  <li>是七张牌</li>
+                  <li>能秒杀我？</li>
+                  <li>我当场吧电脑屏吃掉</li>
+
+                </ol>
+           ul>li自动生成
+                   <ul>
+                     <li></li>
+                    </ul>
+          ul>li*3自动生成
+                   <ul>
+                      <li></li>
+                      <li></li>
+                      <li></li>
+                   </ul>
+
+
+    超链接：（行内标签，需要换行符才能换行）
+           <a herf=""> 超链接</a>
+           使用a标签来定义超链接 使用href来指定跳转路径
+                herf可以是一个外部网址，例如百度京东
+                herf也可以是一个内部网址，只要和本网页在一个文件夹下就可以直接写名字
+                <a href="http://www.baidu.com">百度</a>
+                <a href="abcd.html">内部网址</a>
+           相对路径：
+                   相对路径都由./或../开头，可以省略，省略时默认开头为./
+                     ./代表当前文件所在目录，
+                     ../代表当前文件上一集目录    
+           超链接target属性，用来指定超链接打开位置
+               可选值：
+                       _self 默认值，在当前页面打开超链接
+                       _blank 在一个新的页面打开超链接
+                       <a href="../abcd.html" target="_blank">超键列1</a>
+           超链接跳转当前页面其他位置：
+               id属性（唯一不重复，若重复则第一个生效）
+                     每一个标签都可以添加一个id值
+                     id属性就是元素的唯一标识，同一页面中不能出现重复的id值
+               跳转位置：
+                     将href属性设置为#目标id即可
+                     #代表跳转顶部
+                     javascript:;代表一个不会跳转的超链接
+           去除超链接下划线： 
+                      text-decoration: none;
+          超链接样式：
+                       text-decoration： underline  overline
+
+
+
+
+
+
+     图片模块：
+           图片标签用于向当前页面中引入一个外部图片，使用img标签来引入外部标签，img标签是一个自结束标签
+           img这种元素属于替换元素（块和行内元素之间，具有两种元素的特点）
+           属性：
+               src 指定图片的路径（和超链接规则一样）
+               alt 图片的描述，这个描述默认情况下不会显示，有些浏览器在图片无法加载时显示，搜索引擎会根据alt中的
+                   内容来识别图片，如果不写alt属性则图片不会被搜索引擎所识别
+               width 图片的宽度（单位是像素）
+               height 图片的高度
+                      宽度和高度中如果只修改了一个，则另一个会等比缩放
+                      在PC端一般不修改图片大小，在移动端经常对土拍你进行缩放，办证清晰度
+           图片的格式：
+                      jpeg(jpg)
+                         支持颜色丰富，不支持透明效果，不支持动图
+                         一般用来显示照片
+                       gif
+                          支持颜色比较少，支持简单透明，支持动图
+                          颜色单一的图片，动图
+                       png
+                          支持的颜色丰富，支持复杂透明，不支持动图
+                          颜色丰富，复杂透明动图（专为网页而生）
+                       webp 
+                          谷歌新推出的一种网页格式，具备以上所有的优点，缺点是兼容差
+                       base64
+                          图片src属性使用base64编码，使网页图片同时加载
+
+      内联框架： 用于向当前页面中引入一个其他界面
+                  <iframe src="https://www.baidu.com" frameborder="0" width="300"></iframe>  
+                       src:  引入的网页的网址
+                       frameborder: 指定边框样式 0为没有 1为有
+                       width:   显示尺寸
+
+     音频显示： audio 标签来向页面引入一个外部的音频
+                     音频文件引入时，默认情况下不允许用户自己控制播放停止
+               属性：controls 是否允许用户控制播放
+                     autoplay 音频文件是否自动播放
+                     loop 音乐是否循环播放
+               实现1： <audio src="./aaa.mp3" controls ></audio>
+               实现2： <audio controls>
+                           <source src="./aaa.mp3">
+                        </audio>
+      视频显示：使用video 标签 方法同audio.
+
+
+      id属性（唯一不重复，若重复则第一个生效）
+                     每一个标签都可以添加一个id值
+                     id属性就是元素的唯一标识，同一页面中不能出现重复的id值
+                     <p id = "akk"> 两岸三地<p>
+      class属性（可以重复，类似id）不能设置为数字
+                     可以通过class来给元素分组
+                     可以为一个元素指定多个class
+
+                    <p class = "akk"> 两岸三地<p>
+                    一个元素设置多个class，不同class用空格隔开
+                    <p class = "akk abb"> 两岸三地<p>
+
+
+
+
+
+      属性：align
+            居中： center
+
+
+      文本框：<input type = 'text'>
+            值： size  文本长度
+                 value  初始值
+                 placeholder  背景文字
+                 required     必须填写
+
+      密码框：<input type = 'password'> 
+
+      单选按钮：<input type="radio" >
+
+             值  name 设置相同单选按钮组，name相同就是一组
+
+
+
+       复选按钮 <input type="checkbox">
+
+
+
+       下拉列表：<select >
+                 <option >苍老师</option>
+                 <option >高树玛利亚</option>
+                 <option >遥美</option>
+                 </select>
+
+                  select 下拉列表开始
+                  option 每一个列表的值
+                  size   设置高度
+                  multiple="multiple"   设置可以多选
+                  option 设置selected="selected"  设置默认选中
+                  
+
+        文本域：<textarea>  
+                  值：cols 宽
+                      rows 高
+                     
+
+         普通按钮：<input type = "button"> (不具备提交form的功能)
+          
+         提交按钮：<input type="submit"> (具备提交form的功能)
+   
+         重置按钮：<input type="reset"> 把输入框的改动复原 
+
+
+         牛逼按钮：<button>
+               值：  type=“submit”   具备提交form的功能     
+                     插入img           插入图片
+
+
+
+
+          表格：
+              <table>标签用于显示一个表格 
+               <tr> 表示行 
+               <td> 表示列又叫单元格
+
+               举例：<table>
+                       <tr>
+                         <td>1</td>
+                         <td>2</td>
+                       </tr>
+ 
+                       <tr>
+                         <td>3</td>
+                         <td>4</td>
+                       </tr>
+ 
+                       <tr>
+                         <td>a</td>
+                         <td>b</td>
+                       </tr>
+ 
+                       </table>
+
+                    值： border 边框
+                         width  宽度
+                         align  水平对齐
+                         valign 垂直对其
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+
+
+类装载器ClassLoader：
+
+    负责加载class文件，class文件在文件的开头有特定的文件标示。将class文件字节码内容加载到内存中。并将这些内容转换成方法区中的
+    运行时数据结构并且 ClassLoader 只负责class文件的加载，至于他是否可以运行，则由Execution Engine决定。
+
+     .class  -> ClassLoader -> Class -> 实例化
+
+     获取类加载器
+
+        实例化对象.getclass().getClassLoader()
+
+查看JVM内存
+
+      long maxMemory = Runtime.getRuntime().maxMemory();   //最大内存(byte)
+
+      long totalMemory = Runtime.getRuntime().totalMemory();   //总内存(byte)
+
+      System.out.println(maxMemory/(double)1024/1024+"MB");
+      
+
+       System.out.println(totalMemory/(double)1024/1024+"MB");

@@ -1,0 +1,1538 @@
+
+换行符\n 是字符串 两边添加单引号或双引号  "\n"
+缩进量\t 
+
+type(变量) 返回值为变量类型
+str\bool\int\float
+  
+算法
+      5/2=2.5 float
+      5//2=2 int
+      5%2=1 int
+
+输入字符：变量=input("提示语言")      str
+      字符转数字：float(变量\字符串)   int(变量\字符串)
+       数字转字符：str(数字|变量)
+
+Debug模式 f8 执行选取命令之前命令
+                   f9 执行之后所有
+
+del 删除变量
+
+字符串拼接
+     str="111"+"2222"
+     str=str1+str2
+
+     str.lower()            转为小写
+     str.upper()            转为大写
+     str.capitalize()        字符串首字母大写
+     str.title()                每个单词首字母大写
+     str.swapcase()       大小写互换
+
+format 函数    返回值  str
+     字符  "{}{}you".format("i","love")     输出值    “i love you ”
+             “{2} {1} {0}".format("sb","nmsl""cnm")      输出值      "cnm nmsl sb "
+                                序列号：   0        1         2
+               简便方法
+                     str100="我叫{p1},我在{p2}班，身高{p3} ".format(p1="你爸",p3="193",p2="15")
+     数字   format(12345.6789,'0.2f')     小数保留两位 四舍五入 输出   "12345.68"     str        0.2f /.2f保留两位小数
+              format(123456.445,',')     千分位分隔符    输出  "123,456.445"      str
+               format(123456789.223323,'0,.2f')  = "{:0,.2f}".format(123456789.223323)        输出123,456,789.22           0,.2f     0：整数    , ：三位一分割   .2f：保留两位小数
+                * 在字符串格式化输出时，如遇到格式化输出数字，则需要在{}内增加:前缀，之后写上格式化语句   例 {str1：0,.2f}
+               错误例子 print("{:0,.2f}".format(m=123456789.223323))   字符串格式化时  m 是一个标识符，不能作为变量
+      
+删除空白
+            str.lstrip()   删除左边空格
+            str.rstrip()   删除右边空格
+            str.strip()    删除两边空格
+              str.strip("#")    删除两边#
+ 
+len()获取字符串长度
+
+find函数
+str.find(目标串，[开始位置],[结束位置])
+例 "nice too meet you".find('ee')   返回值 9   ee 在第十个字符位置                                         ********python里字符串索引从0开始，所以是9 *******  
+返回值-1 不存在指定字符串
+find函数返回第一个找到的位置
+ 
+rfind() 从右边开始找
+index()和find一样 不过找不到会报错  index只会返回第一次出现的值
+rindex 从右边开始找
+
+count()
+str.count(目标串，[开始位置],[结束位置])
+找到数据，返回次数 找不到返回0
+
+  
+"str" in str1 判断str 是否在str1里                 boul 
+
+
+str.replace(原始串，目标串，[替换次数])
+例 "aaabbbbccccc".replace("b","d",2)    输出:"aaaddbbccccc 	"
+
+
+
+
+**************************************************************************************************************************************************
+
+流程控制语句
+
+if/else
+if判断条件: 
+        （必须有空格） 程序
+else：
+             程序
+ ==相等
+！=不等
+数字与布尔的比较
+0=False
+非0=True
+
+逻辑运算符
+与 或 非
+and or not
+优先级
+not>and>or
+and 前后都成立，结果成立
+or 前后有一个成立，结果成立
+
+
+if:
+elif:
+elif:
+else
+elif可以有很多
+多个判断同时成立首先匹配最上结果
+ 
+次方的算法
+5的三次方
+pow(5,3)
+5**3
+
+
+while (条件) ：
+      执行程序
+      修改条件程序
+
+continue  用于跳过当前循环剩余语句    用于控制单词循环是否向下执行
+break  直接跳出循环
+
+print后面加end=""不换行
+print("jk",end="")
+python默认输出完换行
+
+is    比较内存地址
+==    比较内容
+a=56
+b=a
+c=56.0
+print(a is b)     true
+print(a is c)      false
+
+二进制运算
+& 与
+|   或
+^ 异或
+~ 取反
+<<左移
+>>右移 
+
+Python中二进制数最高位 0为正 1为负 
+取反1开头数时 取反+1再负数
+1100000
+取反 -（~1100000+1）
+
+
+
+*******************************************************************************************
+列表，字典，集合，元组  添加删除等操作不用定义变量赋值     m1.append("3")          错误 ：m1=m1.append("3")          
+  **********************************************************************************************************************************
+列表
+ 正列表下标v       0           1             2         3         4           5        6       第一个数从0开始依次递增
+数字                    a            b           c         d          e          f        g
+负列表下标        -7           -6           -5       -4        -3        -2       -1        最后一个数从——1开始依次递减
+列表创建 
+变量名 = [ 元素1，元素2          ]
+列表取值
+变量= 列表变量[索引值]    a=min[1]
+范围取值
+列表变量=列表变量[起始索引:终止索引]      a=min[1:4]   Python中列表取值左闭右开 包含1不包含4
+列表查找只有index 没有find
+
+Python提供的for循环语句和Java、C++等编程语言提供的for语句不同，Python中的for循环更像是shell或是脚本语言中的foreach循环。
+for 迭代变量 in 可迭代对象:
+for 变量   in    数组 列表 :
+name=["张三","李四","张三","王晨"]
+for p in name:
+ if p=="张三":
+     print(p)
+ 输出张三 
+count=len(name)  i=0
+name=["张三","李四","张三","王晨"]
+for p in name:
+ if p=="张三":
+    r i=count*-1+i
+     print(p,ri)  i++
+求倒叙索引
+自动依次循环 name 里所有值 类似JAVA  foreach
+
+
+
+range 函数
+range(start, end, step1):
+range 左开右闭
+
+for i in rang(start, end, step1):
+ print(i)
+ 
+len(参数名)   求长度
+
+列表操作  不用m=m.append(1)   直接m.append(1) 
+    reverse 列表反转
+    sort 列表排序 升序排列
+     list.sort( key=None, reverse=False)    key 用来比较的元素
+    sort (reverse=Ture)  列表排序 降序排列
+
+    list.append(新元素)   在列表末端加新元素
+    list.insert(下标，新元素)  在指定位置加入新元素
+
+    list[下标]=新值 替换
+    list[起始下标：结束下标]  替换指定范围内数据
+
+    list.remove(元素)  删除指定元素
+    list.pop(下标) 按下标位置删除元素
+
+     list.extend[列表 ]   追加列表
+
+
+    is 判断变量是否指向同意内存
+
+clear 清空
+
+字符串转列表   split(分割点)
+   str="张三,30"
+  l= str.split(",")    以逗号为分割点分割字符串变成列表
+   l=["张三","30"]
+
+列表运算
+[5,6,7] + [8,9,10] = [5,6,7,8,9,10]
+['see','you']*2=['see','you','see','you']
+
+**************************************************************************************************************************
+
+字典 HASH 
+
+字典里有的key 要加  ''
+
+m={}
+         {   键1:值1    , 键2:值2    ,  键3:值3    , 键不能重复 值可以重复  }
+利用大括号创建字典
+m={'name':'刘伟艺' , 'age':'21' }
+利用dict函数创造字典
+m=dict(name='刘伟艺',age='21')
+3.m=dict.fromkeys（）函数，用（[],默认值）方式生成键，值默认为None也可设置默认值，例如dict.fromkeys(['name','age','hiredate']，默认值)    
+
+
+获取字典的值
+1. 变量 = 字典名称['查找key']
+2. 变量= 字典名称.get("key","默认值")__，默认值可以为任何字符串，如果无则输出“None”
+变量 = 字典名称.get('key', '字符串') 此方式可以在 key 不存在时，用 字符串 替换 None
+3. 可以使用成员运算符 in 来判断 KEY是否在字典中。
+4. 遍历字典
+方式一：
+for key in 字典名成：
+v = 字典[key]
+print(key)
+方式二：
+for key , value in 字典.items(）
+也可为：for k , v in 字典.items()
+print(k,v)
+ 
+
+字典的删除
+1.dict.pop('key')删除指定的k,v
+2.dict.popitem()删除最后一个k,v返回一个元组
+3.dict.clear()清空字典
+
+字典更新(新增同理)：有则更新无则新增
+1.dict['key'] = newvalue
+2.dict.update(key = value)也可传入一个字典实现字典合并
+
+
+
+
+字典设置默认值  有则更新 无则添加
+m=dict.setdefault('grade','c')
+视图对象
+ks = dict.keys()
+vs = dict.values()
+its = dict.items() 这些都是随动的
+老版本格式化输出字典： 结构 "%(key)s,%(key)s" %emp
+str="姓名:%(name)s,评级:%(grade)s,入职时间:%(hiredate)s" %emp
+
+新版本的字符串格式化
+m = "姓名{name},评级:{grade},入职时间:{hiredae}".format_map(dict)
+
+有个字典：student={'name':'小明','class':'20190301','score':597.5}
+
+使用format输出相关信息：
+s1='{st[class]}班{st[name]}总分：{st[score]}'.format(st=student)
+
+改用format_map方法后代码如下：
+student={'name':'小明','class':'20190301','score':597.5}
+s1='{class}班{name}总分：{score}'.format_map(student)
+
+执行结果都是：'20190301班小明总分：597.5'
+
+
+********************************************************************************************************************            
+元组：
+1、元组是不可变的列表
+2、元组使用小括号，列表使用方括号
+tup1 = (''physics,'chemistry',1997,2000)
+元组的读写：
+1、元组的读取方式与列表相同
+2、元组的元素在创建后不允许修改
+3、元组允许使用元组运算符来创建新元组
+(5,6,7) + (8,9,10) = (5,6,7,8,9,10)
+#创建一个新的元组保存数据，和原始数据无关，修改原始数据，他也不会变化
+('see','you')*2=('see','you','see','you')
+#创建
+#t = 'a','b','c',1,2,3也是创建一个元组
+t = ('a','b','c',1,2,3)
+print(t)
+print(type(t))
+#获取数据，在获取数据时与列表完全相同
+print(t[5]) #正序索引，获取第6个元素
+print(t[-1]) #倒序索引
+print(t[1:4]) #范围取值
+print('b' in t ) #成员运算符
+#元组在创建后内容不可变
+#t[0] =2
+#写入数据的函数同样不支持
+#t.insert('f')
+#如果元组内持有列表，那么列表的内容是允许被修改的
+
+#元组运算符
+#元组运算符同样适用于列表
+t3 = (1,2,3) + (4,5,6)
+print(t3)
+#如果元组只有一个元素时，必须在这个元素后增加逗号说明这是一个元组
+t4 = ('see',) * 5
+print(t4)
+输出结果为：('see', 'see', 'see', 'see', 'see')
+t5 = ('see') * 5
+print(t5)
+输出结果为：seeseeseeseesee
+
+********************************************************************************************************************************************
+
+
+序列包含常用数据结构：
+1、字符串
+2、列表
+3、元组
+4、数字序列
+
+数字序列：
+1、range用于表示数字序列(整数，数据间隔1)，内容不可变
+2、数字序列使用range()函数创建
+3、语法：r=range(0,100) #产生0-99数字序列
+r1 = range(10,20) #10-19的整数，左闭右开
+print(r1)#输出结果为range(10,20)--节省内存
+print(type(r1)) range
+print(r1[9])
+print(r1[3:5]) #取值范围：将索引值3、4数据。结果：range（13,15）
+#增加步长
+r2 = range(10,20,2)
+print(r2) #输出10,12,14,16,18 间隔2
+print(r2[4])
+print(r2[0:2]) #输出 range(10,14,2)
+#成员运算符in,序列数据结构中通用
+print(12 in range(10,20))
+print(22 not in range(10,20)
+
+
+
+序列类型可以互相转化
+1.list()转化为列表
+2.tuple()转化为元组
+但是元组不支持转换带特殊符号，可利用列表进行桥接,可以用split(特殊字符)
+3.join(),str()转化为字符串
+str用于将单个数据转化为字符串
+join用于将列表进行连接print（“，”.join(变量)）--以逗号将字符串连接。必须以字符串，不能用数字
+特别注意:只能将range转换出去 不能转换回来
+
+
+
+
+************************************************************************************************************************************************************
+
+
+
+集合的创建方法：
+{}，key值间用“，”分割或者用Set（）函数
+# 集合的创建
+college1 = {"哲学" , "经济学" , "法学" , "教育学"}
+print(college1)
+# 输出后可以发现原来的顺序被打乱了，
+# 原因是集合的存储时通过hash值在内存中存放的，
+# 每一次运行后hash值都会改变所以每次的存放位置都会不同
+
+# set（）内置函数从其他数据结构转换(列表、元组)
+college2 = set(["金融学" , "哲学" , "经济学" , "历史学" , "文学"])# 将列表转为集合
+print(college2)
+
+# 用set创建字符串集合
+college3 = set("中华人民共和国")，#对每个字符生成集合。
+print(college3)
+输入字符串时分别输出
+输入列表一起输出
+
+# 空集合的创建
+college4 = set()
+print(type(college4))
+
+
+a1=set('124568')   输出结果：{'1', '5', '8', '2', '4', '6'}
+a1=set(['124568'])   输出结果：  {'124568'}
+a2=set(('12345648')) 输出结果   {'6', '8', '1', '4', '3', '2', '5'}
+a2=set(('12345648','123'))  输出结果  {'123', '12345648'}
+a2=set('12345648','123')   输出结果   报错
+
+
+set1 , set2
+交集 获取两个集合中重复部分
+c3 = set1.intersection(set2) 
+把交集赋值给set1
+set1.intersection_update(set2) 
+并集
+c4 = set1.union(s et2)
+Python中没有并集的更新函数update
+差集 将两个集合所有元素合并，去重
+c5=set1.difference(set2) #表示set1在set2中不存在的部分
+c6=set1.symmetric_difference(set2) #symmetric_difference表示双向差集
+set1.difference_update(set2) #对set1进行更新操作
+set1.symmetric_difference_update(set2) #对set1进行更新操作
+
+
+
+# 集合间的关系操作
+# == 判断两个集合的元素是否完全相同
+# issubset判断是否为"子集"
+print(s3.issubset(s4))#s3是否为s4的子集
+# issuperset判断是否为"父集"
+print(s4.issuperset(s3))#s4是否为s3的父集
+#isdisjoint 函数判断两个集合是否存在重复元素
+#True 代表不存在重复元素,False则代表存在重复
+print(s5.isdisjoint(s6))
+
+
+
+集合的操作
+s3.add() 增加元素
+s3.update(list or tuple) 增加多个元素
+s3.remove() 删除元素，无元素会报错
+s3.discard() 删除元素，无元素不会报错
+s3不能按索引查找元素
+
+****************************************************************************************************************
+三种内置生成式：
+
+列表生成式 list = [操作语句 循环 额外追加循环或者判断条件语句]
+lst3 = [i * 10 for i in range(10,20) if i % 2 ==0]
+相当于
+for i in range(10,20):
+if i % 2 == 0:
+lst3.append(i * 10)
+
+
+字典生成式 dict = {键：值 循环 追加}
+dict1 = {i+1:lst6[i] for i in range(0,len(lst6))}
+相当于
+for i in range(0,len(lst6)):
+dict1[i+1] = lst6[i]
+
+
+集合生成式 set = {操作 循环 追加}
+set1 = {i * j for i in range(1,4) for j in range(1,4) if i == j}
+for i in range(1,4):
+for j in range(1,4):
+if i == j:
+set1.add(i * j)
+
+
+
+
+
+循环条件多于两个的时候要展开来写 为了阅读的方便
+
+
+
+
+
+
+
+*************************************************************************************************************************
+函数
+
+
+
+函数的定义：
+
+def 函数名(形式参数(形参)1,形式参数,...,形式参数n)：#形参可有可无，取决于要实现的功能。
+要运行的代码（函数体）#可能是多行语句
+return 输出的数据((返回值)
+#return不是必须的，但是return语句执行后，函数将中断执行
+
+
+
+
+
+def verse(name):#创建函数
+#函数体
+if name=="静夜思"
+
+ print('床前明月光')
+ print('疑是地上霜')
+ print('举头望明月')
+ print('低头思故乡')
+
+verse("静夜思")  #调用函数
+
+
+
+
+函数的使用技巧1：
+1、设置参数默认值
+#1、为参数设置默认值，只需要在形参后面增加 '= 具体值'即可
+def calc_exchage_rate(amt,source = 'CNY',target = 'USD'):
+
+2、关键字传参
+#2、以形参形式传参（关键字传参）
+#像这么多形参，在实际开发中，对这种多参数的可以封装成一个字典
+#将整个字典作为参数，传入。
+def health_check(name,age,height,weight,hr,hbp,lbp,glu):
+
+
+health_check('张三',32,178,85.6,70,120,80,4.3)
+health_check(name='张三',age=32,height=178,weight=85.6,hr=70,
+hbp=120,lbp=80,glu=4.3)
+
+
+
+
+3、混合形式传参（既可以包含按位置传参，又可以强制指定按关键字传参）
+#*代表之后所有参数传参时必须使用关键字传参
+def health_check(name,age,*,height,weight,hr,hbp,lbp,glu):
+print('您的健康状况良好')
+health_check('张三',32,height=178,weight=85.6,hr=70,
+hbp=120,lbp=80,glu=4.3)
+
+
+函数其他三种传参方式：
+1、序列(列表、元组、字符串、range)传参 def(*lst)
+2、字典传参 def(**dict)
+3、返回值包含多个数据 (return可以返回字典、列表等）
+
+
+def health_check(name,age,*,height,weight,hr,hbp,lbp,glu):
+param = {'name':'张三','age':'32','height':'178','weight':'85.6','hr':'70','hbp':'120','lbp':'80','glu':'4.3'}
+health_check(**param)
+
+
+
+
+
+
+
+|||||||||||||||||||||||||||||||||||||||举例
+3、返回值包含多个数据
+def get_detail_info():
+#先用一个大的字典保存，所有相关信息
+dict1 = {
+#员工信息
+     'employee':[
+     {'name':'张三','salary':1800},
+     {'name':'李四','salary':2000}
+                  ],
+#设备信息
+     'device':[
+         {'id':'8837120','title':'xxx笔记本'},
+         {'id':'8937120','title':'xxx台式机'}
+            ],
+#资产
+     'asset':[{},{}],
+#项目
+    'project':[{},{}]
+       }
+return dict1
+print(get_detail_info())
+#取张三的工资
+d = get_detail_info()
+sal = d.get('employee')[0].get('salary')<===============================重点 提取多重字典列表嵌套方法    
+print(sal)
+
+
+
+产生随机数：
+import random
+变量 = random.randint(1,16) 全闭
+
+
+from random import randint
+变量=randint(1,16)
+
+
+
+
+**********************************************************************************************************************
+
+本题考查的是对包与模块知识点的理解。python中模块是包含变量、函数、.....代码块的文件；包是存放多个文件/模块的文件夹，
+可以统一组织和管理多个python模块；标准的包结构中包含一个特殊的文件[__init__.py]。两者的区别：包是一个文件夹，可以包含多个文件/模块
+，模块是一个文件。
+模块
+
+控制台为什么会打开python
+在cmd控制台敲calc为什么会弹出计算器，敲notepad为什么会弹出记事本
+在此电脑-->高级系统设置-->环境变量-->本用户的用户变量和系统变量-->path
+因为环境变量中有。
+模块导入及定位：
+
+导入：import os
+定位：现在当前包找-->然后在内置函数中找（python标准库）-->sys.path（环境变量）
+
+当前两个都没有找到的话，就在环境变量中找，如果没有，可以添加
+import sys
+sys.path
+
+结果为一个列表
+如果添加的话sys.path.append('')括号为模块所在的目录
+sys为python内置的模块，就是为了python能够操作windows等系统下的环境变量，退出就没有了，下次再进去，还要重新进行添加环境变量。
+
+模块的属性
+1.进入pycharm控制台 =>Terminal 输入python
+2.定义模块 import 模块名
+3.dir（模块名）：可以得到模块的属性和方法
+4.help(模块名)：可以得到关于模块信息的帮助
+5.模块名.__name__ :获得模块的名称
+6.模块名.__doc__ :获得注释
+7.模块名.__file__ :获得模块的全路径
+注意 ：模块的属性是__name__ ,s是两个下划线
+将鼠标放置在要导入的方法。使用快捷键alt+enter即可
+
+
+
+
+
+*************************************************************************************************************************
+
+包
+
+python的包: 必须包含__init__.py
+解决模块重名问题
+
+
+一、import 1.先引入标准库2.在引入第三方库包3.最后引入自定义库包
+二、包引用的四种方法
+1.引入整个包：import 包名
+2.只引入所需要的属性或方法：from 包名.子包....import 方法或属性
+例：from pay.alipay import tools
+3.指定别名：当出现引入两个以上重名模块或方法时，用以区分对象，
+例：from pay.alipay.tools import pay as ali_pay
+from pay.wechat_pay.tools import pay as we_pay
+4.导入全部：from moudle.x.x.x import * ,以‘*’结束
+例：from pay.alipay.tools import *
+
+
+if __name__ == "__main__":      当前为执行程序时执行
+
+
+
+关于 __init__.py
+1.英文半角的双下划线
+2.添加一个__init__.py文件，可以将文件夹变成一个模块
+3.导入包的实质就是导入这个包的__init__.py文件
+4.__init__.py一般为空，可以批量导入所需的模块
+
+
+在__init__.py为空的前提下， 包的引入有三种，分别是
+from 包名  import  模块名、
+from 包名.模块名  import 函数名、
+import  包名.模块名，利用as可以给模块或包指定别名。
+
+
+包__init__.py    wechatpay
+from . import wechatpay
+from .wechatpay import tengxun
+
+程序__init__.py   tengxun
+from .tengxun import tengxun,nima
+
+
+程序里的函数
+tengxun()
+nima()
+
+
+执行时从最高级包.第二级包.程序.函数（）
+
+Python1.wechatpay.tengxun.nima()
+
+
+
+*******************************************************************************************************************
+
+
+
+DOS 
+cd ..返回上一级目录
+cd 文件名 进入下一级目录
+dir 查看当前目录下的所有文件及文件夹
+d: 从其他盘跳至d盘
+cls 清空当前页
+exit 退出控制台
+
+OS
+
+*************************
+os 系统的操作命令
+1.os.environ 系统的环境变量
+2.os.sep 返回目录间的分隔符
+3.os.system(程序) 作用与在 win+r 进入cmd 输入程序打开一样 打开你想打开的程序
+4.os.getcwd() 获取当前目录
+5.os.chdir(目录) 跳转到其他目录                       目录举例：     D:\python\OS_test
+6.os.listdir() 得到当前目录下的文件及文件及
+7.os.mkdir(文件夹名) 创建文件夹 
+8.os.rename(原名，新名) 修改文件夹的名称
+9.os.rmdir(文件名) 删除文件夹
+
+
+*********************
+OS.PATH
+1、os.path模块
+2、os.path.isdir('path')：判断path是否是文件夹（目录），是--True，不是--False
+3、os.path.isfile('path')：判断path是否是文件，是--True，不是--False
+4、os.path.exists('path')：判断path文件夹、文件或文件路径是否存在，存在--True，不存在--False
+5、os.path.dirname('path')：去掉文件名，返回目录路径
+6、os.path.split('path')：将path分割成 目录路径和文件名，且两者用 ' , '分割,用元祖返回
+7、os.path.splitext('path')：将path分割成 文件名 和 .xx 格式的后缀名（扩展名），返回的是元组    k,v=os.path.splitext(file_name)   
+8、os.path.basename('path')：获取path最后的文件名，如果path以 \ 或 / 结尾，会返回空值
+9、os.path.join('c:\\desktop', 'a', 'b', 'c')：拼接路径，输出'c:\\desktop\\a\\b\\c'（可适用于各种平台）
+10、os.makedirs('a\\b\\c')：创建多层递归目录
+11、os.path.abspath(__file__)：返回一个文件的绝对路径，输出c:\work\tmp\test.py通过模块的 __file__ 属性可查看到指定模块的源文件路径
+12、os.path.abspath('.')：返回当前目录的绝对路径
+13、os.path.abspath('..')：返回上级目录的绝对路径6. 例： f1=“c:\\users\\administrator\\desktop\\123.txt”(1） os.path.dirname(f1)获取文件的上一级目录 'c:\\users\\administrator\\desktop'
+\os.path.split(f1) 得到('c:\\users\\administrator\\desktop','123.txt')
+(2) os.path.basename(f1)
+获取当前文件名 “123.txt”
+14、os.path.splitext(f1) 得到文件的后缀名
+15、os.path.join('c:\\desktop','a','b','c')
+返回'c:\\desktop\\a\\b\\c'
+在这基础上创建这样一个目录：
+f2=os.path.join('c:\\desktop','a','b','c')
+os.makedirs(f2)
+
+
+*********************
+DateTime模块：
+1、timedelta            对日期/时间进行加减操作时使用
+2、date                 date类表示一个日期
+3、datetime.strftime    将datetime对象格式化成字符串
+4、datetime.strptime   将字符串按照一定的格式转换成datetime对象
+5、time                表示一个时间的类
+6、datetime .now / today        系统的当前时间
+
+
+# 使用time模块的sleep函数停顿2秒
+time.sleep(2)
+
+
+datetime 模块转换参数表
+%A   星期英文 Monday
+%B   月份英文 January
+%m   月份 数字 01-12
+%d   日期 数字 01-31
+%Y   年份 4位  2019
+%y   年份 2位   19
+%H    小时 24制 00-23
+%l    小时 12制 01-12
+%p    am pm
+%M    分钟     00-59
+%S     秒数   00-61
+
+
+
+
+#当前时间
+now_time = datetime.datetime.now()
+
+#当前的日期
+print('now day:{0}'.format(now_time.date()))
+#当前的时间
+print('now time:{0}'.format(now_time.time()))
+#也是当前时间
+print('now day2:{0}'.format(datetime.datetime.today()))
+#年月日毫秒
+print('year:{0}'.format(now_time.year))
+print('month:{0}'.format(now_time.month))
+print('day:{0}'.format(now_time.day))
+print('microsecond:{0}'.format(now_time.microsecond))
+
+#获取到毫秒数,写web接口会用到
+print(time.time())
+#在线程中用到，让他休息一段时间
+time.sleep(2)
+
+
+print("现在的时间为{0}".format(datetime.now().date()))
+print("现在的日期为{0}".format(datetime.now().time()))
+
+
+1.关于自定义时间
+需要引入datetime date time 标准库
+datetinme(y,m,d,h,m,s)
+date(y,m,d)
+time(h,m,s,ms,..)
+# 自定义日期时间为2019-10-10 8:10
+date_time = datetime.datetime(2019,10,10,8,10)
+注：10以下的数不能写成0x格式
+2.字符串转换成datetime
+使用datetime.strptime()方法，里面传入2个参数，第一个是字符串，第二个是转化的日期格式
+例：d4 = "2019-12-12 1:34:48pm"
+d5 = datetime.strptime(d4,"%Y-%m-%d %H:%M:%S%p")
+print(d5)
+3.datetime转化为字符串：strftime()1.strftime()
+只有一个参数，时间格式化的写法
+可以只取其中的几个值
+例：d6 = datetime.now()
+d7 = d6.strftime("%Y-%m-%d %H:%M:%S")
+print(d7)
+4.日期的加法必须引入timedelta模块
+n = datetime.now()
+n1 = n + timedelta(days=10,hours=10)括号中可写一个或多个对应参数
+print(n1)
+5.日期的减法
+d8 = datetime(1999,7,1)
+d9 = datetime(2019,11,22)
+d10 = d9 - d8
+print(d10)
+返回天数 days
+
+
+
+
+dir() 函数不带参数时，返回当前范围内的变量、方法和定义的类型列表；带参数时，返回参数的属性、方法列表。如果参数包含方法__dir__()，该方法将被调用。如果参数不包含__dir__()，该方法将最大限度地收集参数信息。
+
+
+
+
+www.pypi.org 库地址
+
+
+
+
+*******************************************************************************************************************************8
+
+虚拟环境--virtualenv？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+1、安装虚拟环境：在任何一个目录下pip install virtualenv
+建一个目录，用来保存虚拟环境，就相当于虚拟的几台电脑
+进入根目录 cd /
+创建文件 mkdir envs，cd envs
+virtualenv django1.11（可以创建多个的虚拟环境）
+会等待一会，把python.exe可执行的文件移过去，然后安装一系列的工具。
+虚拟环境创建成功。
+2、进入/退出虚拟环境：activate/deactivate
+cd django1.11
+然后进入 cd Scripts目录，dir查看所有目录
+有一个activate命令，激活的意思
+然后安装想要的就行了pip install django==1.11
+如果退出也是cd Scripts目录 deactivate.bat
+要创建新的虚拟环境，关闭上一个虚拟环境之后，cd envs目录下
+virtualenv flask
+3、每个虚拟环境加进行切换特别不方便，需要下载一个
+pip install virtualenvwarpper-win（windows系统需要加，linux不需要加）
+还需要在环境变量中加上（重新加）
+变量名：WORKON_HOME，变量值为：c:\envs（存放虚拟环境编变量的目录）
+4、虚拟环境自由切换：workon vname
+在pycharm中配置，file-->settings-->搜interpreter-->+号
+
+
+
+
+
+**************************************************************************************************************************************
+
+
+
+高阶函数
+
+rest = filter(lambda n: n % 2 !=0, l)
+
+1、filter( func , seq ) #func是过滤条件(函数）, seq是要过滤的序列：
+用于过滤序列，过滤掉不符合条件的元素，返回由符合条件元素组成的新列表。
+该函数接收两个参数，第一个为函数，第二个为序列，序列的每个元素作为参数传递给函数进行判断，然后返回 True 或 False，
+最后将返回 True 的元素放到新列表中。
+Python3中返回的为filter对象，需要使用list()转换为列表， 返回一个filter对象, 其中包含对其执行函数时结果为真的所有元素
+
+2. lambda函数: 创建内嵌的简单命名函数(没有名称)
+   这里的lambda argument_list: expression表示的是一个函数。这个函数叫做lambda函数。
+   lambda函数有输入和输出：输入是传入到参数列表argument_list的值，输出是根据表达式expression计算得到的值。
+   lambda n: n % 2 !=0       返回布尔值 n 为传入数据 n % 2 !=0 为判断条件
+   lambda的函数体不再是代码块，lambda匿名函数是一个表达式
+
+
+3. sorted()函数默认的排序是升序（从小到大）。
+
+4.map()
+  map(func, seq,...)的功能是将传入的函数依次作用到序列的每个元素，并把结果返回
+
+  Python map 与 filter 函数区别
+  filter 是通过生成 True 和 False 组成的迭代器将可迭代对象中不符合条件的元素过滤掉；而 map 返回的则是 True 和 False 组成的迭代器。
+
+  >>> res1 = map(lambda n: n > 5, range(10))
+  >>> lt1 = list(res1)
+  >>> print(lt1)
+  [False, False, False, False, False, False, True, True, True, True]
+
+  >>> res2 = filter(lambda n: n > 5, range(10))
+  >>> lt = list(res2)
+  >>> print(lt)
+  [6, 7, 8, 9]
+5.reduce函数， 需要调用 from functools import reduce
+  reduce(func,seq[,inital])
+  将序列的前两个元素通过func计算合二为一，再将结果与第3个元素合二为一，依此类推，直到处理完整个序列得到一个结果。
+  一个比较简单的应用就是求和
+
+
+     >>>def add(x, y) :            # 两数相加
+...     return x + y
+... 
+>>> reduce(add, [1,2,3,4,5])   # 计算列表和：1+2+3+4+5
+15
+>>> reduce(lambda x, y: x+y, [1,2,3,4,5])  # 使用 lambda 匿名函数
+15
+
+
+************************************************************************************************************************
+文件
+
+
+
+读写模式之 打开与关闭
+
+1、打开文件：f = open('test.txt')
+2、关闭文件：f.close() # 此处要做异常处理
+3、使用with语法打开关闭:
+             with open("somefile.txt") as f:
+到达该语句末尾时，将自动关闭文件，即便出现异常亦如此
+
+
+r ，只读模式【默认】 
+w，只写模式【不可读；不存在则创建；存在则清空内容；】 
+a， 追加模式【可读； 不存在则创建；存在则只追加内容；】 
+“+” 表示可以同时读写某个文件
+
+r+， 读写【可读，可写】【可理解为先读后写，不擦除原文件内容，指针在0】 
+w+，写读【可读，可写】【可理解为先写后读，擦除原文件内容，指针在0】 
+a+， 写读【可读，可写】【不擦除原文件内容，但指针直接到最后，读取原内容先重置指针】
+
+b  二进制模式 与其他模式结合
+x  独占写入模式  与其他模式结合
+t  文本模式  与其他模式结合
+ 
+文件的读取：
+1、read()：读取文件，可以指定参数，表示读几个字符（字节）
+2、readline() ：读取一个行数据，可以指定参数，表示读前几个字符（字节）
+3、readlines()：读取所有行，并返回列表
+
+seek(3)表示从文件起始位置偏移3个字符从第4个字符位置开始读取
+
+
+文件写入：
+1、使用write()函数写入内容
+2、使用writeline()s函数写入多行内容
+
+
+
+**************************************************************************************************************************************************
+**************************************************************************************************************************************************
+面向对象
+
+类定义
+  语法格式如下：
+  class ClassName:
+
+类对象
+  类对象支持两种操作：属性引用和实例化。
+  属性引用使用和 Python 中所有的属性引用一样的标准语法：obj.name。
+  类对象创建后，类命名空间中所有的命名都是有效属性名。所以如果类定义是这样:
+  class MyClass:
+    """一个简单的类实例"""
+    i = 12345
+    def f(self):
+        return 'hello world'
+ 
+# 实例化类
+  x = MyClass()
+ 
+# 访问类的属性和方法
+  print("MyClass 类的属性 i 为：", x.i)
+  print("MyClass 类的方法 f 输出为：", x.f())
+
+
+#构造方法
+  类有一个名为 __init__() 的特殊方法（构造方法），该方法在类实例化时会自动调用
+  然， __init__() 方法可以有参数，参数通过 __init__() 传递到类的实例化操作上
+  class Complex:
+    def __init__(self, realpart, imagpart):
+        self.r = realpart
+        self.i = imagpart
+  x = Complex(3.0, -4.5)
+  print(x.r, x.i)   # 输出结果：3.0 -4.5
+
+
+  self代表类的实例，而非类
+  类的方法与普通的函数只有一个特别的区别——它们必须有一个额外的第一个参数名称, 按照惯例它的名称是 self。
+
+
+
+#类的方法
+  在类的内部，使用 def 关键字来定义一个方法，与一般函数定义不同，类方法必须包含参数 self, 且为第一个参数，self 代表的是类的实例。
+  #类定义
+  class people:
+    #定义基本属性
+    name = ''
+    age = 0
+    #定义私有属性,私有属性在类外部无法直接进行访问
+    __weight = 0
+    #定义构造方法
+    def __init__(self,n,a,w):
+        self.name = n
+        self.age = a
+        self.__weight = w
+    def speak(self):
+        print("%s 说: 我 %d 岁。" %(self.name,self.age))
+ 
+# 实例化类
+  p = people('runoob',10,30)
+  p.speak()
+
+#类的继承class DerivedClassName(modname.BaseClassName):
+  1.判断是否是一个类的子类
+  用：issubclass（GoldDog，Animal）
+  返回True就是其子类，反之不是
+
+#方法重写：
+#super() 函数是用于调用父类(超类)的一个方法。
+
+class animal:
+    def __init__(self,name):
+        self.name=name
+
+    def eat(self):
+        print("动物必须吃饭")
+
+class cat(animal):
+    def eat(self):
+        print("猫吃鱼")
+        super().eat()
+
+if __name__=="__main__":
+    n=p_cat("白猫")
+    n.eat()
+##输出 ：猫吃鱼
+         动物必须吃饭
+
+
+#重写父类对象 继承父类对象
+
+   class person:
+    def __init__(self,name,gender):
+        self.name=name
+        self.gender=gender
+    def speak(self):
+        print("HELLO,我是{}".format(self.name))
+    def relation(self):
+        return
+
+
+
+
+
+   class student(person):
+       def __init__(self,score,major,gender,name):
+        self.score=score
+        self.major=major
+        person.__init__(self,name,gender)
+
+
+
+
+#类的多重继承
+  如果调用的方法是重名的，那就只会调用第一个方法
+  class Student(Person,Peple1,Peple): 按顺序从左到右调用第一个
+
+  1、__str__方法：使用return,返回一个对象的描述信息
+
+
+  1、@property：可以使方法以属性的方式调用。在调用的时候可以体现出来，方法在调用时是要添加括号的
+  2、当属性设置为私有属性时，在外部不可以直接修改，因此可以同时使用@property和@age.setter，从而可以修改私有属性的值。
+  可以理解为：只有@property表示只读。同时有@property和@*.setter表示可读可写
+  ，若要使用@*.setter，则需要同时使用@property，并且@*.setter需要在@property装饰器的后面
+
+  @.setter允许对已用@property装饰的属性或方法赋值。
+
+
+   举例
+   @property
+    def huge_2(self):
+        pass
+    @huge_2.setter
+    def huge_2(self,v):
+        self.__huge=v
+
+    
+    dsp.huge_2=100                                      #更改方法
+    dsp.__huge=100  &&  dsp.huge_2(100)                 #错误方法
+
+
+
+#isinstance(object,type)函数的用法，该函数用于判断一个对象是否是一个已知类型，第一个参数（object）为对象，第二个参数（type）为类型名(int，str等)
+#issubclass(class, classinfo) 方法用于判断参数 class 是否是类型参数 classinfo 的子类
+#hasattr(object, name) 函数用于判断对象object是否包含对应的属性name。
+
+
+
+#__slots__：
+  1）为指定的类设置一个静态属性列表，为指定的类设置一个静态属性列表（不能改变，类似于常量，是一种约束）
+  2）为属性很少的类节约内存空间
+  slot：不允许给实例添加新的属性、方法
+  __slots__定义的属性,方法仅对当前类起作用，对继承的子类是不起作用的，
+  如果子类中也定义__slots__，那么子类允许定义的属性，方法就是自身的__slots__加上父类的__slots__
+  __slots__=("name","age")    只能对name age 进行操作，不能添加其他属性
+
+  
+#静态方法
+  @staticmethod
+  静态方法，通过类直接调用，不需要创建对象，不会隐式传递self
+  静态方法就是类对外部函数的封装，有助于优化代码结构和提高程序的可读性
+
+#类方法
+  @classmethod
+  类方法，方法中的self是类本身，调用方法时传的值也必须是类的公有属性，
+#实例方法 
+    定义：第一个参数必须是实例对象，该参数名一般约定为“self”，通过它来传递实例的属性和方法（也可以传类的属性和方法）；
+    调用：只能由实例对象调用。  就是说类方法只能操作类本身的公有字段
+
+
+class Dog(object):
+    food = "gutou"
+    age = "1"
+
+    @classmethod
+    def eat(clr): #只能是类中的变量
+        
+        print(clr.age)
+        print(clr.food)
+
+    @staticmethod
+    def print_1():
+        print(Dog.food, Dog.age)
+
+d = Dog("labuladuo")
+d.eat()    #通过对象调用
+Dog.eat()  #通过类调用
+
+Dog.print_1()
+
+
+***********************************************************************
+#装饰器    一定要有return
+  1、用于拓展原来函数功能的一种函数
+  2、返回函数的函数
+  3、在不用更改原函数的代码前提下给函数增加新的功能
+  4  通过给单层装饰器函数外层再添加一层嵌套，达到给单层装饰器添加参数的目的 #传入函数的层永远是最外层
+  5  可以不传入参数，但是不能省略小括号
+  6， @wraps:用来还原被装饰函数原本的一些函数属性，例：__doc__,__name__等
+      from functools import wraps
+  
+
+
+                               
+ def log(func):           #传入参数是一个函数func
+
+
+   def wrapper():
+      print('start...')
+      func()
+      print('end...')
+
+    return wrapper   #返回函数，不需要加括号
+
+ @log             #引用装饰器  
+ def hello():
+   print('hello world')
+
+####
+当传入的参数不确定时，可以使用*args 和**kwargs。
+*args 和 **kwargs ：可以将不定数量的参数传递给一个函数。不定的意思是：预先并不知道，函数使用者会传递多少个参数。
+*args：将实参中按照位置传值，多出来的值都给args，且以元组的方式呈现；
+ **kwargs：将形参中按照关键字传值把多余的传值以字典的方式呈现
+例：
+def fun(a, *args, **kwargs):
+    print('a=', a)
+    print('args=', args)
+    print('kwargs=', kwargs)
+
+fun(1, 2, 3, 4, A='a', B='b', C='c', D='d')
+
+# a= 1
+# args = (2, 3, 4)
+# kwargs = {'A': 'a', 'B': 'b', 'C': 'c', 'D': 'd'}
+
+
+
+
+
+
+from functools import wraps
+def log(func):                       #传入函数
+    @wraps(func)
+    def log1(a,b,*args,**kwargs):    #传入数据
+            print("开始计算")
+            func(a,b,*args,**kwargs)
+            return  func             
+    return log1
+
+
+
+@log
+def add(a,b,*args,**kwargs):
+    print( a+b)
+
+add(1,2,3)
+
+
+****************************************、
+#迭代器介绍
+  1、迭代（iterate）意味着重复多次，就像循环那样（list,tuple）
+  2、实现了方法 __iter__ 的对象是可迭代的，而实现了方法 __next__ 的对象是迭代器
+  3、调用方法 __next__ 时（或 next()）,迭代器返回旗下一个值
+  4、如果迭代器没有可供返回的值，触发 Stoplteration 异常
+
+
+
+
+class number:
+    v=0
+    def __iter__(self):             #定义对象是可迭代的
+        pass
+    def __next__(self):             #定义迭代器功能
+        self.v=self.v+1
+        if self.v>50:               #定义迭代器范围
+            raise  StopIteration    #停止迭代
+        return pow(self.v,2)
+
+
+
+if __name__ == "__main__":
+   p=number()
+   print(p.__next__) && print(next(p))    #调用迭代器v
+
+
+生成器介绍   yield  相当于return
+1、生成器是一种使用普通语法定义的迭代器
+2、包含 yield 语句的函数都被称为生成器
+3、不使用 return 返回一个值，而是可以生成多个值，每次一个
+4、每次使用 yield 生成一个值后，函数都将冻结，即在此停止执行
+5、被重新唤醒后，函数将从停止的地方开始继续执行
+
+
+
+
+
+
+****************
+#使用try.......except.......finally......语句来捕获异常，让程序可以不受异常的影响继续执行
+#把异常代码放在try中，在except代码块中写pass语句，明确地告诉Python解释器不需要处理异常
+
+
+
+****************************************************************************************************************************************
+***************************************************************************************************************************************
+正则表达式                                        
+                
+                                                     示例字符串：123aaaaaabccdefbc456         
+符号              描述                                     实例:正则表达式                 返回结果：全局搜索
+ literal          匹配文本字符串的字面值literal                  abc                         abc
+ re1 |re2         匹配正则表达式re1或re2                         abc|bc                     abc
+                                                                 abc|def                     abc def
+.                匹配任何字符(长度为1)（除了\n）                .a                          aa aa aa
+ ^                匹配字符串起始部分                             ^1.                         12 
+ $                匹配字符串终止部分                             .6$                         56
+ *                匹配0-多次 出现的正则表达式                    a*bc                        aaaaaabc bc
+ +                匹配1-多次 出现的正则表达式                    a+bc                        aaaaaabc
+ ?                匹配0或1次 出现的正则表达式                    a?bc                        abc bc
+ {n}              匹配n次 *连续*出现的正则表达式                   a{4}                        aaaa
+                                                                 a{3}                        aaa aaa （匹配过的字符不会再匹配）
+ {m,n}            匹配最少m次且最多n次 出现的正则表达式 *最大次数优先匹配*   a{1,5}             aaaaa a
+                                                                            a{1,3}            aaa aaa     
+ [...]            匹配来自字符串的任意单一字符                   [a,b,c,l,p]                 a a a a a a b c c b c
+ [..x-y..]        匹配x-y范围的任意单一字符
+ [^..]            不匹配词字符串出现的任何一个字符，             [^abc]{2}                   12 de 45 6
+                   包括某一范围字符
+ (*|+|?|{})       用于匹配上面频繁出现的符号的非贪婪版本
+ (..)             匹配为封闭的正则表达式，然后另存为子组
+
+                                  
+                                                            示例字符串：123aaaa aabccdefbc456  
+特殊字符          描述                                              实例                 返回结果：全局搜索
+ \d               匹配任何十进制数字 与[0,9]一致（\D与\d相反        \d                    1 2 3 4 5 6
+                  ，不匹配任何非数值型数字）                        c\d                   c4
+                   \d等价于[0-9]。0-9任意的一个数字   实例：010-888888888  \d{8}是匹配连续的8个数字   88888888        
+                                                                           \d1{5} 匹配一个数字和5个1   无
+                                                                           \d8{5} 匹配一个数字和5个8   888888 
+
+ \w               匹配任何字母数字字符，与[A-Za-z0-9]相同（\W相反） \w                    1 2 3 a a a a a a b c c d e fb c 4 5 6         
+                                                                    \w{3}                 123 aaa aab ccd efb c45
+ \s               匹配任何空格字符，与[\n\t\r\v\f]相同（\S相反）    \sa                    a
+ \b               匹配任何单词边界（\B相反）
+ \N               匹配已保留的子组（参见上面的（...））
+ \c               逐字匹配任何特殊字符c
+ \A(\Z)           匹配字符串的起始（结束）
+
+转义符\  接特殊符号
+字符串 I don't want to be your entire world, just the best thing in it, I want to say "$%^&*@#~!"，想正确匹配"$%^&*@#~!"
+\"\$\%\^\&\*\@\#\~\!\"
+
+
+正则表达式分组：
+ 1、重复一个字符串时
+ 2、使用（）进行分组，使用(?<word>\w+)指定组名，其中word为组名
+ 3、从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。
+ 表达式(A)(B(C))
+   0 (A)(B(C))
+   1 (A)
+   2 (B(C))
+   3 (C)
+ 1、使用()对匹配的内容分组
+   例如：(\d{1,3}\.){3}\d{1,3}
+         如IP地址：192.168.60.14 （分析\d是数字，然后1-3个，然后转义字符.，然后3组，然后\d是数字，然后1-3个）
+ 2、使用\1、\2反向引用 *****引用的不是表达式而是匹配到的内容*****
+   例如：He loves her lover.
+         He likes her liker.
+         正则表达式为：He (l..e)s her \1r.
+         loves、lover、likes、liker共同的部分为l..e，..表示任意字符，\1r引用
+         He (?<name>l..e)s her \k<name>r.
+         给分组去一个名字，然后去引用这个名字，用\k<名字>。
+结尾加？ 非贪婪模式
+
+
+正则表达式Python引用
+re模块    import re
+   属性(flags)            功能
+   re.I(大写i)     不区分大小写匹配
+   re,L            根据所使用本地语言环境通过\w,\W,\b,\B,\s,\S实现分配
+   re.M            ^和$分别匹配目标字符串行的首尾，而不是严格匹配整个字符串的首尾
+   re.S            . 通常匹配除\n之外所有单个字符，在这里表示所有字符
+   re.X            通过反斜线转义，否则所有空格加上#(以及再该行中所有后续文字)都被忽略
+                   除非再一个字符类中或者允许注释并且提高可读性
+
+ r就是raw的意思，这种表示方式的字符串全称为 原始字符串。
+  像我们平时用的字符串，比如这个 'abc\ndef'，
+  这里面的\n部分是转义成换行符的，使用print函数打印这个字符串的时候是这样：
+  abc
+  def
+  而如果你把以上字符串改成原始字符串版本：r'abc\ndef'
+  则print(r'abc\ndef') 的输出结果是：
+  abc\ndef
+  即在这个过程中，\n不进行转义，只是按照字面上的样子打印出来
+ re模块-compile
+  compile(pattern,flags=0) 
+  功能：使用任何可选的标记来编译正则表达式的模式，然后返回一个正则表达式对象，反之，返回None
+  
+ re模块-match（非全局搜索，从开头开始搜索，如开头没有直接返回none）
+ match(pattern,string,flags=0)  pattern 正则表达式 string 字符串
+ “使用可选标记从字符串的起始位置搜索要匹配的正则表达式模式，匹配成功，立刻返回匹配对象，不再向后进行匹配；反之，返回None
+ 
+ re模块-search(非全局搜索，没有直接返回none()
+  search(pattern,string,flags=0)  pattern 正则表达式 string 字符串 
+  使用可选标记搜索字符串中第一次出现的正则表达式模式。如果匹配成功，则返回匹配对象；如果失败，则返回None
+
+ re模块-findall(全局搜索)（需要非捕获组,有多个分组时在捕获组前加上?:）
+  findall(pattern, string[,flags])
+  查找字符串中所有（非重复）出现的正则表达式模式，并返回一个匹配【列表】
+  
+  捕获组和非捕获组，指的就是分组。
+  捕获组就是一般的分组，如果正则表达式中存在分组，则findall只会对分组中的正则进行匹配，如果只有一个分组，则返回列表，如果有多个分组，
+  则返回为列表嵌套元祖的形式。形如：(\d+)将捕获组转化为非捕获组只需在捕获组前加上“?:”，形如：(?:\d+)  
+
+  p1=re.findall('(\d{1,3}\.){3}\d{1,3}','192.168.0.1')   p1=.0        
+  p1=re.findall('(?:\d{1,3}\.){3}\d{1,3}','192.168.0.1') p1=192.168.0.1
+  (\d{1,3}\.){3}只会输出符合组内容的第3个。
+
+ re模块-group(num)返回整个匹配对象或编号为num的特定子组；反之，返回None
+ re模块-groups():返回一个包含所有匹配子组的元组（如果没有成功匹配或对象里没有组，则返回一个空元组）
+ re模块-groupdict():可以取命名的组，返回字典
+   组命名是（？P<name>\d{4}）
+
+ import re
+print(re.findall('hello','fuck hello,hello'))       ['hello', 'hello']
+print(re.match('hello','fuck hello,hello'))         None
+print(re.search('hello','fuck hello,hello'))         <re.Match object; span=(5, 10), match='hello'>
+print(re.search('hello','fuck hello,hello').group()) hello
+
+
+m.groups()等价于m.groups(0)
+
+
+
+
+
+split()
+
+ 普通分割split(分割规则)
+  a="1afffafad1afsfagsg1qqqqqqqqqqqqqqqq1wwwwwwwwwwwwwwwww1eeeeeeeeeeee"
+  b=a.split("1")
+  
+ 正则分割split(正则表达式分割规则，待分割字符)
+  a1="1qqqqq2wwwwwww3eeeeee4rrrrrrr53334233ttttttt"   #待分割字符
+  q1=re.compile(r"\d+")                               #分割规则（正则）
+  b1=re.split(q1,a1)
+
+Sub(replacement,string[,count =0 ])
+
+**********************************************************************************************************************
+
+引用计数：每个对象都有存有指向该对象的引用总数。
+查看某个对象的引用计数
+sys.getrefcount()
+可以使用del关键字删除某个引用
+垃圾回收：满足特定条件，自动启动垃圾回收。当Python运行时，会记录其中分配对象和取消分配对象的次数。当二者的差值高于某个阈值时，垃圾回收才会启动。查看阈值gc.get_threshold()
+分代回收：Python将所有的对象分为0，1，2三代，所有的新建对象都是0代对象，当某一代对象经历过垃圾回收，依然存活，那么它就被归入下一代对象。
+手动回收：gc.collect()手动回收。objgraph模块中的count()记录当前类产生的实例对象的个数。
+内存池机制：当创建大量消耗小内存的对象时，频繁调用new/malloc会导致大量的内存碎片，致使效率降低。内存池的概念就是预先在内存中申请一定数量的，大小相等的内存块留作备用，当有新的内存需求时，就先从内存池中分配内存给这个需求，不够了之后再申请新的内存。这样做最显著的优势就是能够减少内存碎片，提升效率。
+Python3中的内存管理机制-----Pymalloc
+针对小对象（《=512bytes），pymalloc会在内存池中申请内存空间
+当>512bytes，则会PyMem_RawMalloc()和PyMem_RawRealoc()来申请新的内存空间。
+************************************************************************************************************************
+
+多线程：
+ 
+ #包：      
+          threading
+ #设置线程：
+          y=[111,222,333]
+          m = threading.Thread(target=被执行方法名称,不加括号，name='',args(y,))
+          args：     指定将来调用 函数的时候   传递什么数据过去, args参数指定的一定是一个元组类型
+ #启动：    
+          m.start()
+ #挂起：     
+          m.join()
+ #定义线程功能的方法
+          m.run()
+ #返回线程名
+          m.getName()
+ #设定线程名
+          m.setName(name)
+ #线程是否存活
+          isAlivel/is_alive()
+ #获取线程名称
+          threading.current_thread().name
+ 
+ start() 方法是启动一个子线程，线程名就是我们定义的name
+ run() 方法并不启动一个新线程，就是在主线程中调用了一个普通函数而已。
+ 因此，如果你想启动多线程，就必须使用start()方法。
+ 
+global语句
+
+ 如果你想要为一个定义在函数外的变量赋值，那么你就得告诉Python这个变量名不是局部的，而是 全局 的。我们使用global语句完成这一功能。
+ 没有global语句，是不可能为定义在函数外的变量赋值的。
+
+
+Lock() 一次只能添加一个锁，添加两次锁，会产生死锁，只有被释放之才会能再次加锁。
+RLock() 多重锁，已经获得该锁的线程可以继续多次获得该锁，acquire和release必须成对出现
+注：使用with语法可直接释放，不需在后面释放锁（同with open的用法）,即不用添加锁释放锁，直接with num_1:即可
+ 
+num_1=threading.Lock()
+1、 num_1.acquire() 添加锁
+2、 num_1.release() 释放锁
+
+
+
+***重点：多线程同步实现（线程池）***
+线程池不能加锁
+def num(*args):
+    time.sleep(2)
+    print(threading.current_thread().name)
+
+
+1：def pool():                  #from multiprocessing.dummy import Pool
+   
+    list1= range(100)          #总共执行100次
+    pool_1=Pool(50)            #每个线程池执行 50次,线程名叫pool_1
+    
+    pool_1.map(num_1,list1)    #通过线程池.map执行函数num_1,总共执行次数连接
+    pool_1.close()    	       #关闭
+    pool_1.join()              #挂起
+
+ 2：def sb():                                           #from concurrent.futures.thread import ThreadPoolExecutor
+    list_1= range(100)                                  #总共执行100次      
+    with ThreadPoolExecutor(max_workers=10) as dsb:     #每个线程池执行 10次，线程名叫dsb
+        dsb.map(num_1,list_1)                           #通过线程池.map执行函数,总共执行次数连接
+     
+*****************************************************************************************************************
+进程（必须有main才能使用）
+
+
+from multiprocessing.context import Process 
+p = Process(tatget = 要跑的方法， args =('name', ))
+ os.getpid()获取进程的id
+使用面向对象方法来实现一个进程，继承Process类然后重写run方法，在实例化一个对象，就可以实现
+p.start() #启动进程
+p.join() #挂起进程
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           

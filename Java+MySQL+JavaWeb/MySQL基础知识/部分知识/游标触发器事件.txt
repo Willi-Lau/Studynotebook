@@ -1,0 +1,394 @@
+6．游标
+ 
+MySQL支持简单的游标。在MySQL中，游标一定要在存储过程或函数中使用，不能单独在 查询中使用。
+ 使用一个游标需要用到4条特殊语句：
+ DECLARE CURSOR（声明游标）
+ OPEN CURSOR（打开游标）
+ FETCH CURSOR（读取游标）
+ CLOSE CURSOR（关闭游标）
+
+（1）声明游标
+
+ DECLARE 游标名 CURSOR FOR select语句
+
+例11
+ declare xs_cur1 cursor	for
+    select 学号,姓名,性别,出生日期,总学分
+        from xs
+        where 专业名 = '计算机';
+（2）打开游标
+ 声明游标后，要使用游标从中提取数据，就必须先打开游标。在MySQL中，使用OPEN语  句打开游标
+ OPEN 游标名 
+ 在程序中，一个游标可以打开多次，由于其他的用户或程序本身已经更新了表，所以每 次打开结果可能不同。
+ 3）读取数据
+ 游标打开后，就可以使用FETCH…INTO语句从中读取数据
+
+ FETCH 游标名 INTO 变量名 [,变量名] ...
+
+ FETCH语句是将游标指向的一行数据赋给一些变量，子句中变量的数目必须等于声明游  标时SELECT子句中列的数目
+
+（4）关闭游标
+ 游标使用完以后，要及时关闭。关闭游标使用CLOSE语句
+ CLOSE变量名
+
+ 例12
+ 创建一个存储过程，计算xs表中行的数目
+
+ delimiter $$
+ create procedure compute(out number int)
+ begin 
+	declare xh char(6);
+	declare found boolean default true;
+	declare number_xs cursor for select 学号 from xs;
+	declare continue handler for not found	set found=false;
+	set number=0;
+	open number_xs;
+	fetch number_xs into xh;
+	while found do 
+		set number=number+1;
+		fetch number_xs into xh;
+	end while;
+	close number_xs;
+ end$$
+ delimiter ;
+
+ call compute(@c);
+ select @c;
+
+ 练习：用游标实现，统计选课表中成绩90分及以上的人数，不及格的人数分别是多少
+       统计选课表 xs_kc各个分数段的人数（5种）
+ delimiter $$
+ create procedure com27(out n1 int,out n2 int,out n3 int,out n4 int,out n5 int)
+ begin 
+	declare cj int;
+	declare found boolean default true;
+	declare number_score cursor for select 成绩 from xs_kc;
+	declare continue handler for not found      set found=false;
+	set n1=0,n2=0,n3=0,n4=0,n5=0;
+	open number_score;
+	fetch number_score into cj;
+	while found do 
+            if cj>=90 then 
+		set n1=n1+1;
+            elseif cj>=80 then 
+      set n2=n2+1;
+　　　elseif cj>=70 then
+　　　set n3=n3+1;
+　　　elseif cj>=60 then
+　　　set n4=n4+1;
+　　　else
+　　　set n5=n5+1;
+            end if;
+	fetch number_score into cj;
+	end while;
+	close number_score;
+ end$$
+ delimiter ;
+
+ call com27(@a,@b,@c,@d,@e);
+ select @a,@b,@c,@d,@e;
+ 二  存储过程的调用、删除和修改
+ 1．存储过程的调用
+ CALL 存储过程名([参数 [,...]])
+ 例13
+ 创建存储过程，实现查询xs表中学生人数的功能，该存储过程不带参数
+
+ create procedure do_query()
+   
+	select count(*) from xs order by 学号;
+  call do_query();
+ 
+例14
+ 创建一个存储过程，有两个输入参数：xh和kcm，要求当某学生某门课程的成绩小于60  分时将其学分修改为零，大于等于60分时将学分修改为此课程的学分。
+
+ delimiter $$
+ create procedure do_update(in xh char(6), in kcm char(16))
+ begin
+    declare  kch char(3);
+    declare  xf tinyint;
+    declare  cj tinyint;
+    select 课程号,学分 into kch,xf from kc where 课程名=kcm;
+    select 成绩 into cj from xs_kc where 学号=xh and 课程号=kch;
+    if cj<60 then
+        update xs_kc set 学分=0 where 学号=xh and 课程号=kch;
+    else 
+        update xs_kc set 学分=xf where 学号=xh and 课程号=kch;
+    end if;
+ end$$
+ delimiter ;
+
+ insert into xs_kc values('081101', '208', 50, 10); 
+ call do_update('081101', '数据结构');
+ select * from xs_kc where 学号='081101' and 课程号='208';
+
+
+ 例16
+ 创建一个存储过程do_insert1，作用是向xs表中插入一行数据。再创建另外一个存储过 程do_insert2，在其中调用第一个存储过程，并根据条件处理该行数据。
+（1）创建第一个存储过程：
+
+ create procedure xscj.do_insert1()
+    insert into xs values('091101', '陶伟', '软件工程', 1, '1994-03-05',  50, null, null);
+ 2）创建第二个存储过程：
+ delimiter $$
+ create procedure xscj.do_insert2(in x bit(1), out str char(8))
+ begin 
+	call do_insert1();
+	if x=0 then 
+		update xs set 姓名='刘英', 性别=0 where 学号='091101'; 
+		set str='修改成功';
+	elseif x=1 then
+		delete from xs where 学号='091101';
+		set str='删除成功';
+	end if;
+ end$$
+ delimiter ;
+（3）调用存储过程do_insert2来查看结果：
+ call do_insert2(1, @str);
+ select @str;
+
+
+ call do_insert2(0, @str); 
+ select @str;
+
+ 2．存储过程的删除
+ 确认该存储过程没有任何依赖关系，否则会导致其他与之关联的存储过程无法运行
+ DROP PROCEDURE  [IF EXISTS] 存储过程名
+
+ 3．存储过程的修改
+ 使用ALTER PROCEDURE语句可以修改存储过程的某些特征。
+ 语法格式：
+ ALTER PROCEDURE  存储过程名 [特征 ...]
+ { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA }
+| SQL SECURITY { DEFINER | INVOKER }
+|  COMMENT 'string'
+ 了解
+
+三   存储函数
+
+ 存储函数也是过程式对象之一，与存储过程很相似,区别如下：
+
+（1）存储函数不能拥有输出参数，因为存储函数本身就是输出参数；
+（2）不能用CALL语句来调用存储函数；
+（3）存储函数必须包含一条RETURN语句，而这条特殊的SQL语句不允许包含于存储过程 中。
+ 创建存储函数
+
+ CREATE FUNCTION  存储函数名 ([参数[,...]])
+    RETURNS type
+    [特征 ...] 
+ 存储函数的主体
+
+ RETURNS type子句声明函数返回值的数据类型，不能指定IN、OUT和INOUT
+ 存储函数体：所有在存储过程中使用的SQL语句在存储函数中也适用，包括流程控制语 句、游标等.
+
+ 注意：
+ function只有 DETERMINISTIC, NO SQL 和 READS SQL DATA 被支持。如果我们开启了  bin-log, 就必须指定一个参数。
+ 关掉：
+
+SET GLOBAL log_bin_trust_function_creators = 1;
+
+
+ 例17   创建一个存储函数，它返回xs表中学生的数目作为结果。
+ delimiter $$
+ create function num_of_xs()
+ returns int
+ begin
+	return(select count(*) from xs);
+ end$$
+ delimiter ;
+
+ RETURN子句中包含SELECT语句时，SELECT语句的返回结果只能是一行且只能有一列值。
+
+ select num_of_xs();
+
+ 例18  创建一个存储函数，返回某个学生的姓名。
+
+ delimiter $$
+ create function name_of_stu(xh char(6))
+ returns char(8)
+ begin
+	return (select 姓名 from xs where 学号=xh);
+ end$$
+ delimiter ;
+
+ select name_of_stu('111222')
+
+ 例 19  创建一个存储函数来删除xs_kc表中有，但xs表中不存在的学号。
+ delimiter $$
+ create function delete_stu(xh char(6))
+	returns boolean
+ begin
+	declare stu char(6);
+	select 姓名 into stu from xs where 学号=xh;
+	if stu is null then
+		delete from xs_kc where 学号=xh; 
+		return true;
+	else 
+		return false;
+	end if;
+ end$$
+ delimiter ;
+
+
+ 存储函数的调用、删除和修改
+  SELECT 存储函数名 ([参数 [,...]])
+
+ DROP FUNCTION [IF EXISTS] 存储函数名
+
+
+四 触发器
+  创建  CREATE TRIGGER
+  查看  SHOW TRIGGERS
+
+
+ CREATE TRIGGER 触发器名  AFTER|BEFORE  触发事件
+    ON 表名 FOR EACH ROW  触发器动作
+
+ 触发事件：  激活触发程序的语句的类型。如INSERT,DELETE，UPDATE
+ before：(insert、update)可以对new进行修改，
+ after不能对new进行修改，两者都不能修改old数据。
+ 
+ 触发器动作：包含触发器激活时将要执行的语句。
+            如果要执行多个语句，可使用BEGIN ... END复合语句结构。不要包含            SELECT语句，因为触发器不能返回结果。
+   
+ FOR EACH ROW：这个声明用来指定，对于受触发事件影响的每一行，都要激活触发器的 动作。
+
+
+ 例20  创建一个触发器，当删除表xs中某个学生的信息时，同时将xs_kc表中与该学 生有关的数据全部删除。
+
+  delimiter $$
+  create trigger xs_delete after delete on xs for each row
+  begin
+	delete from xs_kc where 学号=old.学号;
+  end$$
+  delimiter ;
+
+ insert into xs values('111222','罗林琳','通信工程',1,'1994-01-  30',42,null,'转专业学习');
+ insert into xs_kc values('111222','101',90,null);
+
+ delete from xs where 学号='111222';
+
+ 例21 创建一个触发器，当修改xs_kc表中数据时，如果修改后的成绩小于60分，则触 发器将该成绩对应的课程学分修改为0，否则将学分改成对应课程的学分。
+
+ delimiter $$
+ create trigger xs_kc_update before update
+	on xs_kc for each row
+ begin
+	declare xf int(1);
+	select 学分 into xf from kc where 课程号=new.课程号;
+	if new.成绩<60 then
+		set new.学分=0;
+	else 
+		set new.学分=xf;
+	end if;
+ end$$
+ delimiter ;
+
+ 例 22  创建触发器，实现当向xs_kc表插入一行数据时，根据成绩对xs表的总学分进 行修改。如果成绩>=60，总学分加上该课程的学分，否则总学分不变。
+ delimiter $$
+ create trigger xs_kc_zxf after insert
+	on xs_kc for each row
+ begin
+	declare xf int(1);
+	select 学分 into xf from kc where 课程号=new.课程号;
+	if new.成绩>=60 then
+		update xs set 总学分=总学分+xf where 学号=new.学号;
+	end if;
+ end$$
+ delimiter;
+
+ 例23 假设xscj数据库中有一个与kc表结构完全一样的表kc1，创建一个触发器，在kc 表中添加数据的时候，调用存储过程，将kc1表中的数据与kc表同步。
+
+ 首先，定义存储过程：
+ delimiter $$
+ create procedure changes()
+ begin
+	replace into kc1 select * from kc;
+ end$$
+ delimiter;
+
+
+ create trigger kc1_change after insert
+	on kc for each row
+	  call changes();
+
+ 验证：
+ 如何复制表，复制结构
+
+ create table kc1 like kc;  
+ CREATE TABLE kc1 SELECT * FROM kc;
+ insert into kc values('333','python',7,51,3);
+
+ select * from kc1;
+
+ 删除触发器：
+
+ DROP TRIGGER [数据库名.]触发器名
+
+ 五  事件
+
+ 事件的作用
+ 1）关闭账户 2）打开或关闭数据库指示器；3）使数据库中的数据在某个间隔后刷新
+ 4）执行对进入数据的复杂的检查工作。
+
+
+ 要创建事件，必须打开调度器。可以使用系统变量EVENT_SCHEDULER来打开事件调度器 ，TRUE为打开，FALSE为关闭：SET GLOBAL EVENT_SCHEDULER = TRUE;
+ 例7.29】创建一个立即启动的事件
+
+use xscj
+create event direct
+	 on schedule  at now()
+	 do insert into xs values('091103', '张建', '软件工程', 1, '1994-06-05', 50,null,null);
+
+ 例24 创建一个30秒后启动的事件
+ create event thrityseconds
+	 on schedule at now()+interval 30 second
+	 do insert into xs values('091104', '陈建', '软件工程', 1, '1994- 08-16', 50,null,null);
+
+ 例25 创建一个事件，它每个月启动一次，开始于下一个月并且在2020年的12月31日 结束。
+ delimiter $$
+ create event startmonth
+ 	on schedule  every 1 month
+		starts curdate()+interval 1 month --now()
+	ends '2020-12-31'
+	do 
+	begin
+	 if year(curdate())<2021  then
+	insert into xs values('091105', '王建', '软件工程', 1, '1994-03- 16',48,null,null);
+	end if;
+	end$$
+ delimiter ;
+
+ 命令格式：
+ CREATE EVENT [IF NOT EXISTS] 事件名
+    ON SCHEDULE 时间描述
+    [ON COMPLETION [NOT] PRESERVE]
+    [ENABLE | DISABLE | DISABLE ON SLAVE]
+    [COMMENT '注释']
+    DO SQL语句;
+
+ 时间描述：
+ AT 时间点 [+ INTERVAL 时间间隔]
+| EVERY 时间间隔 
+  [STARTS 时间点[+ INTERVAL 时间间隔]] 
+  [ENDS 时间点 [+ INTERVAL 时间间隔]]
+
+ 事件间隔：
+ count {  YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
+          WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
+          DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND}
+
+
+ 事件修改：
+
+ ALTER EVENT语句来修改其定义和相关属性
+
+ ALTER EVENT语句与CREATE EVENT语句格式相仿，
+ 用户可以使用一条ALTER EVENT语句让一个事件关闭或再次让它活动。
+ 用户还可以使用一条RENAME TO子句修改事件的名称
+ 例26  将事件startmonth的名字改成firstmonth
+ alter event startmonth  rename to firstmonth;
+ show events;
+ 
+ 删除事件
+   DROP EVENT [IF EXISTS][数据库名.] 事件名
+ drop event firstmonth;

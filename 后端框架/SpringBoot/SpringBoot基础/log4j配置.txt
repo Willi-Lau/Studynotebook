@@ -1,0 +1,9 @@
+https://blog.csdn.net/weixin_43759352/article/details/104298332
+
+1.在resource下新建log4j.properties
+
+2.写入以下信息：
+log4j.rootLogger=DEBUG, stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n

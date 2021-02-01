@@ -1,0 +1,736 @@
+
+SQL语句不区分大小写，字符串区分大小写
+结尾分号
+  #打开
+  mysql -uroot -p
+  #显示拥有数据库
+  show databases
+  #使用数据库
+  use name1
+  #显示表
+  show tables
+  #具体查看表结构
+  desc student_1
+  #删除整个表，包括内容和结构
+  drop table student_1
+  #添加数据
+  insert into 表名 values(添加的数据)
+ 
+  //设置utf8
+  set names utf8
+  //查看版本
+  select @@version;
+
+2、source 命令导入
+  source 命令导入数据库需要先登录到数库终端：
+    mysql> create database abc;      # 创建数据库
+    mysql> use abc;                  # 使用已创建的数据库 
+    mysql> set names utf8;           # 设置编码
+    mysql> source /home/abc/abc.sql  # 导入备份数据库
+
+
+  create database 逻辑库名称;                                              创建逻辑库
+  create database 名字 character set utf8 collate utf8_general_ci;         创建逻辑库utf8格式
+  show database;                                                           显示逻辑库
+  drop database 逻辑库名称;                                                删除逻辑库 
+  show create table 表名;                                                  查看建表语句                                               
+
+创建数据表
+  create table 数据库名称(
+    列名1 数据类型[约束] [COMMENT 注释]，
+    列名1 数据类型[约束] [COMMENT 注释]，
+      ......
+    )[COMMENT = 注释];
+  由存在的表创建表
+  create table 名字 like 原表明   空表，结构一样
+  create table 名字  as （select语句）   复制表 
+1、复制旧表的数据到新表(假设两个表结构一样)
+  INSERT INTO 新表 SELECT * FROM 旧表
+
+  数据类型	           描述
+  integer(size)              仅容纳整数。在括号内规定数字的最大位数。
+  int(size)
+  smallint(size)
+  tinyint(size)
+
+  decimal(size,d)            容纳带有小数的数字。  "size" 规定数字的最大位数。"d" 规定小数点右侧的最大位数。
+  numeric(size,d)
+  float()   不精确
+
+  char(size)                 容纳固定长度的字符串（可容纳字母、数字以及特殊字符）。在括号中规定字符串的长度。	
+  varchar(size)              容纳可变长度的字符串（可容纳字母、数字以及特殊的字符）。在括号中规定字符串的最大长度。
+  text(size)	            容纳可变长度的字符串（可容纳字母、数字以及特殊的字符）。在括号中规定字符串的最大长度。
+
+  date(yyyy-mm-dd)	            容纳日期。
+  timestamp
+  date                               日期  ALTER TABLE student_num1 ADD year_time1 date;  date不用加括号约束
+
+
+
+
+数据类型修饰符
+ unsigned                   无符号整数，加载int后面
+ not null                   非空
+ primary key                   主键约束，不能重复
+      主键值后加 auto_increment 主键空间自动增大
+
+
+在mysql中新建数据库，如果只写数据库名，没有设置字符集和排序规则，默认字符集为latin1 ，排序规则为latin1_swedish_ci 
+latin1_swedish_ci 不能存放中文，存放中文需把格式设定为UTF-8
+
+ALTER TABLE 表名 DEFAULT CHARACTER SET utf8;     转为UTF-8
+ALTER TABLE `test` CHANGE `name` `name` VARCHAR(36) CHARACTER SET utf8 NOT NULL;   命令用于将表test中name字段的编码方式改为utf8
+
+设置默认值
+alter table 表名 alter column 列名 set default 默认值
+删除默认值
+alter table 名 alter column 列名 drop default 
+删除默认值
+
+添加字段
+ALTER TABLE表名称
+ADD 列1 数据类型 [约束] [COMMENT 注释][FIRST | AFTER列名],
+ADD 列1 数据类型 [约束] [COMMENT 注释],
+......;
+
+修改字段类型和约束
+ALTER TABLE 表名称
+MODIFY 列1 数据类型 [约束] [COMMENT 注释]，
+MODIFY 列1 数据类型 [约束] [COMMENT 注释]，
+......;
+
+修改字段名称
+ALTER TABLE 表名称
+CHANGE 列1 新名字 数据类型 [约束] [COMMENT 注释]，
+CHANGE 列1 新名字 数据类型 [约束] [COMMENT 注释]，
+......;
+
+删除字段
+ALTER TABLE 表名称
+DROP 列1，
+DROP 列2，
+......;
+
+修改表名
+alter table 表名 rename to 新表名
+
+
+
+约束：
+第一范式：原子性，每个数据不可拆分的基本原子
+第二范式：唯一性，每列数据不能重复一致
+第三范式：关联性，每列都与主键有直接关系，不存在传递依赖。
+然后依照第三范式，数据可以拆分保存到不同的数据表，彼此保持关联。
+
+字段约束：
+主键约束：PRIMARY KEY 字段值唯一，且不能为NULL
+非空约束：NOT NULL 字段值不能为NULL
+唯一约束：UNIQUE 字段值唯一，且可以为 NULL 
+外键约束：FOREIGN KEY 保持关联数据的逻辑性，约束定义在子表上
+
+
+
+索引：
+执行顺序：from->where->select->order by->limit
+
+ 数据量巨大，经常被查询的数据表可以设置索引
+ 索引只添加到经常被索引检索条件的字段上
+ 不要再大字段上创建索引
+
+ 创建索引
+  1:create table 表名(
+      ...
+     ...
+     index 索引名 （字段名称）
+     )
+
+  2: create index 索引名 on 表名（字段名称）
+     alter table 表名 add index 索引名（字段名称）
+
+  查看表包含的索引
+  show index from 表名
+  
+
+  删除索引
+  drop index 索引名 on 表明
+主键索引：PRIMARY KEY 字段值唯一，且不能为NULL
+唯一索引：UNIQUE 字段值唯一，且可以为 NULL 
+外键索引：FOREIGN KEY 保持关联数据的逻辑性，约束定义在子表上
+
+查询  select 字段名 from 表明 limit 起始值，偏移值   （若limit 只有一个值代表起始值为0）
+
+select * from 表名 limit 10                 查询所有字段信息，从0开始查询10个
+select 字段名 from 表明 limit 2，5            查询指定字段信息，从2开始查询5个
+select  money_month *12 as year_money from 表名   对指定字段进行操作，新命名输出  （本表只有月薪字段无年薪字段，把月薪*12得到年薪。 
+                                                                                    如若不as,本字段名字为money_month *12，这种操作不会改变表的信息）
+
+  查询附带：（添加到from后面）
+   limit 起始值，偏移值   （若limit 只有一个值代表起始值为0）   从起始值开始查询偏移值个  放最后
+   order by 字段1，字段2   (asc（默认）\desc)    对指定字段进行排序 asc升序 desc降序
+   
+   distinct去除重复（添加到字段名前面select后面）（select只查询一个字段时生效，查询多个字段时失效）
+
+   where 进行筛选判定 加在from 后面
+   
+
+     筛选方法：
+       字段名 in(m,n,p)              判断字段值是否在m,n,p中      in只能筛选在一个字段里的东西，如果筛选的不同字段需要union进行连接
+       DATEDIFF(expr1,expr2)         返回日期expr2-expr1的值        now() 现在的日期
+       IFNULL(字段名,m)              如果指定字段值为null ，则替换成m进行操作，不在数据表上更改。
+       字段名 is null                为空
+       字段名 is not null            不为空
+       字段名 between a and b        范围a-b
+       字段名 like "A%"              模糊查询 名字以A开头，%为任意字段 _为一个字符
+       字段名 regexp"正则表达式"      正则表达式
+                 正则表达式的汉字运算符：
+                 REGEXP “[^\\u4e00-\\u9fa5]{2,4}$”
+       and     与
+       or       或
+       not     非
+       xor     异或   两边不同为true  相同为false
+      替代    union关键字可以将多个查询语句的结果集进行合并
+
+查询注意事项
+    1：in只能筛选在一个字段里的东西，如果筛选的不同字段需要union进行连接
+    2：避免出现笛卡尔积，避免出现from调用一个表而不用
+  错误写法：use lol;
+            select  all_player.*
+            from champion_s right join all_player
+            on champion_s.club = all_player.old_club
+            where all_player.old_club = (Select club from champion_s where S_number = 'S5')
+            and all_player.`name` in (select  `上单` from champion_s where S_number = 'S5'
+            union select  `打野` from champion_s where S_number = 'S5'
+            union select  `中单` from champion_s where S_number = 'S5'
+            union select  `ADC` from champion_s where S_number = 'S5'
+            union select  `辅助` from champion_s where S_number = 'S5')
+            ;
+
+    from 里调用了champion_s而并没有用，出现重复查询
+
+   正确写法：use lol;
+             select  all_player.*
+             from all_player,money_level
+             where 
+             all_player.Social_status BETWEEN money_level.lower and money_level.higher
+             and all_player.old_club = (Select club from champion_s where S_number = 'S5')
+             and all_player.`name` in (select  `上单` from champion_s where S_number = 'S5'
+             union select  `打野` from champion_s where S_number = 'S5'
+             union select  `中单` from champion_s where S_number = 'S5'
+             union select  `ADC` from champion_s where S_number = 'S5'
+             union select  `辅助` from champion_s where S_number = 'S5')
+
+case   when then end 结构：
+             ;
+        SELECT
+	employees.NAME ,
+	employees.address , 
+        CASE
+        WHEN salary.Income < 2000 THEN "低收入"
+        WHEN salary.Income BETWEEN 2000
+        AND 3000 THEN
+	  "中收入"
+       WHEN salary.Income > 3000 THEN
+	 "高收入"
+       END as money                 必须有as 新名字
+ 
+
+       FROM
+        employees,salary
+       WHERE employees.EmployeeID = salary.EmployeeID;
+
+
+
+
+聚合函数放在select里不放在where里            *******聚合函数不能出现在where子句里！！！******
+    1、length（）统计字符串的个数
+       聚合函数返回的结果集只有一条记录
+    2、AVG（要求的内容）用于获取非空值得平均值，非数字数据统计结果为0
+    3、SUM（要求的内容）求和 #只能用于数字类型，字符串类型的结果为0，日期类型的结果是毫秒数相加
+    4、MAX（要求的内容）获得非空值的最大值 #LENGTH（要求的内容）可求长度
+       查询员工名字最长的是几个字符。
+       SELECT MAX(LENGTH(ename)) FROM t_emp;
+    5、MIN（要求的内容）获得非空值的最小值
+    6、COUNT(*)用于获得包含空值的所有记录个数，COUNT(列名)用于获得包含非空值的记录个数。
+  
+
+
+普通函数：
+     1: round()   四舍五入
+     2: floor()   舍去小数部分   floor(5.7) = 5    floor(4.9) = 4 
+     3:	cell()    强制近卫       cell(1.1)= 2      cell(0.1) = 1
+     4：date_format(date,格式)    日期转字符     date_format(20190913,%y年%m月%d日)   =   2019年9月13日
+
+    truncate 语句
+       turncate语句用于删除记录，并且不支持回滚
+    IF表达式
+      IF(expr1,expr2,expr3)
+      如果 expr1 是TRUE (expr1 <> 0 and expr1 <> NULL)，则 IF()的返回值为expr2; 否则返回值则为 expr3。IF() 的返回值为数字值或字符串值，具体情况视其所在语境而定。    
+
+
+
+分组：（按分组输出）放到from 后面
+   
+     默认情况下汇总函数是对全表范围内的数据做统计
+     group by子句的作用是通过一定的规则将一个数据集划分成若干个小的区域，然后针对每个小区域分别进行数据汇总处理
+     1、对select子句的要求：
+         查询语句中如果含有GROUP BY字句，那么SELECT字句中的内容旧必须要遵守规定：SELECT字句中可以包括聚合函数，
+         或者GROUPBY字句的分组列，其余内容不可以出现在SELECT字句中
+     
+     2、with rollup   对分组结果集再次做汇总计算，如果是普通字段没办法汇总则用NONE值代替。    groupp by 后面
+     select departmentid as 小组号,count(name) as 人数
+
+     from employees  group by departmentid with ROLLUP ;
+
+
+     3、group_concat（）函数可以把分组查询中的某个字段拼接成一个字符串   select 里
+     select departmentid as 小组号,count(name) as 人数,GROUP_CONCAT(name)
+
+       from employees  group by departmentid  ;
+     
+     4、查询语句各种子句的执行顺序：
+         from->where->group by->select->order by->limit
+     5、round（）函数将小数四舍五入为一个整数。
+     6、GROUP BY +组名可进行分组 可多个分组，组名后加逗号继续加组名即可
+
+
+结尾查询：having 
+针对查询结果进行二次查询，再所有查询结束时进行
+having子句和where子句的功能是相同的都是做数据的筛选
+      1、group by 1 表示用select子句的第一个字段作为分组字段
+          select name,count(*) gruop by 1 from stu   用name  进行分组        
+
+      2、HAVING 子句不能独立存在，必须依赖于GROUP BY 语句
+      3、having子句的用途：
+          having子句用在group by子句后面（不能独立存在）可以引入聚合函数做条件判断。
+      4、聚合函数是针对结果集进行的，但是where条件并不是在查询出结果集之后运行，所以主函数放在where语句中，会出现错误，
+      5、大致解释如下，sql语句的执行过程是：from-->where-->group by -->having --- >order by --> select;
+
+
+
+
+表连接
+   内连接
+      1.SELECT e.empno,e.ename,d.dname FROM t_emp e JOIN t_dept d  ON e.dept = d.dept;
+      
+            表名后要加一个别名，如t_emp e，这是由于两张表都有dept，系统分辨不出来是哪一个。
+
+      2.将ON改成WHERE；
+            SELECT e.empno,e.ename,d.dname FROM t_emp e JOIN t_dept d WHERE e.dept = d.dept;
+ （通用）3.将join去掉，改用逗号
+            SELECT e.empno,e.ename,d.dname FROM t_emp e, t_dept d
+            WHERE e.dept = d.dept;
+  外连接简介：
+      外连接与内连接的区别在于，除了符合条件的记录之外，结果集中还会保留不符合条件的记录。
+            select e.empno,e.ename,d.dname
+            from t_emp e
+            left join t_dept d on e.deptno=d.deptno;
+
+            多个外连接  FROM cart c RIGHT JOIN business b on c.businessId = b.businessId   RIGHT JOIN food f on c.foodId = f.foodId 
+                       
+    左连接和右连接：
+    左外连接就是保留左表所有的记录，与右表做连接。如果右表有符合条件的记录就与左表连接。如果右表没有符合条件的记录，就用null与左表连接。右外连接也是如此。
+
+
+子查询
+   查询条件中再加一个括号，括号里完整的写出要查询的信息
+   查询部门号和刘明一样的人的所有信息
+   use yggl;
+   select *
+   from employees
+   where DepartmentID = (SELECT DepartmentID from employees where `NAME` = "刘明") and `NAME` != "刘明";
+   1：exists查询：测试查询结果是否为空，不为空返回TRUE   外查询查一次子查询查一次，而不是子查询结束再执行外查询
+    子查询：在select查询条件中，使用另一个select查询
+   2：in 子查询
+     表达式  [not] in (select 子句)
+     select 姓名,学号 from xs  where 学号 in (select 学号 from xs_kc where 课程号='206');
+     先子查询 ，后外查询
+     IN 子查询返回一列数据
+   3：比较子查询
+     {< | <= | >| >=|<>|!=} {ALL  |  SOME  |  ANY} 
+     ALL： 表达式与子查询结果中每个值比较，都满足，返回true
+     SOME,ANY：  表达式与子查询结果中某个值比较，若满足，返回true
+
+     例16：功能206号课程，成绩不低于101的成绩的最低值？
+
+          select  学号 from xs_kc 
+          where 课程号 ='206'and 成绩 >=ANY(
+          select 成绩 from xs_kc where 课程号='101');
+
+
+INSERT语句
+    INSERT INTO t_dept（deptno,dname,loc） VALUE（0,“后勤部”，“北京”）
+    #若需插入多条，在后面加就可以
+    INSERT INTO t_dept（deptno,dname,loc） VALUE（50,“后勤部”，“北京”），（60，“国防部”，“北京”）
+
+    INSERT语句方言（只适用于MySQL）
+    INSERT INTO t_emp SET empno=“ ”，job=“ ”
+
+    IGNORE关键字 会让INSERT只插入数据库不存在的记录
+    使用方法：在INSERT和INTO的中间加上IGNORE即可
+
+
+
+update语句
+   UPDATE [IGNORE] 表名
+   SET XX=XX,XX=XX （运行顺序最后）
+   [ WHERE 条件1.......]
+   [ ORDER BY .......]
+   [ LIMIT .........]；(只能取前X的，即【0，X】），只能填一个数字
+
+   2、update语句的表连接，表连接的update语句可以修改多张表的记录
+     update 表1,表2
+     set 字段1=值1,字段2=值2,.....
+     where 连接条件;
+     或者
+     update 表1 join 表2 on
+     set 字段1=值1,字段2=值2,.....
+
+
+delete语句：
+  delete语句用于删除记录：
+    delete [ignore] from 表名 
+    [where 条件1,条件2,.....]
+    [order by ......]
+    [limit ....];
+  #删除10部门中，工龄超过20的员工记录
+    delete from t_emp
+    where deptno=10 and datediff(now(),hiredate)/365 >=20;
+  #删除20部门中工资最高的员工记录
+    delete from t_emp
+    where deptno=20
+    order by sal+ifnull(comm,0) desc
+    limit 1;
+
+
+
+1.创建视图
+ （1)创建YGGL数据库上的视图DS_VIEW,视图包含Departments表的全部列。
+     create or replace
+     view DS_VIEW
+     as select * from Departments;
+（2)创建YGGL数据库上的视图Employeesview,视图包含员工号码、姓名和实
+    可使用如下SQL语句：
+     create or replace
+     view Employees_view(EmployeeID,Name,Reallncome)
+     as
+     select Employees.EmployeeID,Name,InCome-OutCome
+     fromEmployees,Salary
+     whereEmployees.EmployeeID=Salary.EmployeeID;
+
+
+2：查询视图
+（1)从视图DS_VIEW中查询出部门号为3的部门名称。
+      selectDepartmentName
+      fromDS_VIEW
+      whereDepartmentlD=’3’;
+(2)从视图Employees_view中查询出姓名为“王林”的员工的实际收入。
+     selectReallncome
+     fromEmployees_view
+     whereName~王林；
+
+3：更改删除添加视图注意事项：
+    插入数据时数据同时会更新到多个表，有的表有的数据不能为null，删除数据同理
+    Reallncome 字段由income-outcome 组成，因为计算出Reallncome时已经把income,outcome的物理地址删除，
+    所以修改Reallncome无法对income,outcome进行修改，所以不能修改
+    数据更改删除麻烦，因为更改视图还会更改表，更改原则要符合原表字段的原则，遇到使用group by,distinct，
+    时执行完操作就会删除原来数据的物理地址，再次进行更新视图信息时就会显示更新失败。
+
+显示存储引擎：show ENGINEs;
+事务：（一口气执行全部，不可分开执行）
+ 隐形事务： insert,update,delete
+ 显性事务： 事务具有明显的开启和结束标志
+            显示事务前提：设置自动提交功能为禁用
+                       1:开启事务
+                           set autocommit = 0;
+                           start transaction; //可省略
+                       2：编写事务中的语句
+                           语句1；
+                           语句2；
+                           。。。
+                       3：结束事务
+                           commit; 提交事务
+                           rollback;回滚事务
+                回滚点的使用：
+                       savepoint a;  a为名字  即设置保存点
+                       rollback to a;   回滚到a
+
+
+用户变量：针对当前绘画（连接）有效
+  #声名，初始化    1：set @变量名 = 值； 
+                   2：set @变量名 := 值； 
+                   3：select @变量名 := 值；                     
+
+  #赋值            1：set @变量名 = 值； 
+                   2：set @变量名 := 值； 
+                   3：select @变量名 := 值
+                   4:select 字段 into 变量名 from 表
+                 使用时一直有@
+                   set @m =1;
+                   set @n = 2;
+                   set @num = @m + @n;
+                   select @num;
+
+局部变量： 仅仅再begin,end中有效，定义应用在begin,end中第一句话
+  #声明： declare 变量名 类型
+  #声明+赋值  declare 变量名 类型 default 值；
+  #赋值            1：set 局部变量名 = 值； 
+                   2：set 局部变量名 := 值； 
+                   3：select @局部变量名 := 值
+                   4:select 字段 into 局部变量名 from 表
+
+
+
+
+
+
+
+
+存储过程和函数：
+  类似JAVA中方法
+   概念：一组预先编译好的SQL语句的集合，完成批处理语句
+   存储过程：0-多个返回值   多用于批量增删改
+   函数：1个返回值        多用于处理数据返回结果
+
+
+
+存储过程：
+ 一：创建：
+    create procedure 存储过程名（参数列表）
+    begin 
+    
+        存储过程体
+    end
+
+    注意：
+     1，参数列表半酣三部分,可以无参
+        （参数模式  参数名 类型）
+        in stuname char(20)
+        参数模式：
+               in:可以作为输入，该参数需要传入值
+               out：该参数可以作为返回值
+               inout：既可以输入，又可以输出
+      2，如果存储过程提只有一句话，begin end 可以省略
+      3，存储过程提中语句每条加分号，存储过程结尾使用delimiter重新设置
+          语法： delimiter 结束标记
+          案例： delimiter a 
+ 二：调用
+  call 存储过程名（实参列表） 结束标记；
+
+举例：in
+
+      1：
+        delimiter $;
+        create PROCEDURE find_inf_1 (in name1 char(20))
+        BEGIN
+        select *
+        from all_player a
+        where a.`name` = name1;
+
+
+        end $;
+
+        call FIND_inf_1('uzi');
+
+
+
+       2：
+        mysql> delimiter $$　　#将语句的结束符号从分号;临时改为两个$$(可以是自定义)
+        mysql> CREATE PROCEDURE delete_matches(IN p_playerno INTEGER)
+            -> BEGIN
+            -> 　　DELETE FROM MATCHES
+            ->    WHERE playerno = p_playerno;
+            -> END$$
+        Query OK, 0 rows affected (0.01 sec)
+ 
+        mysql> delimiter;　　#将语句的结束符号恢复为分号
+
+
+    out:
+       delimiter $$$
+       create PROCEDURE b(in name1 char(20),out name2 char(20))
+       BEGIN
+       select club  into name2      //返回值name2赋值                  返回两个以上值的写法： select name1,age1 into name2,age2
+       from all_player a
+       where a.`name` = name1;
+
+       END $$$
+       delimiter;
+
+       call b('uzi',@club);   //传入接受变量@club2
+       select @club;      //输出@club2
+
+
+    inout:
+      delimiter  $$
+      create procedure fuck (inout a int ,inout b int)
+      begin
+
+      set a = a*2;
+      set b = b*2;
+
+      end $$
+      delimiter ;
+      set @a = 10;
+      set @b = 20;
+      call fuck(@a,@b);
+      select @a,@b;
+
+
+  #删除存储过程
+      drop procedure 名字
+  #查看存储过程结构
+      show create procedure 名字     不同于表，视图，直接desc 名字
+
+函数：
+   一：创建语法：
+     create function 函数名（参数列表）  returns 返回值类型      ****create 时是retunrs!!!!有s!!!!!!!!!!!
+     begin
+         函数体
+     end
+  
+
+
+    delimiter $$
+
+     create function sb() RETURNs int 
+     BEGIN
+     DECLARE a int(10) DEFAULT 0;
+     select count(*) into a
+     from all_player;
+     return a;
+
+
+
+     end $$
+
+
+
+     select sb()$$
+
+
+    二：函数调用
+        select 函数名（参数列表）;
+
+
+四  触发器
+  
+  创建  CREATE TRIGGER
+  查看  SHOW TRIGGERS
+    每一行  for each row
+    old.   旧信息
+    new.   新信息
+
+ CREATE TRIGGER 触发器名  AFTER|BEFORE  触发事件
+    ON 表名 FOR EACH ROW  触发器动作
+
+ 触发事件：  激活触发程序的语句的类型。如INSERT,DELETE，UPDATE
+ 
+ 触发器动作：包含触发器激活时将要执行的语句。
+            如果要执行多个语句，可使用BEGIN ... END复合语句结构。
+不要包含SELECT语句，因为触发器不能返回结果。
+   
+ FOR EACH ROW：这个声明用来指定，对于受触发事件影响的每一行，都要激活触发器的 动作。
+
+ 例20  
+       创建一个触发器，当删除表xs中某个学生的信息时，同时将xs_kc表中与该学生有关的数据全部删除。
+
+         delimiter $$
+         create trigger xs_delete after delete on xs for each row
+         begin
+       delete from xs_kc where 学号=old.学号;
+         end$$
+         delimiter ;
+
+        insert into xs values('111222','罗林琳','通信工程',1,'1994-01-  30',42,null,'转专业学习');
+        insert into xs_kc values('111222','101',90,null);
+
+        delete from xs where 学号='111222';
+
+ 例21 创建一个触发器，当修改xs_kc表中数据时，如果修改后的成绩小于60分，则触发器将该成绩对应的课程学分修改为0，否则将学分改成对应课程的学分。
+
+        delimiter $$
+        create trigger xs_kc_update before update
+       on xs_kc for each row
+        begin
+       declare xf int(1);
+      select 学分 into xf from kc where 课程号=new.课程号;
+       if new.成绩<60 then
+       set new.学分=0;
+       else 
+       set new.学分=xf;
+       end if;
+        end$$
+        delimiter ;
+
+ 例 22  创建触发器，实现当向xs_kc表插入一行数据时，根据成绩对xs表的总学分进 行修改。
+  如果成绩>=60，总学分加上该课程的学分，否则总学分不变。
+        delimiter $$
+       create trigger xs_kc_zxf after insert
+       on xs_kc for each row
+       begin
+      declare xf int(1);
+      select 学分 into xf from kc where 课程号=new.课程号;
+      if new.成绩>=60 then
+      update xs set 总学分=总学分+xf where 学号=new.学号;
+      end if;
+       end$$
+     delimiter;
+
+ 例23 假设xscj数据库中有一个与kc表结构完全一样的表kc1，创建一个触发器，在kc 表中添加数据的时候，调用存储过程，将kc1表中的数据与kc表同步。
+
+ 首先，定义存储过程：
+       delimiter $$
+       create procedure changes()
+       begin
+      replace into kc1 select * from kc;
+      end$$
+      delimiter ;
+
+
+      create trigger kc1_change after insert
+     on kc for each row
+       call changes();
+
+ 验证：
+ 如何复制表，复制结构
+
+      create table kc1 like kc;  
+     CREATE TABLE kc2 as SELECT * FROM kc;
+
+      insert into kc values('333','python',7,51,3);
+
+     select * from kc1;
+
+ 删除触发器：
+
+      DROP TRIGGER [数据库名.]触发器名
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

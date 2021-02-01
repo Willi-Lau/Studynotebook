@@ -1,0 +1,2 @@
+访问   http://localhost:8080/swagger-ui.html
+教学： https://blog.csdn.net/u012702547/article/details/88775298

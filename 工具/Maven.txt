@@ -1,0 +1,57 @@
+教学地址：https://www.jianshu.com/p/e351f8e22c9a
+         https://blog.csdn.net/love_forver/article/details/78434937
+
+javaweb
+         https://blog.csdn.net/weixin_42405670/article/details/88781023
+
+         https://blog.csdn.net/czc9309/article/details/80304074
+
+Maven 下载慢
+
+https://www.cnblogs.com/tiandi/p/10666454.html
+
+添加web.app
+
+        https://blog.csdn.net/weixin_34309435/article/details/85970040?utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduend~default-1-85970040.nonecase&utm_term=idea%E6%B7%BB%E5%8A%A0webapp%E6%96%87%E4%BB%B6%E5%A4%B9&spm=1000.2123.3001.4430
+
+Tomcat 缺少插件 Deployment里什么都没有
+
+        https://blog.csdn.net/czc9309/article/details/80304074
+
+Spring 配置Javaweb 出现找不到Spring 核心文件错误
+
+        https://www.cnblogs.com/feiyujun/p/6537510.html
+        
+创建Maven项目报错 Process terminated
+
+       原因：Maven路径 .setting 配置的不对
+       https://blog.csdn.net/weixin_43840202/article/details/108086388
+
+<!--依赖都放到这里-->
+  <dependencies>
+
+     //依赖地址
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    //依赖地址
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.38</version>
+    </dependency>
+    
+  </dependencies>
+
+
+
+  添加书写：
+  Name : archetypeCatalog
+  Value : internal
+  

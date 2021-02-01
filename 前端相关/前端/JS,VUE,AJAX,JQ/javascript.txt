@@ -1,0 +1,1338 @@
+    JavaScript如何使用
+
+            1.在 HTML 中，JavaScript 代码必须位于 <script> 与 </script> 标签之间。
+            注意:
+            脚本可被放置与 HTML 页面的 <body> 或 <head> 部分中
+            把脚本置于 <body> 元素的底部，可改善显示速度，因为脚本编译会拖慢显示(为什么放在底部，只要在html元素加载完成之后，我们才能利用js对这些Html元素进行操作的)
+
+
+
+        
+            区分大小写
+            与 Java 一样，变量、函数名、运算符以及其他一切东西都是区分大小写的。
+            比如：
+            变量 test 与变量 TEST 是不同的
+
+        
+            变量是弱类型的
+            与 Java 和 C 不同，ECMAScript 中的变量无特定的类型，定义变量时只用 var 运算符，可以将它初始化为任意值。
+            因此，可以随时改变变量所存数据的类型（尽量避免这样做）。
+            例子
+                var color = "red";
+                var num = 25;
+                var visible = true;
+
+            每行结尾的分号可有可无
+            2.使用 var 运算符声明变量
+            与 Java 不同，ECMAScript 中的变量并不一定要初始化
+
+            可以使用typeof 检查数据类型
+            ypeof 运算符
+            typeof 运算符有一个参数，即要检查的变量或值。例如：
+
+            var sTemp = "test string";
+            alert (typeof sTemp);    //输出 "string"
+            alert (typeof 86);    //输出 "number"
+            对变量或值调用 typeof 运算符将返回下列值之一：
+
+            undefined - 如果变量是 Undefined 类型的
+            boolean - 如果变量是 Boolean 类型的
+            number - 如果变量是 Number 类型的
+            string - 如果变量是 String 类型的
+            object - 如果变量是一种引用类型或 Null 类型的
+
+
+
+            parstInt() 转整数
+            parstFlaot() 转浮点
+            toString() 转字符
+
+  JavaScript 常用操作方法
+                     setInterval(function, milliseconds)      可按照指定的周期（以毫秒计）来调用函数或计算表达式。 方法会不停地调用函数，直到 clearInterval() 
+                                                              被调用或窗口被关闭。由 setInterval() 返回的 ID 值可用作 clearInterval() 方法的参数。
+                     setTimeout(function, milliseconds)        方法用于在指定的毫秒数后调用函数或计算表达式。（不重复）
+                     clearInterval(id_of_setinterval)          停止setInterval()的执行
+                     clearTimeout(id_of_settimeout)            停止setTimeout（）的执行
+                     push()                                    数组中添加新元素
+                     prototype                                 为JavaScript对象添加属性    
+                     innerHTML                                 改变文本, URL, 及链接目标:
+
+
+  文件后缀：  .js
+  引入
+     <script src = "路径"> </script>
+   写入head 或body
+            <script>  </script>
+            [] 数组
+            {} 对象
+
+                数组循环for:
+                var array = [1,2,3,4,5,6]
+                array.forEach( i =>{
+                    alert(i)
+                })
+                对象：
+                var a = {
+                    key:value,
+                }
+          
+
+            加载模式：同步加载  慢
+                    异步加载   让负责页面内结构，样式的代码先加载
+                                值：async:当脚本代码下载完后会立即执行脚本代码
+                                    defer:等页面效果加载完成后在执行脚本代码
+
+
+            输出语句： alert() 警告框
+                    console.log() 控制台输出
+                    document.write() 网页输出
+
+
+
+            JS能够做什么：可以改变htlm内容
+                        可以改变html属性
+
+
+    ECMAScript：它表示JavaScript的标准
+    尽管 ECMAScript 是一个重要的标准，但它并不是 JavaScript 唯一的部分，当然，也不是唯一被标准化的部分。实际上，一个完整的 JavaScript 实现是由以下 3 个不同部分组成的：
+            1.核心（ECMAScript）
+            2.文档对象模型（DOM）
+            3.浏览器对象模型（BOM）
+
+
+  
+
+     函数的定义：
+            1：使用function命令声明
+            function 名字 (参数){
+                语句
+                return 语句     //可写可不写
+            }
+            2：采用变量赋值的写法  (匿名函数)
+                var 函数名1 = function(){
+                    函数体
+                    }
+                调用： 函数名1（）;
+
+                匿名函数的自执行
+                    (function(参数){ alert(abc)})(参数);
+            3:Function构造函数方式创建一个函数
+                var x = new Function("x","y","var sum; sum=x+y;return sum;");
+                    alert(x(2,3));
+                    //等价的
+                    function x(x,y){
+                            var sum;
+                            sun = x+y;
+                            return sum;
+                            }
+
+        
+                function box(){
+                alert("这是一个自定义的函数");
+                }
+
+                //调用函数
+                box();
+
+                // 有参数的函数
+                    function box1(a,b) {
+                    alert(a+b);
+                    }
+
+                    box1(1,2);
+
+                //不参数有返回值的方法
+                    function box1(a,b) {
+                    return a+b;
+                    }
+                //调用函数要将这个函数的返回值赋值给一个变量result
+                    var result = box1(1,2);
+                    alert(result);
+    
+                onclick 单击事件
+
+            JavaScript中的return可以返回函数的函数
+
+                当函数没有明确返回值，返回值就是underfined
+                当函数有返回值时，返回什么就是什么
+                在使用return时函数会停止执行并返回一个结果
+                函数返回值通常是一个唯一的之，不过也可能是一个函数（返回值接受给一个变量，变量就为函数）
+    
+
+                function a(){
+                    return function (){
+                    alter(2)    
+                    }}
+                调用： 
+                        var m = a();
+                        m();
+                或：
+                        a()();
+
+
+
+
+
+
+
+
+    JavaScript中也是面向对象Object：
+
+                    Object 是一个无序的集合，可以存放任意的对象，所有其他的对象都是他的儿子
+                    创建Object 两种方式
+                1  new 创建
+                    var obj = new Object();
+                    obj.name = "andy";
+                    obj.age = 18;
+                    obj.fn = function(){
+                            alert("吃饭");           
+                            }
+                2.使用字面量
+                    var obj1 = {
+                        name : 18
+                        age  :  aaa
+                        eat : function(){
+                            alert("吃饭");
+                        }
+                        }; {}表示一个对象
+
+
+        构造函数：其实就是一个普通函数，在内部可以使用this
+                        对于构造器我们要使用new运算符，就能生成实例，并且this会绑定在实例对象上
+
+                JavaScript 中的构造器（规范：函数名称首字母大写）
+                function Person(name,age){
+                        this.name = name;
+                        this.age = age;
+                        this.eat = function(){
+                            alert("eat...')
+                        } 
+                        }
+
+                通过new对象来调用构造器
+                var person = new Person('andy',20);
+                person.eat();
+
+
+                使用prototype向构造器添加属性方法
+                构造器.protptype.属性名 = 值
+                    构造器.protptype.函数名 = function(){值}
+    
+                函数的作用域(scope):它是指变量存在的范围
+                    ES5只有两种作用域
+                    1.全局：
+                        函数外部声明的变量，可以应用到函数内部读取
+
+                    2.函数使用域
+                        函数内部定义的，外部无法读取
+                        会覆盖同名的全局变量
+                    注意：对于var来说，局部变量只能在函数内部声明，在其他区块{} 比如if语句中，都是全局bl
+
+                        function 里的变量时局部变量，其他{}里的不是局部变量
+                        如果function里嵌套别的{}，比如if ，那么if 里的变量作用域提升到function中
+
+                        //与全局作用域相同，函数的作用域内部也会产生变量的提升的情况。
+                        //使用var声明变量的时候，无论在什么地方，变量声明都会被提升到函数体的头部
+
+                                function fun(x){
+                                if(x>100){
+                                        var temp = x-1000;
+                                            }
+                                        }
+                        //等价于
+                                function fun(x){
+                                var temp;
+                                if(x>100){
+                                        temp = x-1000;
+                                            }
+                                            }
+
+
+            函数的几个作用：
+                    1.可以将函数作为一个构造器使用
+                    2.普通函数
+                    3.函数的自执行(function(){})
+
+
+
+
+        JavaScript中的三个重要组成：
+        1.ECMAScript 基本语法标准
+        2.JS Browser BOM 浏览器对象模型（BOM）
+           浏览器对象模型（Browser Object Model (BOM)）允许 JavaScript 与浏览器对话
+           Window对象：Window 对象表示浏览器中打开的窗口
+           常用的方法：
+                alert()  显示带有一段消息和一个确认按钮的警告框。
+                confirm()  显示带有一段消息以及确认按钮和取消按钮的对话框。        提示
+                prompt()  显示可提示用户输入的对话框。
+
+           Location 对象包含有关当前 URL 的信息。
+           Location 对象是 Window 对象的一个部分，可通过 window.location 属性来访问。
+               基本语法：location.href=URL    跳转到URL
+               常用的方法： reload()  重新加载当前文档。
+
+           History 对象包含用户（在浏览器窗口中）访问过的 URL。
+           History 对象是 window 对象的一部分，可通过 window.history 属性对其进行访问。
+               back()  加载 history 列表中的前一个 URL。  后退
+               forward()  加载 history 列表中的下一个 URL。 前进
+               go()  加载 history 列表中的某个具体页面。 go(-1)  go(1)
+          3.DOM 文档对象模型
+
+            Document 对象
+            每个载入浏览器的 HTML 文档都会成为 Document 对象。
+            Document 对象使我们可以从脚本中对 HTML 页面中的所有元素进行访问。（可以通过很多方式获取）
+
+            对HTML页面中的元素进行访问的三个重要方法
+            1.getElementById()	返回对拥有指定 id 的第一个对象的引用。
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Document</title>
+                        <script type="text/javascript">
+                            function getValue()
+                            {
+                            var x=document.getElementById("myHeader")
+                            //innerHTML显示节点元素中的纯文本内容   
+                            alert(x.innerHTML)
+                            }
+                            </script>
+                    </head>
+                    <body>
+                        <h1 id="myHeader" onclick="getValue()">This is a header</h1>
+                        <p>Click on the header to alert its value</p>
+                    </body>
+                    </html>
+            2.getElementsByName()	返回带有指定名称的对象集合。
+                该方法与 getElementById() 方法相似，但是它查询元素的 name 属性，而不是 id 属性。
+                另外，因为一个文档中的 name 属性可能不唯一（如 HTML 表单中的单选按钮通常具有相同的 name 属性），
+                所有 getElementsByName() 方法返回的是元素的数组，而不是一个元素。
+
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Document</title>
+                        <script type="text/javascript">
+                            function getElements()
+                            {
+                                var x=document.getElementsByName("myInput");
+                                alert(x.length);
+                            }
+                        </script>
+                    </head>
+                    <body>
+                        <input name="myInput" type="text" size="20" /><br />
+                        <input name="myInput" type="text" size="20" /><br />
+                        <input name="myInput" type="text" size="20" /><br />
+                        <br />
+                        <input type="button" onclick="getElements()"
+                        value="How many elements named 'myInput'?" />
+                    </body>
+                    </html>
+            3.getElementsByTagName()	返回带有指定标签名的对象集合。
+
+                    如何查看文档
+                      <select id="ss" onchange="getValue()">
+                        <option value="1">Java</option>
+                        <option value="2">C++</option>
+                        <option value="3" selected>Node</option>
+                        <option value="4">Spring</option>
+                      </select>
+
+              **   Select 对象
+                        Select 对象代表 HTML 表单中的一个下拉列表。
+                        在 HTML 表单中，<select> 标签每出现一次，一个 Select 对象就会被创建。
+                        您可通过遍历表单的 elements[] 数组来访问某个 Select 对象，或者使用 document.getElementById()。
+
+                        options[]	返回包含下拉列表中的所有选项的一个数组。
+                        selectedIndex	设置或返回下拉列表中被选项目的索引号。
+
+                        事件：
+                        onchange	当改变选择时调用的事件句柄。
+
+              **    Option 对象
+                        Option 对象代表 HTML 表单中下拉列表中的一个选项。
+                        在 HTML 表单中 <option> 标签每出现一次，一个 Option 对象就会被创建。
+                        您可通过表单的 elements[] 数组访问一个 Option 对象，或者通过使用 document.getElementById()。
+                    **//selectObject.value 返回option的值
+                        
+                        selected	设置或返回 selected 属性的值。
+                        text	设置或返回某个选项的纯文本值。
+                        value	设置或返回被送往服务器的值。
+
+                    实现：
+                      <script type="text/javascript">
+                          function getValue() {
+                            //根据Id查询到select元素
+                            var x = document.getElementById("ss");
+                            for(var i = 0;i<x.length;i++) {
+                                // document.write(x.options[i].text+"<br>");
+                                // document.write(x.options[i].value+"<br>");
+                                if(x.options[i].selected==true){
+                                  alert(x.options[i].text);
+                                }
+                            }
+                            //  alert(x.selectedIndex);
+                          }
+                        </script>
+
+
+                      <!--onsubmit 表单提交之前会调用函数  -->
+                        <form id="form1" name="form1" action="" method="post" onsubmit="getForm()">
+                            <input type="text" id="a" value="abc">
+                            <input type="submit" value="ok">
+                        </form>
+                    如何获取到表单中元素的值
+                    1.document.forms[0].a.value
+
+                    2. var x=document.getElementById("form1");   x.elements[i].value
+           
+
+
+                     form.elements 定义和用法
+                          elements 集合可返回包含表单中所有元素的数组。
+
+                          元素在数组中出现的顺序和它们在表单的HTML 源代码中出现的顺序相同。
+
+                          每个元素都有一个 type 属性，其字符串值说明了元素的类型。
+
+                          语法
+                          formObject.elements[]
+
+                          
+                      属性：checked  查看是否被选中 和 设置是否被选中
+                       在 HTML 文档中 <input type="checkbox"> 每出现一次，Checkbox 对象就会被创建。
+                      您可以通过遍历表单的 elements[] 数组来访问某个选择框，或者通过使用 document.getElementById() 。
+
+                      属性
+                      1.checked	设置或返回 checkbox 是否应被选中。
+                      语法:checkboxObject.checked=true|false
+
+                      2.type	返回 checkbox 的表单元素类型。
+
+                      <script>
+                              function getValue() {
+                                  //1. 根据id获取到form表单元素
+                                  // var x = document.getElementById("form1");
+                                  var objForm = document.form1; //根据表单中的name来获取到表单
+                                  //2.对表单进行遍历
+                                  for(var i = 0;i<objForm.length;i++){
+                                  //2.1 根据id查找到全选的checkbox
+                                  var a = document.getElementById("all");
+                                  //2.2 需要判断我们获取的全选的checkbox是否被选中
+                                  if(a.checked==true){
+                                      //2.3 如果被选中，还需要去判断当前的元素是不是checkbox,如果是checkbox就要将它选中
+                                      if(objForm.elements[i].type=="checkbox") {
+                                          objForm.elements[i].checked=true;
+                                      }
+                                  }else {
+                                      // 反选
+                                      if(objForm.elements[i].type=="checkbox") {
+                                          objForm.elements[i].checked=false;
+                                      }
+                                  }
+                                  }
+                              }
+                          </script>
+
+
+                      二级联动的实现
+
+                      思路：
+                      1. 当页面首次加载之后我们要把学期添加到每一个select中
+                      2. 当我选择第一个select中的学期之后，我们要将每二个课程的select中的数据清除掉，然后要将学期所对应的课程获取到添加到第二个课程的select中
+
+                      add() 方法用于向 <select> 添加一个 <option> 元素。
+                      语法: selectObject.add(option,before)
+                      option	必需。要添加选项元素。必需是 option 或 optgroup 元素。
+                      before	必需。在选项数组的该元素之前增加新的元素。如果该参数是null，元素添加到选项数组的末尾。
+
+                      需要的事件onload: 页面首次加载之后会触发这个事件
+                          onload 事件会在页面或图像加载完成后立即发生。 <body onload="load()">
+
+                      <form id="form1" name="form1" action="" method="post">
+                              <table border="0" align="center">
+                                  <tr>
+                                      <td>学期</td>
+                                      <td>
+                                          <select id="selTerm" onchange="changeTerm()">
+                                              <option>请选择学期</option>
+                                          </select>
+                                      </td>
+                                  </tr>
+
+                                  <tr>
+                                      <td>课程</td>
+                                      <td>
+                                          <select id="selCourse">
+                                              <option>请选择学期所对应的课程</option>
+                                          </select>
+                                      </td>
+                                  </tr>
+                              </table>
+                          </form>
+
+                              <script>
+                          //创建一个数组用于保存学期以及所对应的课程
+                          var courseList = new Array();
+                          courseList["第一学期"] = ['HTML','NodeJS','MySQL','MongoDB'];
+                          courseList["第二学期"] = ['JavaScript','JSP','Spring','Hibernate'];
+                          courseList["第三学期"] = ['Ajax','AVue','Vue','React'];   
+                          
+                          function changeTerm() {
+                              //selectObject.value 返回option的值
+                              var selTerm = document.getElementById("selTerm").value;
+                              var selCourse = document.getElementById("selCourse");
+                              //如果把 options.length 属性设置为 0,Select 对象中所有选项都会被清除。
+                              selCourse.options.length = 0;
+                              for(var i in courseList) {
+                                  if(i==selTerm){
+                                  for(var j in courseList[i]) {
+                                      selCourse.add(new Option(courseList[i][j]),null);
+                                  }
+                              }
+                              }
+                          }
+                          // 当页面中首次加载的时候就要调用这个方法，将学期添加到第一个select中
+                          function allTerm() {
+                              var selTerm = document.getElementById("selTerm");
+                              for(var i in courseList) {
+                                  //要将courseList中的学期添加到selTerm下拉列表框中
+                                  selTerm.add(new Option(i),null);
+                              }
+                          }
+                          // window.onload = allTerm
+                          </script>    
+
+
+                   JS改变HTML或CSS
+                       JS可以改变所有属性，CSS可以设置style，也可以设置class，再通过css属性设置。
+                       改变图片等路径   document. document.getElementById().src=("相对路径")
+                       改变CSS样式   document. document.getElementById().style.color="red"
+
+                    HTML DOM innerHTML 属性
+                            
+
+                            定义和用法
+                            innerHTML 属性设置或返回表格行的开始和结束标签之间的 HTML。
+
+                            语法
+                            HTMLElementObject.innerHTML=text
+
+                            浏览器支持
+                            Internet ExplorerFirefoxOperaGoogle ChromeSafari
+
+                            所有主要浏览器都支持 innerHTML 属性
+                            innerHTML    输出内容
+
+                    HTML DOM className 属性（设置，添加，修改class属性）
+                                
+
+                                定义和用法
+                                className 属性设置或返回元素的 class 属性。
+
+                                语法
+                                获取属性值：
+
+                                HTMLElementObject.className
+                                设置（添加）属性值：
+
+                                HTMLElementObject.className = classname
+                    //窗口打开出发事件
+                        window.onload = function(){}
+
+                    正则表达式使用：
+                              正则式子对象.text(检测内容)
+                    如何封装属于自己的Javascript库（面向对象知识）
+                    
+                    JavaScript prototype 属性
+                                
+
+                                定义和用法
+                                prototype 属性允许您向对象添加属性和方法
+
+                                注意： Prototype 是全局属性，适用于所有的 Javascript 对象。
+
+                                语法
+                                object.prototype.name=value
+
+
+                    JavaScript push() 方法
+
+
+                                实例
+                                数组中添加新元素：
+
+                                var fruits = ["Banana", "Orange", "Apple", "Mango"];
+                                fruits.push("Kiwi")
+                                fruits 结果输出：
+
+                                Banana,Orange,Apple,Mango,Kiwi
+
+
+                                定义和用法
+                                push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+
+                                注意： 新元素将添加在数组的末尾。
+
+                                注意： 此方法改变数组的长度。
+
+                                提示： 在数组起始位置添加元素请使用 unshift() 方法。
+                                
+
+
+
+                                语法
+                                array.push(item1, item2, ..., itemX)
+
+
+
+
+
+                   
+
+
+                    JSON 基础知识
+
+                         
+
+                        例子：  var text = '{ "name":"Runoob", "initDate":"2013-12-14", "site":"www.runoob.com"}';   //最外面必须有一个单引号，把整个大括号也包含在内，因为JSON必须有一个大括号
+                                JSON: JavaScript Object Notation(JavaScript 对象表示法)
+
+                                JSON 是存储和交换文本信息的语法。类似 XML。
+
+                                JSON 比 XML 更小、更快，更易解析。
+                        JSON 对象
+                                    对象语法
+                                    实例
+                                    { "name":"runoob", "alexa":10000, "site":null }
+                                    
+                                    JSON 对象使用在大括号({})中书写。
+                                    对象可以包含多个 key/value（键/值）对。
+                                    key 必须是字符串，value 可以是合法的 JSON 数据类型（字符串, 数字, 对象, 数组, 布尔值或 null）。
+                                    key 和 value 中使用冒号(:)分割。
+                                    每个 key/value 对使用逗号(,)分割。
+                        JSON 数组
+                                    数组作为 JSON 对象
+                                    实例
+                                        [ "Google", "Runoob", "Taobao" ]
+                                    JSON 数组在中括号中书写。
+                                    JSON 中数组值必须是合法的 JSON 数据类型（字符串, 数字, 对象, 数组, 布尔值或 null）。
+                                    JavaScript 中，数组值可以是以上的 JSON 数据类型，也可以是 JavaScript 的表达式，包括函数，日期，及 undefined。
+
+                                    JSON 对象中的数组
+                                    对象属性的值可以是一个数组：
+
+                                    实例
+                                        {
+                                        "name":"网站",
+                                        "num":3,
+                                        "sites":[ "Google", "Runoob", "Taobao" ]
+                                        }
+                                    我们可以使用索引值来访问数组：
+
+                                    实例
+                                         x = myObj.sites[0];
+
+                        JSON 语法规则
+                                JSON 语法是 JavaScript 对象表示语法的子集。
+                                用双引号
+                                数据在名称/值对中，名值对用:隔开
+                                数据由逗号分隔
+                                大括号保存对象
+                                中括号保存数组
+                                JSON 不允许包含函数
+
+                        JSON.stringify()   将 JavaScript 对象转换为JSON。
+                        JSON.parse()   将JSON数据转换为 JavaScript 对象
+                           
+                                parse()       
+                                    var obj = JSON.parse('{ "name":"runoob", "alexa":10000, "site":"www.runoob.com" }'); //因为JSON对象需要{}包含，所以最外层有一个单引号，用来区分以及包含
+                                    document.getElementById("demo").innerHTML = obj.name + "：" + obj.site;
+
+
+                                stringify()
+                                    var obj = { "name":"runoob", "alexa":10000, "site":"www.runoob.com"};    //没有最外层的单引号只是一个块元素
+                                    var myJSON = JSON.stringify(obj);
+                                    document.getElementById("demo").innerHTML = myJSON;
+                   
+                   
+                    ES6(ECMAScript6)  标准的版本
+
+                        1.在定义变量时，ES6 使用let来定义变量
+
+                              let 拥有代码块级作用域（类似JAVA 区分var）
+                              var 拥有函数作用域（只有在函数内部是局部变量，除此之外都是全局变量） 
+                                 
+                                let用于定义局部变量
+                                        代码块：  {} 包起来的，形成一个作用域，块级作用域
+                                                    {let a = 0}  这个a只有在这个代码块中才生效
+                                                    {var a = 0}  这个a在这全部代码中都生效  
+
+                                let是不允许重复声明的
+                                        let a = 0;
+                                        let a = 1;  //报错。不允许重复
+                                                            
+                        2.定义常量： const
+                                注意：定义时一定写好初始量
+
+                        3.ES6中会提供使用一些简单的方式来实现字符串的连接
+                                var a = '这是一个';
+                                var b = 'ES6';
+                                var c = `hello ${a} 非常重要的 ${b}`;
+                                alert(c);                                    
+                        4.解构赋值
+                                // var a = 12;
+                                // var b = 13;
+                                // var c = 14;
+                                // alert(a);
+
+                                var [a,b,c] = [12,13,14];
+                                console.log(a,b,c);
+
+                                // 与json来配合（与顺序无关的）
+                                var {a,b,c}  = {b:13,a:12,c:14};
+                                console.log(a,b,c);
+
+                                //模式匹配：左边的结构与右边的结构是一样的
+                                var [a,[b,c],d] = [12,[1,2],5];
+                                console.log(a,b,c,d);
+
+                                //交互-对数据的解析
+                                var arr = [{title:'test',href:'www.163.com',img:'img1'}];
+                                var [{title,href,img}] = arr;
+                                console.log(title,href,img);
+                       5.ES6中还会给我们提供一些对数组操作的方法
+
+                                    
+                                    var arr = [1,2,3];
+                                    var arr2 = arr;
+                                    //删除数组中的最后一个元素
+                                    arr2.pop();
+                                    console.log(arr,arr2);    1,2    1,2     引用类型，arr,arr2指向相同地址
+                                
+                                可以使用循环的方式删除数组中的一个元素(传统的方式)
+                                    var arr = [1,2,3];
+                                    var arr2 = [];
+                                    for(var i = 0;i<arr.length;i++){
+                                        arr2[i] = arr[i];
+                                    }
+                                    arr2.pop();
+                                    console.log(arr,arr2);    1,2,3   1,2    arr2为新的数组，和arr无关
+
+                                以上的方式也可以使用ES6中提供的方式来解决
+                                    var arr = [1,2,3];
+                                    var arr2 = Array.from(arr);
+                                    arr2.pop();
+                                    console.log(arr,arr2);      1,2,3   1,2    arr2为新的数组，和arr无关
+
+                                也可以使用ES6中的超引用的方式来处理以上问题(类似于Java中的动态可变参数...values Object[])
+                                    var arr = [1,2,3];
+                                    var arr2 = [...arr]; //超引用
+                                    arr2.pop();
+                                    console.log(arr,arr2);     1,2,3   1,2    arr2为新的数组，和arr无关
+
+                                    function show(...values) {
+                                        values.push(5);
+                                        console.log(values);
+                                    }
+
+                                    show(1,2,3,4);
+
+                                总结：
+                                以上代码对数组的复制可以有三种方式
+                                    1. 循环
+                                    2. Array.from(arr)
+                                    3. var arr = [...arr] 超引用的方式          
+
+                        6.for循环
+                               var arr = ["1","2","3"]
+                            
+                            1: for(var i in arr){
+                                    console.log(i)
+                                }
+
+                            2:  for(var i of arr){   //for of多用于遍历集合
+                                    console.log(i)
+                                }
+
+
+                        7.ES6中的集合 （MAP） key-value 形式
+
+                            //创建
+                             var map = new Map()
+                            //向集合添加元素
+                             map.set("a","apple");  传入key-value
+                            //获取元素
+                             map.get("a");  输入所查询的key
+                            //删除元素
+                             map.delete("a") 输入所删除的key
+                            
+                            可以结合for of遍历map
+                            for(var k of map)  输出 key,value形式
+                            for(var [k，v] of map)  输出 key value形式
+                            for(var k of map.keys)  输出 key形式
+                            for(var k of map.values)  输出 value形式
+
+
+                        8.ES6箭头函数
+                                    格式：     ()=>{}
+                                    var show = ()=>{'hello word'}
+                                等价于 function(){return 'hello word'}
+                                    
+                                    var show=(a,b)=>a+b
+                                等价于 function(a,b){return a+b}
+
+                                //使用箭头函数所需要注意的问题
+                                    //this的问题，如果使用箭头函数，那么此时的this指向的是window对象，而不是当前对象自身
+                                    var a = 1000;
+                                    var json = {
+                                        a:100,
+                                        b:200,
+                                        show:()=>{
+                                            alert(this.a);   
+                                        }
+                                    }  
+                                    json.show();
+
+                                    输出值：1000
+                        9.class 类
+                          
+                          定义类： class  类名{}     类名必须大写  
+
+                          构造方法： constructor(参数1,参数2){        注意：在ES6中每个类只能有一个构造函数，程序在运行的时候报错
+
+                                             this.参数1 = 参数1;
+                                             this.参数2 = 参数2;
+                                             }
+                          普通方法：   方法名(){
+                                               内容
+                                             }
+
+
+                          类的继承： class 子类名 extends 父类名
+
+                          构造方法继承：(继承父类构造器)   super(参数1，参数2)
+                                     constructor(name,age,job='自由职位者'){
+                                                    super(name,age);    //父类构造器包含的参数
+                                                    this.job = job;
+                                                }
+
+                           特殊方法：.bind(this);   //相当于将内层的this绑定到外层的this
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+                      
+
+                 
+
+                    AXIOS
+                         
+                          http://www.axios-js.com/zh-cn/docs/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

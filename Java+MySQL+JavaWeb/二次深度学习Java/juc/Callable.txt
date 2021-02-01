@@ -1,0 +1,27 @@
+
+
+实现Callable的方式：
+
+    1.实现Callable 接口，定义泛型（返回类型）
+    2.重写 call方法
+
+    //实现 Callable 接口。有返回值
+    class CallableThread implements Callable<Integer>{
+
+
+        @Override
+        public Integer call() throws Exception {
+            System.out.println("Callable begin");
+            return 14;
+        }
+    }
+
+调用Callable的方法：
+
+        //Callable 的实现
+        FutureTask <Integer> futureTask = new FutureTask(new CallableThread());   //new FutureTask里的是实现Callable接口的实现类
+        //通过Thread
+        new Thread(futureTask,"a").start();
+        //返回接受值
+        Integer i = futureTask.get();
+        System.out.println(i);

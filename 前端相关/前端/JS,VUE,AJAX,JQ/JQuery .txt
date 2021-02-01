@@ -1,0 +1,246 @@
+jQuery 是一个 JavaScript 函数库。
+
+                            参考： https://www.jquery123.com/
+                                  https://www.w3school.com.cn/jquery/jquery_ref_events.asp
+
+                            jQuery 是一个高效、精简并且功能丰富的 JavaScript 工具库。
+                            它提供的 API 易于使用且兼容众多浏览器，这让诸如 HTML 文档遍历和操作、
+                            事件处理、动画和 Ajax 操作更加简单。
+
+                            jQuery 库包含以下特性：
+
+                                    HTML 元素选取
+                                    HTML 元素操作
+                                    CSS 操作
+                                    HTML 事件函数
+                                    JavaScript 特效和动画
+                                    HTML DOM 遍历和修改
+                                    AJAX
+
+                            JQuery库的引用
+
+                                    1.可以引用网络上的资源库(BOOTCDN)  https://www.bootcdn.cn/
+                                        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                                        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                                    2.可以通过NPM包管理工具下载JQuery
+
+                                        前题：需要安装Node
+                                        Node是什么:它相当于一个前端的虚拟机V8
+                                        Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行环境。
+                                        Node.js 使用了一个事件驱动、非阻塞式 I/O 的模型，使其轻量又高效。
+                                        Node.js 的包管理器 npm，是全球最大的开源库生态系统。
+
+                                        可以在终端使用命令下载库到要地：npm install jquery
+
+                                        如果由于下载太慢没有下载成功，就需要把国外的镜像地址改成阿里镜像，这样下载就很快了
+                                        // 设置 淘宝镜像源
+                                        npm config set registry https://registry.npm.taobao.org
+
+                                        // 查看 使用的 镜像源
+                                        npm config get registry
+
+
+                            文档就绪函数(所有JQuery必须用这个格式书写)
+                                 您也许已经注意到在我们的实例中的所有 jQuery 函数位于一个 document ready 函数中：
+
+                                    $(document).ready(function(){
+
+                                         --- jQuery functions go here ----
+
+                                    });
+
+                                或
+
+                                    $(function(){
+                                        --- jQuery functions go here ----
+                                    })
+
+                                作用：这是为了防止文档在完全加载（就绪）之前运行 jQuery 代码。
+
+
+
+                        jQuery 文档常用操作方法
+                                    $('#kkk')  id选择器 kkk为id值
+                                    $('.kkk')  class 选择器 kkk为class值 返回一个数组
+                                    $('div')   名字选择器  选择所有div 返回一个数组
+                                    $(this)    指向自己   !!不是 'this'  没有引号
+                                    addClass()  向匹配的元素添加指定的类名。
+                                    removeClass()  向匹配的元素删除指定的类名。  删除样式
+                                    toggleClass（） 向匹配的元素切换指定的类名。 
+                                    append()  向匹配元素集合中的每个元素结尾插入由参数指定的内容。
+                                    attr()  设置或返回匹配元素的属性和值。
+                                    html()  设置或返回匹配的元素集合中的 HTML 内容。
+                                    text()  设置或返回匹配元素的内容。
+                                    val()      设置或返回匹配元素的值。(最常用的方法)（获取value）
+                                    html()     获取html代码
+                                    text()     获取元素的文本
+                                    next()     指向下一个元素
+                                    show()     使隐形的模块显型  (隐形就是设置 display = none)
+                                    hide()     使模块隐形  
+                                    mouseover()  鼠标移入
+                                    mouseout()   鼠标移出
+                                    :eq()        按索引查找
+                                    find()       通过一个选择器，jQuery对象，或元素过滤，得到当前匹配的元素集合中每个元素的后代。
+                                    blind        添加事件
+                                    unblind      删除事件
+                                    siblings()  获得匹配元素集合中每个元素的兄弟元素,可以提供一个可选的选择器。
+                                    fadeIn()    通过淡入的方式显示匹配元素
+                                    fadeOut()   通过淡出的方式隐藏匹配元素。
+                                    index()    从匹配的元素中搜索给定元素的索引值，从0开始计数。     匹配元素.index("指定元素")
+                                    hover()    将二个事件函数绑定到匹配元素上，分别当鼠标指针进入和离开元素时被执行。
+                                    trigger()  方法触发被选元素的指定事件类型
+                                     
+                
+
+
+
+
+
+
+
+
+
+
+                                    添加事件：
+                                           $('input:eq(0)').click(function(){})    //选择第一个input
+                                                                                               
+                                            $('input:eq(0)').bind('click',function(){ })   
+                                    
+
+                             关于如何阻止事件的冒泡(面试重点)
+                                    就是点击子节点，会向上触发父节点。
+                                    如果在一个div中又包含了一个子div，这两个div都添加了事件，如果点击子div
+                                    我只希望处理这个子div的事件，我们不希望外层的div事件也执行，这个时候就要用到阻止冒泡
+                                     
+                                    $('#box').bind('click',function(event){  //传入参数
+                                        alert("这是外层dvi")
+                                        event.stopPropagation(); //阻止事件冒泡的方法
+                                    }) 
+
+
+    选择器：
+            *	            $("*")	            所有元素
+            #id	            $("#lastname")  	id="lastname" 的元素
+            .class  	    $(".intro")	        所有 class="intro" 的元素
+            element	        $("p")	            所有 <p> 元素
+            .class.class	$(".intro.demo")	所有 class="intro" 且 class="demo" 的元素
+                    
+            :first	$("p:first")	第一个 <p> 元素
+            :last	$("p:last")	    最后一个 <p> 元素
+            :even	$("tr:even")	所有偶数 <tr> 元素
+            :odd	$("tr:odd")	    所有奇数 <tr> 元素
+                    
+            :eq(index)  	$("ul li:eq(3)")	    列表中的第四个元素（index 从 0 开始）
+            :gt(no)	        $("ul li:gt(3)")	    列出 index 大于 3 的元素
+            :lt(no)     	$("ul li:lt(3)")	    列出 index 小于 3 的元素
+            :not(selector)	$("input:not(:empty)")	所有不为空的 input 元素
+                    
+            :header	        $(":header")	所有标题元素 <h1> - <h6>
+            :animated	 	                所有动画元素
+                    
+            :contains(text)	$(":contains('W3School')")	包含指定字符串的所有元素
+            :empty	        $(":empty")	                无子（元素）节点的所有元素
+            :hidden	        $("p:hidden")	            所有隐藏的 <p> 元素
+            :visible	    $("table:visible")	        所有可见的表格
+                    
+            s1,s2,s3	    $("th,td,.intro")	所有带有匹配选择的元素
+                    
+            [attribute]	        $("[href]")	            所有带有 href 属性的元素
+            [attribute=value]	$("[href='#']")	        所有 href 属性的值等于 "#" 的元素
+            [attribute!=value]	$("[href!='#']")	    所有 href 属性的值不等于 "#" 的元素
+            [attribute$=value]	$("[href$='.jpg']")	    所有 href 属性的值包含以 ".jpg" 结尾的元素
+                    
+            :input	    $(":input")	        所有 <input> 元素
+            :text	    $(":text")      	所有 type="text" 的 <input> 元素
+            :password	$(":password")	    所有 type="password" 的 <input> 元素
+            :radio  	$(":radio")	        所有 type="radio" 的 <input> 元素
+            :checkbox	$(":checkbox")  	所有 type="checkbox" 的 <input> 元素
+            :submit	    $(":submit")	    所有 type="submit" 的 <input> 元素
+            :reset	    $(":reset")	        所有 type="reset" 的 <input> 元素
+            :button	    $(":button")	    所有 type="button" 的 <input> 元素
+            :image	    $(":image")	        所有 type="image" 的 <input> 元素
+            :file	    $(":file")	        所有 type="file" 的 <input> 元素
+                    
+            :enabled	$(":enabled")	所有激活的 input 元素
+            :disabled	$(":disabled")	所有禁用的 input 元素
+            :selected	$(":selected")	所有被选取的 input 元素
+            :checked	$(":checked")	所有被选中的 input 元素
+
+
+
+
+
+            例子：
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .highter{
+            color: brown;
+        }
+
+        .anot {
+            color: darkblue;
+        }
+        
+    </style>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        // 如何设置以及获取HTML的方本和值
+       $(function(){
+         $('input:eq(0)').click(function(){
+            // 获取某个元素的html代码
+            alert($('p').html());
+         });
+
+
+         $('input:eq(1)').click(function(){
+            // 获取某个元素的文本
+            alert($('p').text());
+         });
+         
+
+         $('input:eq(2)').click(function(){
+            // 设置元素的HTML代码
+            alert($('p').html('<strong>新设置的文本</strong>'));
+         });
+
+         $('input:eq(3)').click(function(){
+            // 设置文本
+            alert($('p').text('哈哈'));
+         });
+
+         $('input:eq(4)').click(function(){
+            // 设置文本
+            alert($(this).val());
+         });
+
+         $('input:eq(5)').click(function(){
+            // 设置文本
+            $(this).val('click me');
+         });
+
+       }) 
+    </script>
+</head>
+<body>
+        <input type="button" value="获取元素的HTML代码">
+        <input type="button" value="获取文本">
+        <input type="button" value="设置元素的HTML代码">
+        <input type="button" value="设置文本">
+        <input type="button" value="获取到按钮的值">
+        <input type="button" value="设置按钮的值">
+
+       <!-- JQuery是如何来操作节点 -->
+       <p class="demoClass" title="这是一个段落标签"><em>这是一个段落标签</em></p>
+       <ul>
+           <li title="Java">Java</li>
+           <li title="Node">Node</li>
+           <li title="AngularJS">AngularJS</li>
+       </ul>
+</body>
+</html>

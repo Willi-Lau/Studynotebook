@@ -1,0 +1,29 @@
+队列是一种特殊的线性表，它只允许在表的前端进行删除操作，而在表的后端进行插入操作。
+
+一些最常用的Queue实现类是LinkedList，ArrayBlickingQueue, LinkedBlockingQueue，PriorityQueue, PriorityBlockingQueue。
+
+一般是FIFO 中例外的是优先队列的顺序元素根据提供的比较器，或元素的自然顺序，和后进先出队列（或堆）的阶元LIFO（后进先出）。
+
+boolean add(E e) 
+插入指定元素为该队列是否有可能立即这样做不违反容量限制，还 true成功后抛出 IllegalStateException如果没有空间是可用的。  
+E element() 
+检索，但不删除此队列的头。  
+boolean offer(E e) 
+如果可能立即在不违反容量限制的情况下这样做的话，将指定的元素插入到队列中。  
+E peek() 
+检索，但不删除，这个队列头，或返回 null如果队列为空。  
+E poll() 
+检索并移除此队列的头，或返回 null如果队列为空。  
+E remove() 
+检索和删除此队列的头 空返回异常。  
+
+
+
+
+
+
+
+
+
+
+

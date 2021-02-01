@@ -1,0 +1,53 @@
+// 接受db.properties的值
+
+//        新建对象
+
+        Properties properties =new Properties();
+
+//        设置路径
+
+        BufferedReader file_load =new BufferedReader(new FileReader("E:/liuweiyi/Javaweb_demo1/src/db.properties"));
+
+//        添加路径
+
+        properties.load(file_load);
+
+//        读取名字密码
+
+        String name = properties.getProperty("name");
+
+        String password = properties.getProperty("password");
+
+        //写入
+        
+        prop.setProperty("num", s);     //Key，value
+
+        OutputStream fos = new FileOutputStream(file);   //传入
+
+        prop.store(fos, name);                        //传入
+ 
+
+
+或：
+   *******
+                //读取db.properties文件里的信息
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("db");   //这里是相对于resources 这个包读取，只需要写文件名不需要写尾缀
+
+                String jdbc_driver = resourceBundle.getString("jdbc.driver");
+                String jdbc_url = resourceBundle.getString("jdbc.url");
+                String jdbc_name = resourceBundle.getString("jdbc.name");
+                String jdbc_password = resourceBundle.getString("jdbc.password");
+   ******
+
+properties 文件格式
+
+继承于HashTable有着 key:value的格式
+
+
+
+
+
+name=liuweiyi
+
+password=123456789
+

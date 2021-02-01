@@ -1,0 +1,1055 @@
+Spring 优点
+   不需要new 就可以实例化对象，调用对象的方法
+
+
+Spring 开发步骤
+
+    1.pom.xml 中导入Spring 信息
+       
+       <!--    spring 配置文件-->
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>   
+                <artifactId>spring-context</artifactId>     //只需要填写这个，剩下的自动填入
+                <version>5.0.5.RELEASE</version>
+            </dependency>
+        </dependencies>
+    2.编写applicationContext.xml文件，完成构造器注入
+        
+        自动执行无参构造创建对象
+        <bean id="userdao" class="com.fullstuck.dao.impl.UserDaoImpl"></bean>   //id 为标识名，随便起 class为实现类的位置 默认执行无参构造
+
+
+    3.完成Bean 以及实现类
+         编写 interface 定义方法，并实现方法
+
+
+
+    4.通过指定方法，访问Bean中的方法
+         
+        ClassPathXmlApplicationContext app = new ClassPathXmlApplicationContext("applicationContext.xml");  //读取核心xml 文件
+        User userdao = (User) app.getBean("userdao");          //读取指定id 在.xml中配置的类的id值
+        userdao.speak();                //读取指定方法  speak() 为方法的名字
+
+.xml:
+                                <?xml version="1.0" encoding="UTF-8"?>
+                                <beans xmlns="http://www.springframework.org/schema/beans"
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                    xmlns:context="http://www.springframework.org/schema/context"
+                                    xmlns:aop="http://www.springframework.org/schema/aop"
+                                     xmlns:tx="http://www.springframework.org/schema/tx"
+                                    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                                                        http://www.springframework.org/schema/context
+                                                        https://www.springframework.org/schema/context/spring-context.xsd
+                                                        http://www.springframework.org/schema/aop
+                                                        http://www.springframework.org/schema/aop/spring-aop.xsd
+                                                        http://www.springframework.org/schema/tx
+                                                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                                                        ">
+
+applicationContext中的一些参数：
+
+   <bean> :
+           id       唯一的类标识符
+           class    类的位置
+           scope    指对象作用范围，有以下取值：
+                                singleton          默认值，单例
+                                prototype          多例
+                                request            WEB中，Spring创建一个Bean对象，将对象存入request中
+                                session            WEB中，Spring创建一个Bean对象，将对象存入session中
+                                global session     WEB中，应用在Portlet环境中，如果没有Portlet环境那么global session 相当于session
+
+                                当scope 取值为singleton 时，在加载Spring核心文件时对象就被创建
+                                            prototype时，在每一次getBean方法执行时创建对象
+
+           init-method         Bean创建时执行的方法
+           destroy-method      Bean销毁时执行的方法
+           factory-method      如果class的值写的是工厂的位置而不是要实例化类的位置，factory-method则写你想执行代理工厂的方法
+                               例子：     <!--    采用工厂类实现     class写工厂的位置，factory-method 为工厂要执行的方法（自定义实例化）-->
+                                          <bean id="userdao" class="com.fullstuck.factory.Staticfactory" factory-method="getuser"></bean>
+           factory-bean        非静态工厂注入时，选择注入的工厂id 值
+           <property>          属性注入，依赖注入 set
+                               name     名字
+                               value    普通属性的值
+                               ref      注入对象，引入的值
+                               <list>   list集合
+                               <map>    map集合 
+           <constructor-arg>   属性注入，依赖注入 构造方法
+                               name     名字
+                               value    普通属性的值
+                               ref      注入对象，引入的值
+                               <list>   list集合
+                               <map>    map集合 
+
+    <import>    导入其他spring .xml文件 
+                实际开发中，Spirng所需配置文件非常的多，这导致主体Spring文件非常巨大，所以可以将主配置文件按照模块，或分层来
+                进行拆分，再在主文件中通过import 引入其他分文件
+
+                文件名格式： applicationContext-***.xml     *** 为别名
+                引入格式： <import resources = "applicationContext-***.xml ">      
+                引入所有：  <import resource="applicationContext-*.xml"/>  默认引入所有 applicationContext-*.xml                     
+
+
+Spring中注入的方法：
+
+      通过Spring 嵌套的注入创建对象，可以实现很多功能
+      
+      1.普通注入（默认为无参构造）    实例化
+
+         
+         
+         <bean id="userdao" class="com.fullstuck.dao.impl.UserDaoImpl" ></bean>
+         id       唯一的类标识符
+         class    类的位置
+
+      2.静态工厂注入               实例化
+        可以自定义实例化对象的方式，在工厂设置有参构造等
+
+         工厂bean
+            <bean id="userdaobyfactory" class="com.fullstuck.factory.Staticfactory" factory-method="getuser"></bean>
+            id       唯一的类标识符
+            class    写工厂的位置
+            factory-method   为工厂要执行的方法（自定义实例化）
+
+        工厂类： 
+               注意必须是public static 开头
+                //手动实例化
+                public static User getuser(){
+                    return new UserDaoImpl();
+                }
+
+       3.非静态工厂注入            实例化
+          可以自定义实例化对象的方式，在工厂设置有参构造等
+            
+          工厂bean
+                <bean id="userdaobyfactory02" class="com.fullstuck.factory.NoStaticFactory"></bean>
+                id       唯一的类标识符
+                class    写工厂的位置
+
+          要实例化的bean
+                <bean id="userdaoby_nostaticfactory" factory-bean="userdaobyfactory02" factory-method="getuser"></bean>
+                id       唯一的类标识符
+                factory-bean     对应工厂类的id 值
+                factory-method   工厂类要执行的方法
+          工厂类：
+               注意必须没有 static 开头
+                //手动实例化
+                public  User getuser(){
+                    return new UserDaoImpl();
+                }     
+
+
+Spring Bean 依赖注入的概念
+        
+        * 介绍:
+
+                IOC 控制反转：之前需要我们自己创建的对象现在交给IOC容器来实现
+                DI 依赖注入
+                可注入类型：（可传入参数）
+                    普通数据类型
+                    引入数据类型 （对象，其他类）
+                    集合数据类型
+
+                持久层：Dao层 定义具体实现方法的位置
+                业务层：实现层，向用户展示的层
+                
+                依赖注入是Spring框架核心IOC的具体实现，在编写程序时，通过控制反转，把对象的创建交给Spring,但是代码中不可能出现没有以来的状况
+                IOC只是减少耦合不会消除。例如：业务层还是会调用持久层的方法，那种业务层和持久层的依赖关系，在使用Spring之后就让Spring来维护了。
+                
+                
+
+                简单的说，就是通过Spring框架把持久层传入业务层，不用我们自己通过容器去获取。使用时只需要调用业务层的对象就可以
+
+                或者说，就是在业务层里调用持久层的方法，不使用 new ClassPathXmlApplicationContext("applicationContext.xml");这个
+                而是使用Spring 依赖注入，注入到.xml中，自动完成调用
+
+
+        * 使用set方法实现依赖注入： property
+
+                不管引入的类型是对象还是普通数据还是集合，流程都一样
+
+                首先在业务层 引入要实现的持久层的对象，并且设置set方法
+                
+                 注入对象：
+
+                    //通过set方法注入UserDao
+                    private UserDaoImpl userDaoimpl;
+
+                    //设置set方法
+                    public void setUserDaoimpl(UserDaoImpl userDaoimpl) {
+                        this.userDaoimpl = userDaoimpl;
+                    }
+
+                注入普通数据： 
+
+                    //引入名字 依赖注入
+                    private String studentname;
+
+                    //设置set方法
+                    public void setStudentname(String studentname) {
+                        this.studentname = studentname;
+                    }
+
+                注入集合：
+                     //注入list
+                     private List<String> list;
+                     //注入map
+                     private Map<String,String> map1;
+                     //注入含有对象的map
+                     private Map<String, Student> stu_map;    
+
+
+                然后再 applicationContext.xml中配置依赖注入
+
+                    持久层 bean 配置
+                    <bean id="userdao" class="com.fullstuck.dao.impl.UserDaoImpl" ></bean>
+
+                    业务层配置
+                    <bean id="userservice" class="com.fullstuck.service.impl.UserServiceimpl">
+                        <property name="userDaoimpl" ref="userdao"></property>    //name为set方法后的名字，注意第一个字母小写（引入对象）
+                                                                                  //ref 为依赖注入 引用持久层的 bean 的 id值,把这个值
+                                                                                    通过set方法引入（就是set传入的参数）
+                        <property name="studentname" value="卢本伟"></property>   //name为数据变量的名字 value为值
+
+                        <property name="list">            //注入list name为集合的名字
+                            <list>
+                                <value>卢本伟</value>        //直接设置value 值
+                                <value>123</value>
+                                <value>456</value>
+                            </list>
+                        </property>
+
+                        <!--        依赖注入普通map-->
+                        <property name="map1">           //注入map name为集合的名字
+                            <map>
+                                <entry key="name" value="大司马"></entry>      //entry为默认引入 key ,value 均自定义 
+                                <entry key="age" value="222"></entry>
+                                <entry key="city" value="芜湖"></entry>
+                            </map>
+
+                        </property>
+
+                        <!--       依赖注入对象-->
+                        <property name="stu_map">    //注入map name为集合的名字
+                            <map>
+                                <!--        这里的引入对象 也需要在.xml中配置，并不是class那种写路径引入。引入的是对应的bean 的 id 值    -->
+                                <entry key="men1" value-ref="student01"></entry>     //key 为自定义的 value 为引入其他bean的id值
+                                <entry key="men2" value-ref="student02"></entry>     //引入的student在下面
+                                <entry key="men3" value-ref="student03"></entry>
+                            </map>
+                        </property>
+
+                     </bean> 
+
+                        <!--    student 类-->
+                        <!--    创建多个对象 被上面的map引用-->
+                        <bean id="student01" class="com.fullstuck.demo.Student">
+                            <property name="name" value="吕丰轩"></property>
+                            <property name="age" value="21"></property>
+                            <property name="city" value="大连"></property>
+                        </bean>
+                        <bean id="student02" class="com.fullstuck.demo.Student">
+                            <property name="name" value="张佳伟"></property>
+                            <property name="age" value="21"></property>
+                            <property name="city" value="阜新"></property>
+                        </bean>
+                        <bean id="student03" class="com.fullstuck.demo.Student">
+                            <property name="name" value="李泽宁"></property>
+                            <property name="age" value="21"></property>
+                            <property name="city" value="阜新"></property>
+                        </bean>
+
+
+
+                property 属性：
+                     name: 引用的为对象时，name为业务层(service)set方法后的名字，注意第一个字母小写，剩下其余的不变
+                                         例：setUserDaoimpl 为set方法的名字，此时在.xml中，property 的name 属性就是 userDaoimpl   
+                           引用的为普通数据时，name就是那个变量的名字 value就为变量的名字              
+                     ref： 为依赖注入 引用持久层(dao)的 bean 的 id值
+                     value:为引入普通变量时，普通变量的值，这个值是多少就在这写
+       
+        *  使用构造器完成依赖注入： constructor-arg
+
+                不管引入的类型是对象还是普通数据还是集合，流程都一样
+
+                首先在业务层 引入要实现的持久层的对象，并且设置构造方法
+
+                    //通过有参构造注入UserDao
+                    private UserDaoImpl userDaoimpl;
+
+                    //有参构造
+                    public UserServiceimpl(UserDaoImpl userDaoimpl) {
+                        this.userDaoimpl = userDaoimpl;
+                    }
+
+                然后再 applicationContext.xml中配置依赖注入
+
+                    持久层 bean 配置
+                    <bean id="userdao" class="com.fullstuck.dao.impl.UserDaoImpl" ></bean>
+
+                    业务层配置
+                    <bean id="userservice" class="com.fullstuck.service.impl.UserServiceimpl">
+                        <constructor-arg name="userDaoimpl" ref="userdao"></constructor-arg>    //name为构造器传入对象的名字，注意是对象不是类名
+                    </bean>                                                         //ref 为依赖注入 引用持久层的 bean 的 id值,把这个值
+                                                                                    通过set方法引入（就是set传入的参数）
+
+
+               constructor-arg 属性：
+                     name: 引用的为对象时，name为构造器传入对象的名字，注意是对象不是类名
+                           例：public void setUserDaoimpl(UserDaoImpl userDaoimpl) 这里传入对象名字为 userDaoimpl，这里的name就用 userDaoimpl
+                     ref： 为依赖注入 引用持久层(dao)的 bean 的 id值
+
+    数据库连接池：
+              
+              连接池是采用了预先建立多个数据库连接对象，然后放到连接池里，当有客户端请求时，取出一个连接对象为客户端服务，当请求完成时，客户端调用
+              .close()方法，将连接对象放回池中。  在普通的数据库连接中，客户端得到的是物理连接，在连接池中，客户端得到的是连接对象，从使用开始到
+              使用结束，连接对象的物理连接始终没有关闭，所以我们在一定程度上减少了建立连接所需要的时间，这对多使用、高并发的网站十分有利。
+
+            
+            C3P0数据库连接池：
+
+                
+                    ComboPooledDataSource source = new ComboPooledDataSource();    //建立对象
+                    
+                    source.setDriverClass("com.mysql.jdbc.Driver");                //配置数据库信息
+                    source.setJdbcUrl("jdbc:mysql://localhost:3306/fruit");
+                    source.setUser("root");
+                    source.setPassword("root");
+
+                   
+                    Connection connection = source.getConnection();                  //连接数据库 后续操作和普通JDBC一样了
+                    
+                    System.out.println(connection);                                 //打印连接信息，说明连接上了
+
+                    connection.close();
+
+
+            Druid数据库连接池
+               
+                    DruidDataSource source = new DruidDataSource();               //建立对象
+                    
+                    source.setDriverClassName("com.mysql.jdbc.Driver");         //配置数据库信息
+                    source.setUrl("jdbc:mysql://localhost:3306/fruit");
+                    source.setUsername("root");
+                    source.setPassword("root");
+
+                   
+                    Connection connection = source.getConnection();             //连接数据库 后续操作和普通JDBC一样了
+                    
+                    System.out.println(connection);                             //打印连接信息，说明连接上了
+
+                    connection.close();
+
+
+    Spring 配置数据库连接池：
+
+                 查看C3P0.txt
+
+
+                 
+
+    Spring 注解： 
+
+            使用注解前提：增加组件扫描，让spring 知道你用了什么组件
+                       
+                        <!--    配置组件扫面 扫描注解实现注解-->
+                        <!-- 配置一个基本包 Spring 会自动扫面他包含的所有信息  这里是扫面com 包里所有的信息-->
+                        <context:component-scan base-package="com"></context:component-scan>
+
+                        
+                @Component通用的注解，表示该类为Spring的组件 设置id 被spring管理 可以带参数（）括号里写id值，也可以不带参数，没有括号，id值为类名首字母小写剩下的不变
+                @Controller 标识将该类定义为SpringMVC的Controller控制器
+                @Repository 表示dao 设置自己的id
+                @Resource(name = "user")   和Repository 对应使用，接受reposition的接口信息
+                @RequestMapping(value = "/admin/users",method = RequestMethod.GET) 设置路径以及获取方式
+                @Service 当前类为业务层，可以被Spring管理，后期就可以处理事物
+                @Autowired的用法和作用  这个注解就是spring可以自动帮你把bean里面引用的对象的setter/getter方法省略，它会自动帮你set/get。
+                @Qualifier("falchion")  private Weapon weapon;   两个实现类实现统一接口,那么可以使用Qualifier 选取你想用的接口（后面必须有一个私有属性值）
+                @Before：在被代理对象的方法前先调用，属于前置通知。
+                @AfterReturning：在被代理对象的方法正常返回后调用，属于返回通知（也等于后置通知）如果发生异常则不会被调用
+                @Around：在被代理对象的方法封装起来，并用环绕通知取代它，属于环绕通知，它将覆盖原有的方法，但是允许你通过反射调用原有方法。
+                环绕通知是Spring AOP中最强大的通知，它可以同时实现前置和后置的通知，它保留了调度被代理对象原有方法的功能，
+                所以它强大，又灵活。这个通知里有一个参数ProceedingJoinPoint,是Spring提供的一个参数，使它可以反射连接点。
+                当环绕通知使用pjp.proceed()方法后会先调用前置通知，然后反射切点方法，最后就是后置通知和返回（或者异常）通知。
+                @AfterThrowing：在被调用对象的方法抛出异常后调用，属于异常通知，要求被代理对象的方法执行过程中产生异常
+                @After：在被代理对象的方法后调用，属于后置通知
+
+                        
+            注解：                      等同于：                                                                   位置：
+                 @Component("pid"):         <bean id="pid" class="com.fullstuck.service.impl.PigServiceimpl">           class 的上面,实例化bean,没有括号，id值为类名首字母小写剩下的不变
+                 @Autowired                  public void setPig(PigDaoimpl pig) {                                       要注入的值的上面,实现set get，不写Qualifier 是类型注入
+                                                    this.pig = pig;
+                                            }                                                                         
+                 @Qualifier("pig_dao")      <property name="pig" ref="pig_dao"></property>                               要注入的值的上面,依赖注入，名称注入 注入引用类型
+                 @Service("pig")            使用在Service 层上的@Component 标签，提高可读性                                class 的上面,实例化bean,没有括号，id值为类名首字母小写剩下的不变              
+                 @Controller("pig")         使用在Web 层上的@Component 标签，提高可读性                                    class 的上面,实例化bean,没有括号，id值为类名首字母小写剩下的不变
+                 @Repository("pig")         dao 层上的@Component 标签，提高可读性                                          class 的上面,实例化bean,没有括号，id值为类名首字母小写剩下的不变  
+                 @Resource(name = "user")    @Autowired+@Qualifier("user")   提高可读性                                    要注入的值的上面,依赖注入，名称注入 注入引用类型
+                 @value("猪八戒")            <property name="pigname" value="猪八戒"></property>                           要注入的值的上面,依赖注入，名称注入 注入普通类型
+                 @Value("${jdbc.driver}")    <property name="pigname" value="${jdbc.driver}"></property>                  注入，读取properties文件的信息                       
+                 @Scope()                   <bean id="pig" class="com.pig" scope=""></bean>                               设置bean的scope属性
+                 @PostConstruct             <bean id="pig" class="com.pig" init-method =""></bean>                        设置bean的init-method属性           
+                 @PreDestroy                <bean id="pig" class="com.pig" destroy-method =""></bean>                     设置bean的destroy-method属性           
+            
+            新注解：(配置相关)
+                 @Configuration              将这个类设置为Spring 配置类                                                    class上面        
+                 @PropertySource("classpath:db.properties")    配置导入 .properties 文件                                   括号里写 classpath:具体文件名字
+                 @ComponentScan("com")        <context:component-scan base-package="com"></context:component-scan>        组件扫描，填入扫描的位置
+                 @Import({A.class，B。class})   <import resource="applicationContext-*.xml"></import>                      class上面 ，从主Spring 配置类加载其他Spring 配置类   
+                 @Bean("idname")                会将当前方法返回值以指定名称存储到Spring容器中，括号里设置id值                自定义的方法上面，作用同<bean>      
+                 @EnableAspectJAutoProxy                                              实现AOP注解支持  
+                 @EnableTransactionManagement                                         实现事务注解支持
+
+            测试注解：(使用注解代替普通spring 实现)
+                 @RunWith(SpringJUnit4ClassRunner.class)                            引入juint 测试Spring 部分
+                 @ContextConfiguration(classes = {SpringConfiguration.class})       导入核心配置 （核心配置为 注解）    
+                 @ContextConfiguration("classpath:applicationContext.xml")          导入核心配置 （核心配置为 xml） 
+                 @Autowired                                                         引入要测试的对象
+                 @Test                                                              测试 void
+
+            事务：
+                 @Transactional                        对类或者方法实现事务管理 可以添加参数设置事务属性     
+                 @EnableTransactionManagement                                         实现事务注解支持
+
+            AOP：
+                @Aspect                                             当前类是一个切面类
+                @Pointcut("execution()")                             配置切点表达式，下面用一个方法做接受
+                @Before("类名.切点")                                 前置增强
+                @afterReturning("类名.切点")                          后置增强 程序成功时才执行
+                @around ("类名.切点")                                 环绕增强
+                @afterThrowing ("类名.切点")                           异常抛出
+                @after("类名.切点")                                    最终增强 不管是否报错都会执行 
+            
+            配置头：(.xml中的)
+    
+                 <context:component-scan base-package="com"></context:component-scan>            包扫描，扫描注解
+                 <context:property-placeholder location="classpath:db.properties"/>              引入 .properties 文件
+                 <aop:aspectj-autoproxy></aop:aspectj-autoproxy>                                  aop注解自动代理
+                 <tx:annotation-driven transaction-manager="事务管理器名"></tx:annotation-driven>  事务注解自动代理
+
+
+                 @Bean具体使用方法：
+                                
+                                在一个@Configuration下，使用@Bean创建一个 void 如果又创建另一个void 并且想使用前一个void的值，直接把上一个void当作参数
+                                传进去就行了。不用特意使用 @Resource 注入，使用会报错
+
+
+                                @Configuration
+                                @PropertySource("classpath:db.properties")  //括号里写 classpath:具体文件名字
+                                public class C3P0Configuration {
+                                    
+                                    @Value("${jdbc.driver}")   //依赖注入
+                                    private String driver;
+
+                                    @Value("${jdbc.url}")
+                                    private String url;
+
+                                    @Value("${jdbc.name}")
+                                    private String name;
+
+                                    @Value("${jdbc.password}")
+                                    private String password;
+
+                                    
+                         ***        @Bean("dateSource")                 //Spring 会将当前方法返回值以指定名称存储到Spring容器中   设置id值
+                                    public DataSource getDataSource() throws Exception{
+                                        //导入c3p0
+                                                   
+                                        ComboPooledDataSource source = new ComboPooledDataSource();   //建立对象
+                                        source.setDriverClass(driver);     //配置数据库信息
+                                        source.setJdbcUrl(url);
+                                        source.setUser(name);
+                                        source.setPassword(password);
+                                        Connection connection = source.getConnection();   //连接数据库 后续操作和普通JDBC一样了
+                                        System.out.println(connection);    //打印连接信息，说明连接上了
+                                        connection.close();
+                                        return source;
+                                    }
+                                    
+                         ***        @Bean("jdbcTemplate")                                            //注入JDBCTemlpate 对象
+                                    public JdbcTemplate getjdbcTemplate(DataSource dataSource){   //引入其他bean 直接在参数传入就行
+                                        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+                                        jdbcTemplate.setDataSource(dataSource);
+                                        return jdbcTemplate;
+                                    }
+
+
+
+                                }
+            
+
+
+
+        
+            使用注解注意事项：
+                如果通过注解@Autowired配置了一个注入属性。
+                例如：
+                    @Autowired
+                    private String name;
+                这里想再注入具体的值只能通过注解注入，如果想在.xml里注入，还需要写这个变量的的 set 方法。不然会报错。 
+
+
+            通过普通Java class实现Spring Bean： （注解配置）
+
+                
+                ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+                PigService pid_service = (PigService) context.getBean("pid_service");
+                pid_service.dopig_eat();
+
+            通过普通Java class实现Spring Bean： （.xml配置）
+
+                ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+                PigService pig_service = (PigService)context.getBean("pid_service");
+                pig_service.dopig_eat();  
+
+            通过注解实现测试Spring Bean (注解配置) 全注解开发
+                
+                    //导入 junit测试
+                    @RunWith(SpringJUnit4ClassRunner.class)
+                    //导入class 配置
+                    @ContextConfiguration(classes = {SpringConfiguration.class})
+                    public class SpringJuintTest {
+
+                        //导入要测试的实现类
+                        @Autowired
+                        private PigServiceimpl pigServiceimpl;
+
+                        @Autowired
+                        private DataSource dataSource;
+
+                        //测试
+                        @Test
+                        public void test() throws SQLException {
+                            pigServiceimpl.dopig_eat();
+                            System.out.println(dataSource.getConnection());
+                        }
+                    }
+
+            通过注解实现测试Spring Bean (.xml配置) 
+                
+                    //导入 junit测试
+                    @RunWith(SpringJUnit4ClassRunner.class)
+                    //导入核心配置文件 导入.xml
+                    @ContextConfiguration("classpath:applicationContext.xml")
+                    public class SpringJuintTest {
+
+                    //导入要测试的实现类
+                    @Autowired
+                    private PigServiceimpl pigServiceimpl;
+
+                    @Autowired
+                    private DataSource dataSource;
+
+                    //测试
+                    @Test
+                    public void test() throws SQLException {
+                        pigServiceimpl.dopig_eat();
+                        System.out.println(dataSource.getConnection());
+                    }
+                    }
+
+
+   AOP
+       解耦合，减少重复代码，在运行时对代码维护。
+
+       底层实现：
+                实际上，AOP的底层是通过Spring提供的动态代理技术实现的，在运行期间，Spring通过动态代理技术动态生成代理对象。代理对象方法
+                执行时进行增强功能的介入。再去调用目标方法时，完成功能的增强。
+
+        常用动态代理技术：     
+                JDK代理：基于接口的动态代理技术
+                cglib代理： 基于父类的动态代理技术 
+
+        
+        接口方式 AOP:(JDK代理)
+
+              定义一个主接口： Target
+              定义接口实现类： Targetimpl 
+              定义切面对象（增加的方法）： Aspect
+
+              Target:                                                  //目标 （主体方法）
+                    public interface Target {
+
+                            //定义方法
+                            public void speak();
+                        }
+                        
+              Targetimpl :                                             //目标的实现 （主体方法） 实现接口
+                    public class Targetimpl implements Target{
+
+                        public void speak() {
+                            System.out.println("启动程序 ，董世苹是sb");
+                        }
+                    }
+
+               Aspect:                                                  //切面部分  （增加的方法）
+                    public class MyAspect {
+
+                            public void before(){
+                                System.out.println("前置增强");
+                            }
+
+                            public void afterReturning(){
+                                System.out.println("后置增强 程序成功时才执行");
+
+                            }
+
+                            public Object around(ProceedingJoinPoint point) throws Throwable {       //参数为 正在制定的切入点 默认的都是
+                                System.out.println("环绕前置增强");      //环绕前部分 需要自己写
+                                Object proceed = point.proceed();        //调用切入点方法 默认的都是  方法默认
+                                System.out.println("环绕后置增强");       //环绕后部分 需要自己写
+                                return proceed;                          //返回 返回值 默认的都是
+
+                            }
+
+                            public void afterThrowing(){
+                                System.out.println("异常抛出");
+
+                            }
+
+                            public void after(){
+                                System.out.println("最终增强，不管是否报错都会执行");
+                            }
+                        }
+
+                .xml部分
+
+                  引入配置：
+                        xmlns:aop="http://www.springframework.org/schema/aop"
+                        xsi:schemaLocation=" http://www.springframework.org/schema/aop
+                                                http://www.springframework.org/schema/aop/spring-aop.xsd "      
+                  把切面和目标引入spring
+                        
+                        <bean name="targetimpl" class="com.fullstuck.aop.Targetimpl" ></bean>   <!--    目标对象 (主体方法)-->
+                       
+                        <bean name="myAspect" class="com.fullstuck.aop.MyAspect" ></bean>    <!--    切面对象 （增加方法）-->
+
+                   配置切面信息：
+
+                    格式 ：
+                        <aop:config>
+                            <aop:aspect ref="切面类">
+                                <aop:通知类型 method="切面中的方法名" pointcut="execution(切点表达式)"> </aop:切面类型>
+                            </aop:aspect>
+                        </aop:config>
+
+                         通知类型：
+                                before                   前置增强
+                                afterReturning           后置增强 程序成功时才执行
+                                around                   环绕增强
+                                afterThrowing            异常抛出
+                                after                    最终增强 不管是否报错都会执行 
+                   
+                        <aop:config>    <!--    配置织入：告诉Sprint 哪些方法(切点)需要进行哪些(前置，后置)增强-->
+                            <aop:aspect ref="myAspect">     <!--        声明切面(增加的方法的来源)  -->
+
+                               切面抽取
+                                    <aop:pointcut id="point_target" expression="execution(public void com.fullstuck.aop.Targetimpl.speak())"/>        
+                               前置增强(例子为调用抽取切面)
+                                    <aop:before method="before" pointcut-ref="point_target"></aop:before>
+                                环绕增强(例子为调用抽取切面)
+                                     <aop:around method="around" pointcut-ref="point_target"></aop:around>
+                                后置增强(例子为调用抽取切面)
+                                    <aop:after-returning method="afterReturning" pointcut-ref="point_target"></aop:after-returning>
+                                异常(例子为自定义切面)
+                                     <aop:after-throwing method="afterThrowing" pointcut="execution(public void com.fullstuck.aop.Targetimpl.speak())"></aop:after-throwing>
+                                最终增强(例子为自定义切面)
+                                     <aop:after method="after" pointcut="execution(public void com.fullstuck.aop.Targetimpl.speak())"></aop:after>
+                                        
+                                </aop:before>
+                            </aop:aspect>
+                        </aop:config>
+
+                        切点表达式语法：
+                                  
+                                基本格式： execution([修饰符]返回值类型 包名.类名。方法名(参数))   
+                                注意点：  1.修饰符可有可无  
+                                          2.返回值，类名，包名，方法名可以使用 *代替
+                                          3.包名与类名之间一个点 . 代表当前包下的类
+                                            包名与类名之间两个点 .. 代表当前包下的类以及子包类
+                                          4.参数可以使用两个点 ..代表任意参数  
+
+                                例子：
+                                       execution(public void com.java.Pig.pigeat())    正常形式
+                                       exectuion(void void com.java.Pig.*(..))         java 包下所有的方法，接受任意类型参数
+                                       execution(* com.java.*.*(..))                   任意返回值类型 java包下任意类任意方法    最常用
+                                       execution(* com.java..*.*(..))                  任意返回值类型 java包及子包下任意类任意方法
+                
+                切面类型：
+                       before                   前置增强
+                       afterReturning           后置增强 程序成功时才执行
+                       around                   环绕增强
+                       afterThrowing            异常抛出
+                       after                    最终增强 不管是否报错都会执行  
+
+              
+                * 环绕切入：
+                              //返回值为OPbject                          抛出异常
+                        public Object around(ProceedingJoinPoint point) throws Throwable {       //参数为 正在制定的切入点 默认的都是
+                                System.out.println("环绕前置增强");      //环绕前部分 需要自己写
+                                Object proceed = point.proceed();        //调用切入点方法 默认的都是  方法默认 
+                                System.out.println("环绕后置增强");       //环绕后部分 需要自己写
+                                return proceed;                          //返回 返回值 默认的都是
+
+                            }
+
+                切面表达式抽取：（写在<aop:aspect> 里）
+
+                         <aop:pointcut id="point_target" expression="execution(public void com.fullstuck.aop.Targetimpl.speak())"/>
+
+                         下面的aop 的切面表达式使用 pointcut-ref 引入上面的id 引入表达式
+
+                         <aop:before method="before" pointcut-ref="point_target"></aop:before>
+
+
+
+                测试方法：
+                        注意，需要注入目标接口而不是目标实现类 
+
+                        @RunWith(SpringJUnit4ClassRunner.class)
+                        @ContextConfiguration("classpath:applicationContext.xml")
+                        public class Testaop_xml {
+
+                                                        //    这里需要引入 接口 而不是 实现类
+                            @Autowired
+                            private Target target;
+
+                            @Test
+                            public void test(){
+                                target.speak();
+                            }
+                        }
+
+            注解开发aop:
+
+                开发步骤：
+                        1：@Aspect标注切面类
+                        2：使用注解通知标注通知方法 
+                        3：在配置文件中添加aop 自动代理  <aop:aspectj-autoproxy/>
+
+                        通知注解类型：
+                         @Before                  前置增强
+                         @AfterReturning          后置增强 程序成功时才执行
+                         @Around                  环绕增强
+                         @AfterThrowing           异常抛出
+                         @After                   最终增强，不管是否报错都会执行
+
+
+
+                        配置切点表达式：
+                            
+                        @Pointcut("execution(* com.fullstuck.aop_annotation.*.*(..))")  //    配置切点表达式
+                        public void pointcut() {}                                     //随便定义的名字
+
+
+                        例子：
+
+                                @Component("myAspect")
+                                @Aspect   //代表当前类是一个切面类
+                                public class MyAspect {
+
+                                    //    配置切点表达式
+                                    @Pointcut("execution(* com.fullstuck.aop_annotation.*.*(..))")
+                                    public void pointcut() {}
+
+
+                                    @Before("MyAspect.pointcut()")   //类.方法() 调用切点表达式
+                                    public void before(){
+                                        System.out.println("前置增强");
+                                    }
+
+                                    @AfterReturning("MyAspect.pointcut()")
+                                    public void afterReturning(){
+                                        System.out.println("后置增强 程序成功时才执行");
+
+                                    }
+
+                                    @Around("MyAspect.pointcut()")
+                                    public Object around(ProceedingJoinPoint point) throws Throwable {
+                                        System.out.println("环绕前置增强");
+                                        Object proceed = point.proceed();
+                                        System.out.println("环绕后置增强");
+                                        return proceed;
+
+                                    }
+                                    @AfterThrowing("MyAspect.pointcut()")
+                                    public void afterThrowing(){
+                                        System.out.println("异常抛出");
+
+                                    }
+                                    @After("MyAspect.pointcut()")
+                                    public void after(){
+                                        System.out.println("最终增强，不管是否报错都会执行");
+                                    }
+                                }
+
+                        .xml配置：
+                                <?xml version="1.0" encoding="UTF-8"?>
+                                <beans xmlns="http://www.springframework.org/schema/beans"
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                    xmlns:context="http://www.springframework.org/schema/context"
+                                    xmlns:aop="http://www.springframework.org/schema/aop"
+                                    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                                                        http://www.springframework.org/schema/context
+                                                        https://www.springframework.org/schema/context/spring-context.xsd
+                                                        http://www.springframework.org/schema/aop
+                                                        http://www.springframework.org/schema/aop/spring-aop.xsd
+                                                        ">
+                                    
+                                <!--开启组件扫描-->
+                                    <context:component-scan base-package="com.fullstuck.aop_annotation"></context:component-scan>
+                                <!--    aop 自动代理,注解开发必备-->
+                                    <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
+                                </beans>
+
+                Spring JDBCTemplate基本使用
+
+                    JDBCTemplate开发步骤：
+                       1.导入spring-jdbc  spring-tx 坐标
+                       2.创建数据库表和实体(Bean 对象，配置接收信息)
+                       3.创建JDBCTemplate对象
+
+                                JdbcTemplate jdbcTemplate = new JdbcTemplate();                  //使用Temlpate 模板
+                                jdbcTemplate.setDataSource(source);
+
+                       4.执行数据库操作
+
+
+                      方法：
+
+                        .update("SQL语句(参数用?代替)",参数1,参数2,...)   执行增删改
+                        .query("SQL语句",new BeanPropertyRowMapper<自己创建的Bean class>(自己创建的Bean class.class),,参数1,参数2,...)    执行查询 返回list
+                        .queryForObject("SQL语句",new BeanPropertyRowMapper<自己创建的Bean class>(自己创建的Bean class.class),,参数1,参数2,...)    执行查询  返回一个对象
+                        .queryForObject("select count(*) from employee ", int.class);      //聚合操作 
+                       使用方法：
+
+                                ComboPooledDataSource source = new ComboPooledDataSource();              //配置数据库信息
+                                source.setDriverClass("com.mysql.jdbc.Driver");
+                                source.setJdbcUrl("jdbc:mysql://localhost:3306/fruit?characterEncoding=UTF-8");
+                                source.setUser("root");
+                                source.setPassword("root");
+                               
+                                JdbcTemplate jdbcTemplate = new JdbcTemplate();                  //使用Temlpate 模板
+                                jdbcTemplate.setDataSource(source);
+                               
+                                jdbcTemplate.update("insert into employee values(?,?,?)","分店4",0,"0");    //执行操作  增删改使用 .update方法
+
+                       //        查询的方法   查询所有
+                                List<Employee> employees = jdbcTemplate.query("select * from employee", new BeanPropertyRowMapper<Employee>(Employee.class));
+                                System.out.println(employees.toString());
+
+                        注解使用：  
+                                    @Configuration
+                                    @PropertySource("classpath:db.properties")  //括号里写 classpath:具体文件名字
+                                    public class C3P0Configuration {
+                                        
+                                        @Value("${jdbc.driver}")   //依赖注入
+                                        private String driver;
+
+                                        @Value("${jdbc.url}")
+                                        private String url;
+
+                                        @Value("${jdbc.name}")
+                                        private String name;
+
+                                        @Value("${jdbc.password}")
+                                        private String password;
+
+                                        
+                            ***        @Bean("dateSource")                 //Spring 会将当前方法返回值以指定名称存储到Spring容器中   设置id值
+                                        public DataSource getDataSource() throws Exception{
+                                            //导入c3p0
+                                            
+                                            ComboPooledDataSource source = new ComboPooledDataSource();   //建立对象
+                                            source.setDriverClass(driver);     //配置数据库信息
+                                            source.setJdbcUrl(url);
+                                            source.setUser(name);
+                                            source.setPassword(password);
+                                            Connection connection = source.getConnection();   //连接数据库 后续操作和普通JDBC一样了
+                                            System.out.println(connection);    //打印连接信息，说明连接上了
+                                            connection.close();
+                                            return source;
+                                        }
+                                        
+                            ***        @Bean("jdbcTemplate")                                            //注入JDBCTemlpate 对象
+                                        public JdbcTemplate getjdbcTemplate(DataSource dataSource){   //引入其他bean 直接在参数传入就行
+                                            JdbcTemplate jdbcTemplate = new JdbcTemplate();
+                                            jdbcTemplate.setDataSource(dataSource);
+                                            return jdbcTemplate;
+                                        }
+
+
+
+                                    }
+        
+
+
+
+
+        Spring 基于声明式事务控制
+
+
+               事务隔离级别：https://www.cnblogs.com/wj0816/p/8474743.html
+                            https://www.cnblogs.com/kfzsy/articles/13826442.html
+
+                Spring声明式事务控制顾名思义就是采用声明的方式处理事务。这里所说的声明，就是指在配置文件中的声明，用在Spring配置文件中声明式的处理事务
+            来代替代码式处理事务
+
+                在TransactionDefinition接口中定义了五个不同的事务隔离级别
+
+                    ISOLATION_DEFAULT 这是一个PlatfromTransactionManager默认的隔离级别，使用数据库默认的事务隔离级别.另外四个与JDBC的隔离级别相对应 
+                    ISOLATION_READ_UNCOMMITTED 这是事务最低的隔离级别，它充许别外一个事务可以看到这个事务未提交的数据。这种隔离级别会产生脏读，不可重复读和幻像读
+
+                    ISOLATION_READ_COMMITTED 保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据。这种事务隔离级别可以避免脏读出现，但是可能会出现不可重复读和幻像读。
+
+                    ISOLATION_REPEATABLE_READ 这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。它除了保证一个事务不能读取另一个事务未提交的数据外，还保证了避免下面的情况产生(不可重复读)。
+
+                    ISOLATION_SERIALIZABLE 这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。除了防止脏读，不可重复读外，还避免了幻像读。
+
+
+                在TransactionDefinition接口中定义了七个事务传播行为。
+
+                    PROPAGATION_REQUIRED 如果存在一个事务，则支持当前事务。如果没有事务则开启一个新的事务。
+
+                    PROPAGATION_SUPPORTS 如果存在一个事务，支持当前事务。如果没有事务，则非事务的执行。但是对于事务同步的事务管理器，PROPAGATION_SUPPORTS与不使用事务有少许不同。
+
+                    PROPAGATION_MANDATORY 如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常。
+
+                    PROPAGATION_REQUIRES_NEW 总是开启一个新的事务。如果一个事务已经存在，则将这个存在的事务挂起。
+
+                    PROPAGATION_NOT_SUPPORTED 总是非事务地执行，并挂起任何存在的事务。
+
+                    PROPAGATION_NEVER 总是非事务地执行，如果存在一个活动事务，则抛出异常
+
+                    PROPAGATION_NESTED如果一个活动的事务存在，则运行在一个嵌套的事务中. 如果没有活动事务, 则按TransactionDefinition.PROPAGATION_REQUIRED 属性执行
+
+            声明式处理事务的作用：
+
+                1.事务管理不侵入开发的组件。具体来说，业务逻辑对象就不会意识到正在事务管理之中。事实上也应该如此。因为事务管理是属于系统层面的服务，而不是业务逻辑的
+                一部分。如果想改变事务管理策划的话，也只需要在定义文件中重新配置即可。
+                2.在不需要事务管理的时候，只需要在设定文件上修改一下，即可除去事务管理服务。无需改变代码重新编译，这样维护起来极其方便
+
+            注意：SPring 声明式事务控制底层就是AOP
+
+            实现步骤：
+
+                1.创建接口
+                2.创建实现类
+                3.在.xml中或者使用注解配置
+
+                .xml配置：
+
+                    引入事务模块
+                     xmlns:tx="http://www.springframework.org/schema/tx"
+
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+
+                     
+                    <bean id="transactionmanager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> // 配置平台事务管理器 JDBC,Mybatis 用的就是这个
+
+                            <property name="dataSource" ref="dataSource"></property>   //注入一个datasource
+
+                    </bean>
+
+                    
+                    <tx:advice id="txAdvice" transaction-manager="transactionmanager">     //配置事务具体的功能
+                                <tx:attributes>
+                       
+                                    <!-name 名称 isolation 事务隔离级别 propogation 事务传播行为 timeout 超时时间 ready-only 是否只读-->
+                                    <tx:method name="*"/>       //代表任意方法 也可以写方法名在设置方法的属性  只读等信息
+                       
+                                    <tx:method name="select*"></tx:method>   //  配置以select开头的方法名 *为通配符
+                                </tx:attributes>
+                    </tx:advice>
+
+
+                    
+                    <aop:config>                         //使用aop 告诉Spring 谁执行这个事务
+                     
+                        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.fullstuck.commit.*.*(..))"></aop:advisor>
+                    </aop:config>
+
+
+                使用注解开发：
+
+                      @Transactional   写在需要进行事务处理的类或者方法上
+
+                .xml 执行事务注解：(前面需要配置事务管理器，传入的参数是事务管理器的id)
+
+                        <tx:annotation-driven transaction-manager="transactionmanager"></tx:annotation-driven>
+
+                class类执行事务注解：
+
+                        @EnableTransactionManagement
+
+
+
+    Spring 集成Web环境：
+
+        Spring提供了一个监听器ContextLoaderListener,该监听器内部加载Spring配置文件，创建上下文对象，并存储到ServletContext中
+        提供了一个客户端工具WebApplicationContextUtil 供使用者获得上下文对象
+
+        我们只需做两件事：
+            1。在web.xml中配置ContextLoaderListener监听器(导入Spring-web 坐标)
+            2. 使用WebApplicationContextUtil 获取应用上下文对象ApplicationContext
+            
+
+            pom.xml:
+                    <!--        web组件-->
+                    <dependency>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>javax.servlet-api</artifactId>
+                        <version>3.1.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.servlet.jsp</groupId>
+                        <artifactId>javax.servlet.jsp-api</artifactId>
+                        <version>2.3.3</version>
+                    </dependency>
+            <!--        Spring web工具 自动创建ApplicationContext-->
+                    <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                        <version>5.2.8.RELEASE</version>
+                    </dependency>
+
+            web.xml:
+                         <!--    配置Spring 初始化文件 全局初始化信息-->
+                        <context-param>
+                            <param-name>contextConfigLocation</param-name>
+                            <param-value>classpath:applicationContext.xml</param-value>
+                        </context-param>
+                    <!--创建Spring 容器   使用Spring 提供好的工具-->
+                        <listener>
+                            <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+                        </listener>
+
+            servlet：
+
+                    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+                        WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
+                        PigServiceimpl bean = context.getBean(PigServiceimpl.class);
+                        bean.dopig_eat();
+                    }       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

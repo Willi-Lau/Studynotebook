@@ -1,0 +1,691 @@
+https://www.w3cschool.cn/mybatis/
+
+Mybastic 中文网  http://www.mybatis.cn/archives/397.html
+
+
+
+MyBatis的功能架构：
+
+我们把Mybatis的功能架构分为三层：
+
+        API接口层：提供给外部使用的接口API，开发人员通过这些本地API来操纵数据库。接口层一接收到调用请求就会调用数据处理层来完成具体的数据处理。
+        数据处理层：负责具体的SQL查找、SQL解析、SQL执行和执行结果映射处理等。它主要的目的是根据调用的请求完成一次数据库操作。
+        基础支撑层：负责最基础的功能支撑，包括连接管理、事务管理、配置加载和缓存处理，这些都是共用的东西，将他们抽取出来作为最基础的组件。为上层的数据处理层提供最基础的支撑。
+        
+MyBatis的优缺点
+
+        优点：
+
+            简单易学：本身就很小且简单。没有任何第三方依赖，最简单安装只要两个jar文件+配置几个sql映射文件易于学习，易于使用，通过文档和源代码，可以比较完全的掌握它的设计思路和实现。
+            灵活：mybatis不会对应用程序或者数据库的现有设计强加任何影响。 sql写在xml里，便于统一管理和优化。通过sql基本上可以实现我们不使用数据访问框架可以实现的所有功能，或许更多。
+            解除sql与程序代码的耦合：通过提供DAL层，将业务逻辑和数据访问逻辑分离，使系统的设计更清晰，更易维护，更易单元测试。sql和代码的分离，提高了可维护性。
+            提供映射标签，支持对象与数据库的orm字段关系映射
+            提供对象关系映射标签，支持对象关系组建维护
+            提供xml标签，支持编写动态sql。
+
+        缺点：
+
+            编写SQL语句时工作量很大，尤其是字段多、关联表多时，更是如此。
+            SQL语句依赖于数据库，导致数据库移植性差，不能更换数据库。
+            框架还是比较简陋，功能尚有缺失，虽然简化了数据绑定代码，但是整个底层数据库查询实际还是要自己写的，工作量也比较大，而且不太容易适应快速数据库修改。
+            二级缓存机制不佳
+
+
+
+1、MyBatis XML配置文件结构
+        MyBatis框架包括两种类型的XML文件，一类是配置文件，即mybatis-config.xml，另外一类是映射文件，例如XXXMapper.xml等。MyBatis的配置文件包含了会深深影响 MyBatis行为的设置和属性信息。配置文件的层次结构如下：
+
+        configuration（配置）
+
+        properties（属性）
+        settings（设置）
+        typeAliases（类型别名）
+        typeHandlers（类型处理器）
+        objectFactory（对象工厂）
+        plugins（插件）
+        environments（环境配置）
+
+        environment（环境变量）
+        transactionManager（事务管理器）
+        dataSource（数据源）
+        databaseIdProvider（数据库厂商标识）
+        mappers（映射器）
+
+
+
+数据库基本属性 db.properties
+
+        jdbc.driver=com.mysql.jdbc.Driver
+        jdbc.url=jdbc:mysql://127.0.0.1:3306/fruit?useUnicode=true&characterEncoding=UTF-8
+        jdbc.username=root
+        jdbc.password=root
+
+具体的SqlMapConfig.xml配置文件如下所示：
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+        <!-- 配置文件的根元素 -->
+        <configuration>
+        
+            <!-- 属性：定义配置外在化 -->
+            <properties></properties>
+
+            <!-- 设置：定义mybatis的一些全局性设置 -->
+            <settings>
+            <!-- 具体的参数名和参数值 -->
+            <setting name="" value=""/> 
+            </settings>
+
+            <!-- 类型名称：为一些类定义别名 -->
+            <typeAliases></typeAliases>
+
+            <!-- 类型处理器：定义Java类型与数据库中的数据类型之间的转换关系 -->
+            <typeHandlers></typeHandlers>
+
+            <!-- 对象工厂 -->
+            <objectFactory type=""></objectFactory>
+
+            <!-- 插件：mybatis的插件,插件可以修改mybatis的内部运行规则 -->
+            <plugins>
+            <plugin interceptor=""></plugin>
+            </plugins>
+            
+            <!-- 环境：配置mybatis的环境 -->
+            <environments default="">
+            <!-- 环境变量：可以配置多个环境变量，比如使用多数据源时，就需要配置多个环境变量 -->
+            <environment id="">
+                <!-- 事务管理器 -->
+                <transactionManager type=""></transactionManager>
+                <!-- 数据源 -->
+                <dataSource type=""></dataSource>
+            </environment> 
+            </environments>
+
+            <!-- 数据库厂商标识 -->
+            <databaseIdProvider type=""></databaseIdProvider>
+
+            <!-- 映射器：指定映射文件或者映射类，相对于当前核心配置文件的位置开始查找映射文件. -->
+            <mappers>
+                 <mapper resource="mapper/User.xml"/>
+            </mappers>
+
+        </configuration>
+
+
+
+
+
+        例子：
+
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE configuration
+                    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+                    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+            <configuration>
+                <!-- 加载属性文件    -->
+                <properties resource="db.properties">
+
+                </properties>
+
+                <!--    <typeAliases>-->
+                <!--        <typeAlias alias="user" type="com.foreknow.model.User"/>-->
+                <!--    </typeAliases>-->
+
+                <!-- 环境, 就是配置数据库访问环境的标签.
+                default - 默认使用什么环境
+                
+                -->
+                <environments default="development">
+                    <!-- 配置具体的某一个环境
+                    id - 当前环境的命名
+                    -->
+                    <environment id="development">
+                        <!-- 事务管理方式, 当前框架管理数据库事务使用什么技术.
+                        type - 使用的具体技术. JDBC, 就是Connection.commit()/rollback()
+                        -->
+                        <transactionManager type="JDBC" />
+                        <!-- 数据源, 访问的数据库参数
+                        type - 管理方式, 管理Connection的方式,
+                        POOLED , 代表池化管理. 就是连接池.
+                        -->
+                        <dataSource type="POOLED">
+                            <!-- 配置具体参数 -->
+                            <property name="driver" value="${jdbc.driver}" />
+                            <property name="url" value="${jdbc.url}" />
+                            <property name="username" value="${jdbc.username}" />
+                            <property name="password" value="${jdbc.password}" />
+                        </dataSource>
+                    </environment>
+                </environments>
+
+                <!-- 引用映射文件 -->
+                <mappers>
+                    <!-- resource : 相对路径查询资源的属性.
+                    相对于当前核心配置文件的位置开始查找映射文件.
+                    -->
+                    <mapper resource="mapper\Fruit.xml"/>
+
+
+                </mappers>
+            </configuration>
+
+
+
+2、属性（properties）
+这些属性都是可外部配置且可动态替换的，既可以在典型的 Java 属性文件中配置，亦可通过 properties 文件 元素的子元素来传递。例如：
+
+                <properties resource="org/mybatis/example/config.properties">
+                    <property name="username" value="root"/>
+                    <property name="password" value="root"/>
+                </properties>
+
+            或
+
+                <!-- 加载属性文件    -->
+                <properties resource="db.properties">
+
+                </properties>
+
+                <dataSource type="POOLED">
+                    <!-- 配置具体参数 -->
+                    <property name="driver" value="${jdbc.driver}" />
+                    <property name="url" value="${jdbc.url}" />
+                    <property name="username" value="${jdbc.username}" />
+                    <property name="password" value="${jdbc.password}" />
+                </dataSource>
+3 映射器（SQL语句实现类）
+
+        接口绑定
+
+            接口绑定，就是在MyBatis中任意定义接口，然后把接口里面的方法和SQL语句绑定，我们直接调用接口方法就可以，这样比起原来了SqlSession提供的方法，可以有更加灵活的选择和设置。
+
+            接口绑定有两种实现方式，一种是通过注解绑定，就是在接口的方法上面加上 @Select、@Update等注解，里面包含Sql语句来绑定；另外一种就是通过xml里面写SQL来绑定，在这种情况下，要指定xml映射文件里面的namespace必须为接口的全路径名。
+
+            当Sql语句比较简单时候，用注解绑定，当SQL语句比较复杂时候，用xml绑定。一般情况下，用xml绑定的比较多。
+
+            使用MyBatis的mapper接口调用时要注意的事项有：
+
+            （1）Mapper接口方法名和mapper.xml中定义的每个sql的id相同；
+
+            （2）Mapper接口方法的输入参数类型和mapper.xml中定义的每个sql 的parameterType的类型相同；
+
+            （3）Mapper接口方法的输出参数类型和mapper.xml中定义的每个sql的resultType的类型相同；
+
+            （4）Mapper.xml文件中的namespace即是mapper接口的类路径。
+
+            接口绑定实现：
+               .xml 文件：namespace 写 接口路径
+                   <mapper namespace="com.foreknow.dao.UserMapper">
+
+
+        流程：
+            接口：定义方法  ------------->  .xml 定义具体sql语句  <--------------------  主体.xml文件 添加运行 要执行的.xml文件(一个程序只有一个)
+                                  |                                                     /
+                                  | 通过反射获取接口对象实现方法                         /   绑定主体
+                                  |                                                  |/_
+                                  -----------------------------------------> java实现类
+                                                                                |
+                                                                                |
+                                                                               \|/
+                                                                      JavaBean 自己编写的接收类接收(定义与数据库类型相同的属性接受)
+
+
+
+       .java 接口部分
+
+       public interface UserMapper {
+
+                
+                public User getUserById(int id);
+
+                public void insertUser(User User);
+
+                public void deleteUser(int id);
+
+                public void updateUser(User user);
+
+
+            }
+
+       .java 实现类文件部分（接口绑定）
+
+            String resource = "SqlMapConfig.xml";           //绑定主体.xml
+
+            //对SqlMapConfig.xml读取并解析
+            InputStream inputStream = Resources.getResourceAsStream(resource);
+
+            //获取会话工厂SqlSessionFactory
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+            //SqlSession主要用于对数据库的操作
+            SqlSession session =  sessionFactory.openSession();     //获取数据库执行对象  
+
+            UserMapper mapper = session.getMapper(UserMapper.class);    //接口名.class 获取对象   反射机制，通过接口，执行.xml里sql语句
+
+            mapper.getUserById(25);   //查询   方法名和.xml 中的id相同
+            
+            mapper.insertUser(user);  //增加   
+
+            mapper.deleteUser(1)    //删除
+
+            mapper.updateUser(user)  //更改
+            
+            session.commit();     //增删改需要执行事件 查询不用
+            session.close();      //关闭
+            inputStream.close();  //关闭流
+
+           
+
+        .xml 文件部分（接口绑定）
+            
+            头部信息
+             <?xml version="1.0" encoding="UTF-8"?>   
+            <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+            <!--namespace命名空间，主要的作用是对sql进行分类管理的-->
+
+            <!--namespace命名空间，主要的作用是对sql进行分类管理的-->
+            <mapper namespace="com.foreknow.dao.UserMapper">              //绑定接口
+
+                <!--    public User getUserById(int id){}-->
+                <!--parameterType表示参数的类型  resultType表示返回值的类型    -->
+                <!--属性id是一个唯一的标识 ，相当于方法名称     -->
+                <!--    #{id} 相当于一个占位符-->
+
+                //具体sql执行语句                                    //即使返回值是list resultType里写的也是返回的bean的类型
+                <select id="getUserById" parameterType="int" resultType="com.foreknow.bean.User">          //id 和JAVA里方法名一致
+                    select * from user where id=#{id}                                                //#{} 里为输入的值
+                </select>
+
+                <insert id="insertUser" parameterType = "com.foreknow.bean.User" >
+                    insert into user(username,birthday,sex,address) values (#{username},#{birthday},#{sex},#{address});
+                </insert>
+
+                <update id="updateUser" parameterType="com.foreknow.bean.User">
+                    update user set  username = #{username},birthday = #{birthday},sex = #{sex},address = #{address} where id = #{id};
+                </update>
+
+                <delete id="deleteUser" parameterType="int">
+                    delete from user where id=#{id};
+                </delete>
+
+
+            </mapper>
+
+
+         JavaBean 自己定义的接收类:
+                    package com.demo;
+
+                    import java.util.ArrayList;
+
+                    public class fruit  {
+                        private String id;
+                        private String name;
+                        private int inprice;
+                        private int outprice;
+                        private int num;
+                        private String unit;
+
+                        public String getId() {
+                            return id;
+                        }
+
+                        public void setId(String id) {
+                            this.id = id;
+                        }
+
+                        public String getName() {
+                            return name;
+                        }
+
+                        public void setName(String name) {
+                            this.name = name;
+                        }
+
+                        public int getInprice() {
+                            return inprice;
+                        }
+
+                        public void setInprice(int inprice) {
+                            this.inprice = inprice;
+                        }
+
+                        public int getOutprice() {
+                            return outprice;
+                        }
+
+                        public void setOutprice(int outprice) {
+                            this.outprice = outprice;
+                        }
+
+                        public int getNum() {
+                            return num;
+                        }
+
+                        public void setNum(int num) {
+                            this.num = num;
+                        }
+
+                        public String getUnit() {
+                            return unit;
+                        }
+
+                        public void setUnit(String unit) {
+                            this.unit = unit;
+                        }
+                    }
+   
+
+
+        注解+接口映射器
+            除 XML方式定义映射器外，还可以采用注解方式定义映射器，它只需要一个接口就可以通过 MyBatis 的注解来注入 SQL，如下所示。
+
+            public interface StudentMapper2 {
+                @Select("select * from user where id=#{id}")           //不用书写.xml 语句
+                public User getUser(int id);
+            }
+
+
+
+         动态SQL语句的书写
+           参考：https://mybatis.org/mybatis-3/zh/dynamic-sql.html      
+
+
+
+
+
+
+
+        动态标签：
+
+                <if> 条件筛选 ：
+                                <if test="name != null">       // test = "筛选条件"  
+                                        f.name = #{name}         //执行结果
+                                </if>
+
+                <where> 代替SQL中的where 语句;
+
+                                如果where后全部都是条件筛选语句，并且所有的筛选条件都对应不上，SQL语句会变成
+                                select * from fruit where ; 是一个错误语句，使用<where> 标签可以进行自我判断，
+                                where后有语句则自动加上，where后没有被符合条件的就不写入where,where 元素只会在
+                                子元素返回任何内容的情况下才插入 “WHERE” 子句。而且，若子句的开头为 “AND” 或 “OR”，
+                                where 元素也会将它们去除。
+
+                                <select id="findActiveBlogLike" resultType="Blog">
+
+                                    SELECT * FROM BLOG
+
+                                    <where>
+                                        <if test="state != null">
+                                            state = #{state}        
+                                        </if>
+
+                                        <if test="title != null">
+                                            title like #{title}            
+                                        </if>
+
+                                        <if test="author != null and author.name != null">
+                                            author_name like #{author.name}
+                                        </if>
+                                    </where>
+                                </select>
+
+                    choose、when、otherwise
+
+                            有时候，我们不想使用所有的条件，而只是想从多个条件中选择一个使用。针对这种情况，
+                            MyBatis 提供了 choose 元素，它有点像 Java 中的 switch 语句。还是上面的例子，
+                            但是策略变为：传入了 “title” 就按 “title” 查找，传入了 “author” 就按 “author”
+                                查找的情形。若两者都没有传入，就返回标记为 featured 的 BLOG（这可能是管理员认为，
+                                与其返回大量的无意义随机 Blog，还不如返回一些由管理员精选的 Blog）
+                            
+                            <select id="findActiveBlogLike"  resultType="Blog">
+                                SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+                                
+                                <choose>
+                                    <when test="title != null">
+                                        AND title like #{title}
+                                    </when>
+
+                                    <when test="author != null and author.name != null">
+                                        AND author_name like #{author.name}
+                                    </when>
+
+                                    <otherwise>
+                                        AND featured = 1
+                                    </otherwise>
+                                </choose>
+                            </select>
+
+
+
+            <set>   
+                    update中的set 语句标签，用于动态更新语句的类似解决方案叫做 set。set 元素可以用于动态包含需要更新的列，
+                    忽略其它不更新的列。类似where
+
+                            <update id="updateAuthorIfNecessary">
+                                update Author
+                                    <set>
+                                    <if test="username != null">username=#{username},</if>
+                                    <if test="password != null">password=#{password},</if>
+                                    <if test="email != null">email=#{email},</if>
+                                    <if test="bio != null">bio=#{bio}</if>
+                                    </set>
+                                where id=#{id}
+                                </update>
+
+            <foreach>
+                foreach的主要用在构建in条件中，它可以在SQL语句中进行迭代一个集合。
+
+                foreach元素的属性主要有 item，index，collection，open，separator，close。其含义如下所示：
+
+                    item，表示集合中每一个元素进行迭代时的别名
+                    index，指定一个名字，用于表示在迭代过程中，每次迭代到的位置
+                    open，表示该语句以什么开始
+                    separator，表示在每次进行迭代之间以什么符号作为分隔符
+                    close，表示以什么结束
+
+                在使用foreach的时候最关键的也是最容易出错的就是collection属性，该属性是必须指定的，但是在不同情况下，该属性的值是不
+                一样的，主要有以下三种情况：
+
+                （1）如果传入的是单参数且参数类型是一个List的时候，collection属性值为list
+                （2）如果传入的是单参数且参数类型是一个array数组的时候，collection的属性值为array
+                （3）如果传入的参数是多个的时候，我们就需要把它们封装成一个Map了，当然单参数也可以封装成Map，实际上如果你在传入参数的
+                    时候，在mybatis里面也是会把它封装成一个Map的，map的key就是参数名，所以这个时候collection属性值就是传入的List或
+                    array对象在自己封装的map里面的key
+
+                单参数List的类型：
+
+                <select id="getBlogs" parameterType="java.util.List" resultType="Blog">
+                    select * from t_blog where id in
+                    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                                #{item}
+                    </foreach>
+                </select>
+
+                单参数array数组的类型：
+
+                <select id="getBlogs" parameterType="java.util.ArrayList" resultType="Blog">
+                    select * from t_blog where id in
+                    <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </select> 
+
+                自己把参数封装成Map的类型
+
+                <select id="getBlogs" parameterType="java.util.HashMap" resultType="Blog">
+                    select * from t_blog where title like "%"#{title}"%" and id in
+                    <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </select>
+
+
+
+
+        查询中的一对一关联：
+  
+
+
+            bean中的信息：
+
+                //一对一的关联关系
+                    private User user;    为所关联表的信息
+                    public User getUser() {
+                        return user;
+                    }
+
+                    public void setUser(User user) {
+                        this.user = user;
+                    }
+                            
+            .xml中的信息
+
+                <resultMap id="OrdersUsersResultMap" type="com.foreknow.bean.Orders">   //id 为对应sql语句的 resultMap 值 type 为所对应bean 的类名
+
+                    <!--配制映射的订单的信息（Orders表与bean的对应关系）        -->
+                    <id column="id" property="id"></id>                            //为两个表关联的字段，主表
+                    <result column="user_id" property="userId"></result>      //colum 为字段名    property 为字段别名
+                    <result column="number" property="number"></result>
+                    <result column="createtime" property="createtime"></result>
+                    <result column="note" property="note"></result>
+
+                    <!-- 一对一        -->
+                    <association property="user" javaType="com.foreknow.bean.User">   //property 为bean中一对一属性得名字
+                        <id column="id" property="id"></id>                        //为两个表关联的字段，副表
+                        <result column="username" property="username"></result>
+                        <result column="sex" property="sex"></result>
+                        <result column="address" property="address"></result>
+                    </association>
+
+                </resultMap>
+    
+                <select id="getOrderUsersResultMap" resultMap="OrdersUsersResultMap">     //SQL语句，id 为接口中的方法名，resultMap 为上面的 <resultMap> id 值
+                    select orders.*,user.username,user.sex,user.address
+                    from orders,user
+                    where orders.user_id = user.id
+                </select>
+
+
+
+
+
+        查询中的一对多关联：
+         
+               interface:
+                            方法的返回值中的泛型 为最外层 resultMap 所选择的那个表的信息，如下例子，最外层是Orders，返回值的
+                            泛型就是 Orders
+               
+               bean中的信息：
+
+                    //一对多的关联关系
+                            private List<Orderdetail> orderdetails;    <>里的泛型为子表的bean类名，
+                            public List<Orderdetail> getOrderdetails() {
+                                return orderdetails;
+                            }
+
+                            public void setOrderdetails(List<Orderdetail> orderdetails) {
+                                this.orderdetails = orderdetails;
+                            }
+
+               .xml中的信息
+                          
+                          书写规则要遵守 如果是一对多关系，要先写 1 再写 多，即 1在外层，多在里层
+                          collection 里写的是 一对多中 多的信息
+                     
+                    <resultMap id="OrdersDetailResultMap" type="com.foreknow.bean.Orders">  //与SQL文件中resultMap值一样
+                        <!--配制映射的订单的信息（Orders表与bean的对应关系）        -->
+                        <id column="id" property="id"></id>                            //为两个表关联的字段，主表
+                        <result column="user_id" property="userId"></result>      //colum 为字段名    property 为字段别名
+                        <result column="number" property="number"></result>
+                        <result column="createtime" property="createtime"></result>
+                        <result column="note" property="note"></result>
+
+                        <!-- 一对多的关联映射        -->
+                        <collection property="orderdetails" ofType="com.foreknow.bean.Orderdetail">  //property bean中一对多中list得名字，ofType 映射类名
+                            <id column="orderdetail_id" property="id"></id>
+                            <result column="orders_id" property="ordersId"></result>
+                            <result column="items_id" property="itemsId"></result>
+                            <result column="items_num" property="itemsNum"></result>
+                        </collection>
+
+                    </resultMap>
+                    <select id="getOrderDetailResultMap" resultMap="OrdersDetailResultMap">    //resultMap 上面的映射文件
+                        select orders.*,user.username,user.sex,user.address,orderdetail.id orderdetail_id,orderdetail.items_id,orderdetail.items_num,orderdetail.orders_id
+                        from orders,user,orderdetail
+                        where orders.user_id = user.id AND orders.id=orderdetail.orders_id
+                    </select>
+                            
+
+
+
+
+
+
+          使用C3P0：
+                   https://blog.csdn.net/beauman/article/details/90757842                  
+
+
+         传入值有多个值时解决方案
+
+            1.封装成一个Bean
+
+            2.省略 parameterType 传入值用 0 1 2代替
+                    <select id="getUserById"  resultType="com.foreknow.bean.User">          //id 和JAVA里方法名一致
+                        select * from user where id=#{0} and username = #{1}                                                //#{} 里为输入的值
+                    </select>
+            3.使用map 传入，参数写得是map 得 key值
+
+        
+        模糊查询
+
+               在传入值时候就用 %，例如，查询username 中有liu得
+
+               List<User> list = mapper.userinf("%liu%");
+
+        小于号 < 用转义符号 &lt; 
+ 
+        自定义日期：
+
+            Date parse = new SimpleDateFormat("yyyy-MM-dd").parse("1985-01-01");
+
+        MybatisPlus :
+
+            https://www.cnblogs.com/l-y-h/p/12859477.html
+
+            https://www.jianshu.com/p/12ec123d20e8
+
+        
+        <insert>中<selectKey>标签
+        对于不支持自动生成类型的数据库或可能不支持自动生成主键 JDBC 驱动来说，MyBatis 有另外一种方法来生成主键。
+
+            <insert id="insertAndgetkey" parameterType="com.soft.mybatis.model.User">  
+            
+                <!--selectKey  会将 SELECT LAST_INSERT_ID()的结果放入到传入的model的主键里面，  
+                    keyProperty 对应的model中的主键的属性名，这里是 user 中的id，因为它跟数据库的主键对应  
+                    order AFTER 表示 SELECT LAST_INSERT_ID() 在insert执行之后执行,多用与自增主键，  
+                        BEFORE 表示 SELECT LAST_INSERT_ID() 在insert执行之前执行，这样的话就拿不到主键了，  
+                                这种适合那种主键不是自增的类型  
+                    resultType 主键类型 -->  
+
+                <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">  
+                    SELECT max(id)+1 from t_user 
+                </selectKey>  
+                insert into t_user (username,password,create_date) values(#{username},#{password},#{createDate})  
+            </insert>  
+
+
+        在mybatis中通过使用SQL片段可以提高代码的重用性，如下情景：
+
+        　　1、创建动态SQL
+
+        　　　　<sql id="sql_count">select count(*)</sql>
+
+        　　2、使用
+
+        　　　　<select id="selectListCountByParam" parameterType="map" resultType="String">
+
+        　　　　　　<include refid="sql_count"/> from table_name
+
+        　　　　</select>

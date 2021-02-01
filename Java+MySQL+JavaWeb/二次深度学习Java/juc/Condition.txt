@@ -1,0 +1,127 @@
+
+
+
+在Lock 中实现线程并行通信的方法不同于synchronized 的wait(),notify(),notifyAll(),Lock 使用juc 提供的Condition实现线程唤醒等操作
+
+如何创建：
+      
+      Lock lock = new ReentrantLock();
+
+      Condition condition_add = lock.newCondition();
+
+
+方法：
+
+    void await()                             使当前线程等待它暗示或 interrupted。  
+
+    boolean await(long time, TimeUnit unit)  使当前线程等待信号或中断，或指定的等待时间的流逝。  
+
+    long awaitNanos(long nanosTimeout)       使当前线程等待信号或中断，或指定的等待时间的流逝。 
+    
+    void awaitUninterruptibly()              导致当前线程等待，直到它被发出信号。   
+
+    boolean awaitUntil(Date deadline)        使当前线程等待信号或中断，或指定的期限结束。 
+    
+    void signal()                            唤醒一个等待线程。  
+
+    void signalAll()                         唤醒所有等待线程。  
+
+
+
+使用方法：
+        
+        （推荐）使用signal()唤醒线程 类似于Semaphore 一个方法最好对应一个Condition ，即创建时根据方法数量创建对等的Condition
+
+
+        使用signalAll()唤醒线程类似于 notifyAll() 只需要创建一个Condition ,谁被唤醒线程自己抢夺
+        
+        signal():
+
+                class Shop2{
+                    int num = 0;
+                    Lock lock = new ReentrantLock();
+                    Condition add = lock.newCondition();
+                    Condition cut = lock.newCondition();
+                    //增加一个 num
+                    public  void add() {
+                        lock.lock();
+                        try {
+                            while(num != 0){
+                                //add 等待
+                                add.await();
+                            }
+                            num += 1;
+                            System.out.println(Thread.currentThread().getName()+num);
+                            //释放 cut 的权限 唤醒cut
+                            cut.signal();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            lock.unlock();
+                        }
+                    }
+                    //减少一个num
+                    public  void cut(){
+                        lock.lock();
+                        try {
+                            while(num == 0){
+                                //等待
+                                cut.await();
+                            }
+                            num -= 1;
+                            System.out.println(Thread.currentThread().getName()+num);
+                            //唤醒线程
+                            add.signal();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            lock.unlock();
+                        }
+                    }
+                }
+
+        
+        signalAll():
+
+                class Shop4{
+                    int num = 0;
+                    Lock lock = new ReentrantLock();
+                    Condition condition = lock.newCondition();
+
+                    //增加一个 num
+                    public  void add() {
+                        lock.lock();
+                        try {
+                            while(num != 0){
+                                //add 等待
+                                condition.await();
+                            }
+                            num += 1;
+                            System.out.println(Thread.currentThread().getName()+num);
+                            //释放 cut 的权限 唤醒cut
+                            condition.signalAll();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            lock.unlock();
+                        }
+                    }
+                    //减少一个num
+                    public  void cut(){
+                        lock.lock();
+                        try {
+                            while(num == 0){
+                                //等待
+                                condition.await();
+                            }
+                            num -= 1;
+                            System.out.println(Thread.currentThread().getName()+num);
+                            //唤醒线程
+                            condition.signalAll();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            lock.unlock();
+                        }
+                    }
+                }

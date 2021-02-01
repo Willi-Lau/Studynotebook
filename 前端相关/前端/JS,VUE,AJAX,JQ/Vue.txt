@@ -1,0 +1,643 @@
+ Vue 环境项目下载 vue ui
+
+ Vue;
+
+                        环境：
+                                <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+                                <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+                                双向渲染
+                        格式：
+
+                            new Vue({
+                                el: id值等
+                                data:{
+                                    属性值
+                                }
+
+                            });
+
+
+                        引入：
+                             import 自定义名字  from  '引用的路径'   
+                             import Index from '../views/Index.vue' 
+
+                        获取vue:  双括号
+                                  
+                                    1. {{Vue属性名}}      渲染
+                                    2. v-text =Vue属性名
+                                    3.v-html =Vue属性名
+                                    4. v-model=Vue属性名     双线绑定
+
+
+
+                                    <div id="app">
+                                            <!-- 获取变量-->
+                                            你好：{{name}}      //获取vue
+
+                                            <br>
+                                            <!-- v-model vue的一个属性 双向数据绑定 text的值变化，其他name也能变化 -->
+                                            <input type="text" v-model="name">   //获取vue
+                                            <div v-text = 'name2'></div>   //获取vue
+                                            <div v-html = 'name3'></div>   //获取vue
+                                        </div>
+
+                                        <script>
+                                            // 创建Vue对象
+                                            // vm是一个全局变量
+                                            let vm = new Vue({
+                                                el:"#app",
+                                                data:{
+                                                    name:"这是第一个vue.js程序",
+                                                    name2:'name22222',
+                                                    name3:'name333333',
+                                                    
+
+                                                }
+
+                                            });
+
+
+
+
+                        实例：
+                                !-- 定义一个容器 -->
+                                <div id="app">
+                                    <!-- 获取变量 -->
+                                    你好：{{name+date}}
+                                </div>
+
+                                <script>
+                                    // 创建Vue对象
+                                    // vm是一个全局变量
+                                    let vm = new Vue({
+                                        el:"#app",
+                                        data:{
+                                            name:"这是第一个vue.js程序",
+                                            date:"12345"
+
+                                        }
+
+                                    });
+                                    // 修改名字
+                                    vm.name = "heool word";
+
+
+                                </script>
+
+                        Class和Style以及其他属性(src，href等等)渲染   v-bind:class
+
+                            1. 在需要渲染的class或style或src等属性前面加上 :或v-bind: ，后面加上（key:value）key :class名称  value 是否激活（true,false）
+                                设置class:   :class"{'active':'isActive'}"      active 为class的名称，isActive为是否激活，设置true为激活，设置false为不激活
+                                        渲染结果： class = 'active'
+                                        
+                                        
+                                        :class="classObj"
+                                        
+                                                classObj:{        //这里 classObj为vue一个属性值，textColor textSize 才是要设置的class名字
+                                                        'textColor':true,
+                                                        'textSize':true
+                                                    }
+                
+                                        渲染结果：  class = ' textColor '
+                                        注意：对于渲染class 必须包含一个键值对组合  
+                                设置style；
+                                            <!-- 属性绑定内联样式 -->
+                                            <div id="app" v-bind:style="styleObject">  //指向渲染的vue属性
+                                            <p :style="{color:rcolor,fontSize:fsize+'px'}">这是一个段落标签</p> color fontsize为css样式名字,rcolor,fsize为渲染对象
+
+                                            </div>
+                                            <script>
+                                                // 创建Vue的对象
+                                                let vm = new Vue({
+                                                    el:"#app",
+                                                    data:{
+                                                        styleObject:{     //vue属性
+                                                            color: 'red',   //设置具体渲染数值
+                                                            fontSize: '24px'
+                                                        },
+                                                        rcolor:'red',
+                                                        fsize:24
+                                                    }  
+                                                })
+                                            </script>
+                            设置src等其他：
+                                <!-- 属性绑定内联样式 -->
+                                            <div id="app">
+                                            <!-- <div disabled="disabled" >这是一个div</div> -->
+                                            <img :src="url">       //设置渲染指向
+                                            <a :href="baiduurl">baidu</a>      //设置渲染指向
+
+                                            </div>
+                                            <script>
+                                                // 创建Vue的对象
+                                                let vm = new Vue({
+                                                    el:"#app",
+                                                    data:{
+                                                        url:"https://www.baidu.com/s?wd=%E4%BB%8A%E6%97%A5%E6%96%B0%E9%B2%9C%E4%BA%8B&tn=SE_Pclogo_6ysd4c7a&sa=ire_dl_gh_logo&rsv_dl=igh_logo_pc",
+                                                        baiduurl:"http://www.baidu.com"
+                                                    }  
+                                                })
+                        绑定事件：click等
+                            1：语法：v-on: 或@
+                            <input type="button" v-on:click="uuuu" value="abc">
+                            <button @click="uuuu">1</button>
+                                        let vm =  new Vue({
+                                            el:'#qwert',
+                                            data:{
+                                                
+                                            },
+                                            methods:{
+                                                uuuu(){
+                                                alert('0001');
+                                                }
+
+                                            }
+                            2：事件位置：
+                                Vue对象里 method 属性存放 事件
+
+                                new Vum({
+                                    methods ：{
+                                        事件
+                                    }
+
+                                })
+                            3.事件修饰符  
+                                <!-- 阻止单击事件继续传播 -->
+                                <a v-on:click.stop="doThis"></a>
+
+                                <!-- 提交事件不再重载页面 -->
+                                <form v-on:submit.prevent="onSubmit"></form>
+
+                                <!-- 修饰符可以串联 -->
+                                <a v-on:click.stop.prevent="doThat"></a>
+
+                                <!-- 只有修饰符 -->
+                                <form v-on:submit.prevent></form>
+
+                                <!-- 添加事件监听器时使用事件捕获模式 -->
+                                <!-- 即内部元素触发的事件先在此处理，然后才交由内部元素进行处理 -->
+                                <div v-on:click.capture="doThis">...</div>
+
+                                <!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
+                                <!-- 即事件不是从内部元素触发的 -->
+                                <div v-on:click.self="doThat">...</div>   
+                              
+                       列表渲染 v-for (迭代名 in 数组名)
+                                用 v-for 把一个数组对应为一组元素
+                                我们可以用 v-for 指令基于一个数组来渲染一个列表。
+                                v-for 指令需要使用 item in items 形式的特殊语法，其中 items 是源数据数组而 item 则是被迭代的数组元素的别名。
+
+                                     <ul id="example-1">
+                                    <li v-for="item in items" :key="item.message">     //一般谁执行循环语句，v-for写到哪里
+                                        {{ item.message }}         //依次获取每一个message值
+                                    </li>
+                                    </ul>
+                                    var example1 = new Vue({
+                                    el: '#example-1',
+                                    data: {
+                                        items: [   //数组名
+                                        { message: 'Foo' },         //index 0   模块1
+                                        { message: 'Bar' }          //index 1   模块2    每个模块可以有多个数据
+                                        ]
+                                    }
+                                    })
+
+                                可以快捷存入数据，参考boss-1 index list 文件
+
+
+                        条件渲染   v-if 
+                             v-if 指令用于条件性地渲染一块内容。这块内容只会在指令的表达式返回 truthy 值的时候被渲染。
+                             v-else-if，顾名思义，充当 v-if 的“else-if 块”，可以连续使用
+                             v-else 元素必须紧跟在带 v-if 或者 v-else-if 的元素的后面，否则它将不会被识别。      
+
+
+                                   <div v-if="type === 'A'">
+                                    A
+                                    </div>
+                                    <div v-else-if="type === 'B'">
+                                    B
+                                    </div>
+                                    <div v-else-if="type === 'C'">
+                                    C
+                                    </div>
+                                    <div v-else>
+                                    Not A/B/C
+                                    </div>   
+
+                            用 key 管理可复用的元素
+                                <template v-if="loginType === 'username'">
+                                <label>Username</label>
+                                <input placeholder="Enter your username" key="username-input">   //设置唯一的key 值，避免重复使用
+                                </template>
+                                <template v-else>
+                                <label>Email</label>
+                                <input placeholder="Enter your email address" key="email-input">
+                                </template> 
+
+
+
+                        computed(定义方法同methods)
+
+                         公式：computed:{
+                             名字 ： function(){
+                                 内容
+                             }
+                         }
+                         例子：
+                           computed:{
+
+                                reversedMessag:function(){
+                                    return this.message.split('').reverse().join('');
+                                },
+                                price:function(){
+                                    return this.package.count*this.package.price;
+                                }
+                           }
+                            计算属性与方法
+                                1.在使用computed中的函数的时候不需要加括号而methods跌函数在调用的时候需要加括号
+                                2.这两种方式在缓存方面也是不一样的。如果是使用computed属性，只有当reversedMessag
+                                这个属性发生变化的时候才会调用 reversedMessag这个函数。
+                                而method这种方式，每次进入页面的时候都会执行某些函数
+                                3.在实际应用中，如果要显示实时的信息（显示当前进入页面的时候），就要使用method这个属性了                  
+
+
+
+                        组件：自定义的js组件   <div> <span> 这种都是组件
+                            分为局部组件和全局组件
+                            Vue.component(组件名，具体方法)
+
+                            全局组件：实现方法
+                            1：extend方法：
+                                var Aaa = Vue.extend({
+                                                           
+                                    data(){                                        // data一定是一个函数，否则控制台会报错的
+                                        return {
+                                            msg:'我是一个全局的组件'
+                                        }
+                                    },
+                                    methods: {
+                                        change() {
+                                            this.msg = '我被改写了，哈哈......'
+                                        }
+                                    },
+                                    template:'<h1 @click="change">{{msg}}</h1>'   //  定义具体功能
+                                })
+
+                                
+                                 Vue.component('aaa',Aaa);               //注册  aaa是组件的名称   Aaa是构造器
+
+
+                                
+                                    // 创建Vue的对象                      //下面的Vue对象作为接受组件的容器，组件只能在下面已有的vue中使用
+                                    let vm = new Vue({                     
+                                        el:"#app",
+                                        data:{
+                                            bSign:true
+                                        }
+                                    })
+
+                                    // 创建Vue的对象
+                                    let vm1 = new Vue({
+                                        el:"#app1",
+                                        data:{
+                                            bSign:true
+                                        }
+                                    })
+
+
+                            2：直接实现：  构造器直接写到括号里
+                             Vue.component('aaa',{                            //注册  aaa是组件的名称   后面是构造器
+                                                           
+                                    data(){                                        // data一定是一个函数，否则控制台会报错的
+                                        return {
+                                            msg:'我是一个全局的组件'
+                                        }
+                                    },
+                                    methods: {
+                                        change() {
+                                            this.msg = '我被改写了，哈哈......'
+                                        }
+                                    },
+                                    template:'<h1 @click="change">{{msg}}</h1>'   //  定义具体功能
+                                });   
+                                
+                                    // 创建Vue的对象                      //下面的Vue对象作为接受组件的容器，组件只能在下面已有的vue中使用
+                                    let vm = new Vue({                     
+                                        el:"#app",
+                                        data:{
+                                            bSign:true
+                                        }
+                                    })
+
+                                    // 创建Vue的对象
+                                    let vm1 = new Vue({
+                                        el:"#app1",
+                                        data:{
+                                            bSign:true
+                                        }
+                                    })     
+                            局部组件：   //直接在VUE对象里定义，使用范围就在这个对象里
+                                
+                                let vm = new Vue({              // 创建Vue的对象  
+                                    el:"#app",
+                                    
+                                    components:{                // 局部组件  这里是components，加了s!!!!!!!
+                                        'my-aaa':{         //名字：构造
+                                           
+                                            data(){             // 组件中可以有数据、methods 、computed、template
+                                                return {
+                                                    msg:'hello components'
+                                                }
+                                            },
+                                            methods:{           
+ 
+                                            },
+                                            template:'<h1 @click="change"> 这是一个局部组件--{{msg}}</h1>'
+                                        }
+                                    }
+                                }) 
+
+
+                            再其他vue文件中引入 指定 .vue文件，使这个vue文件当作组件去使用
+
+                                    <script>
+                                    // 导入组件
+                                    import Footer from '../components/Footer.vue'
+                                    export default {
+                                        components:{    //引入组件  这是一个局部组件
+                                            Footer   //组件名
+                                        }
+                                        
+                                    }
+                                    </script>
+
+                        created():
+                                  在模板渲染成html前调用，即通常初始化某些属性值，然后再渲染成视图。
+                                  生命周期内执行
+
+                        mounted():
+                                  在模板渲染成html后调用，通常是初始化页面完成后，再对html的dom节点进行一些需要的操作。            
+
+
+                        路由：作用类似<a>，实行跳转vue create my-project  
+                                <!-- router-->
+                                <div id="app">
+                                <p>
+                                    <!-- 可以使用router-link组件来进行导航 -->
+                                    <!-- 可以通过to这个属性来指定链接 -->
+                                    <!-- router-link默认会被渲染成一个<a>标签 -->
+                                    <router-link to="/home" >home</router-link>
+                                    <router-link to="/news" >news</router-link>
+                                </p>
+                                <!-- 路由需要一个出口 -->
+                                <!-- 然后才可以匹配到的组件渲染出来 -->
+                                <router-view></router-view>
+                                </div>
+
+                                <script>
+                                    //1.要定义路由组件
+                                    const Home = {template:'<div>首页</div>'}
+                                    const News = {template:'<div>新闻</div>'}
+
+                                    //2.定义路由(每个路由应该映射为一个组件)
+                                    const routes = [
+                                        {path:'/home',component:Home},
+                                        {path:'/news',component:News}
+                                    ]
+
+                                    //3.创建router的对象(实例),需要传入routes的配制信息
+                                    const router = new VueRouter({
+                                        routes   // （缩写）相当于 routes: routes
+                                    })
+
+
+                                    //4.创建Vue对象和挂载根实例
+                                    //一定要通过router配置参数注入路由，从而让整个应用都有路由的功能
+                                    let vm = new Vue({
+                                        el:"#app",
+                                        data:{},
+                                        //将路由router添加到Vue中
+                                        router  // （缩写）相当于 router: router
+                                    })
+                                </script>      
+
+
+
+
+                        scoped :只在当前文件中生效  一般加载style中设置样式   
+                        vue ui 下载脚手架  
+                        this.$router.push(url)     路由跳转，直接跳转 
+                        this.$router.push({path:'url',query:{参数名:参数值}})   路由跳转，跳转到指定页面，含参数跳转
+
+                        this.$route.query.参数名       获取跳转的参数   注意这里是 route  没有 r   
+                        this.$router.go(-1);           跳转回上一个页面 
+
+                        vue 传参：https://blog.csdn.net/u014395524/article/details/88194842
+
+
+
+
+
+
+
+                                             
+                                                                                
+                          注意： == 表示相同   ===严格相同   option1==option2   option1===option2
+                            如何理解：当进行option1==option2比较的时候，先检查两个操作数的数据类型是否相同，如果相同
+                                    再进行===比较，如果不相同，它会进行类型转换，转换为相同的类型后再进行比较
+
+                                    option1===option2 如果类型不同，直接就是false  
+
+                 Vue.prototype的用法
+
+                  基础事例：
+
+                        在vue项目main.js文件中：
+
+                            Vue.prototype.$appName = 'My App'
+
+                        这样你可以通过在原型上定义它们使其在每个 Vue 的实例中可用。
+
+                            new Vue({
+                            beforeCreate: function () {
+                                console.log(this.$appName)
+                            }
+                            })
+
+                        控制台会打印出 My App。就这么简单！
+
+                        
+
+                        “为什么 appName 要以 $ 开头？这很重要吗？它会怎样？”
+
+                            $ 是在 Vue 所有实例中都可用的属性的一个简单约定。这样做会避免和已被定义的数据、方法、计算属性产生冲突。
+
+                        比如写成：
+
+                            Vue.prototype.appName = 'My App'
+
+                        在vue实例中：
+                        复制代码
+
+                            new Vue({
+                                data: {
+                                    appName: 'The name of some other app'
+                                },
+                                beforeCreate: function () {
+                                    console.log(this.appName)
+                                },
+                                created: function () {
+                                    console.log(this.appName)
+                                }
+                            })
+
+                Vue生命周期：
+
+                    以下函数用法同Vue 中的methods 一样
+
+                    beforeCreate()   创建前
+                    created()        创建完毕
+                    beforeMount()    挂载前
+                    mounted()        挂载完毕
+                    beforeUpdate()   更新前  
+                    updated()        更新完毕
+                    befoerDestroy()  销毁前
+                    destroyed()      销毁完毕   
+
+                    例子：
+                    export default {
+                            data(){
+                                return{
+                                    orderList:[]
+                                }
+                            },
+                            methods:{            //普通函数
+                                listOrderByUserId(){
+                                    this.$axios.post('OrdersController/listOrderByUserId',this.$qs.stringify({
+                                        userId:this.user.userId
+                                    })).then(response=>{
+                                        this.orderList=response.data
+                                        console.log(response.data)
+                                    }).catch(error => {
+                                console.error(error);
+                            });
+                                },
+                            },
+                            created(){          //创建完毕时执行的函数
+                                this.user = this.$getSessionStorage('user');
+                                this.listOrderByUserId();
+                            }
+                        }
+
+        传参，跳转               
+
+            axios:（前台后台交互）
+    
+		            Vue methods:
+		
+                    this.$axios.post('Axios/sb',   //URL首字母必须是大写不然会出错
+                        this.$qs.stringify({       //传参部分 使用qs
+                        num_inf :this.inf
+                        })).then(response=>{      //返回值部分
+
+                        console.log("yes")
+                        }).catch(error=>{
+                        console.log(error)
+                        })
+
+            this.$route.push (页面跳转)
+                
+                1.页面跳转
+                    this.$route.push({
+                    path:'' ,               	//目标URL，为注册的路由
+                    
+                    query:{
+                            key:value      	//传入参数，参数会写入URL，params用法同query，只不过参数不会写进URL
+                            }
+                    })
+                2.读取其他页面传进来的参数：
+                    this.$route.query.key      //key为接受的参数的名字
+
+
+
+
+            在vue中引入外部的css文件
+
+                    在vue中引入外部的css文件
+                    在项目的src文件下，新建一个style文件夹，存放css文件。
+
+                    1. 全局引入
+                    将外部的css文件放到style文件下，引入外部文件只需在main.js文件中
+
+                    import './style/reset.css'
+
+                    我引入的是清除默认样式的css文件
+
+                    2. 局部引入
+
+                    <style scoped>
+                    @import '../assets/iconfont/iconfont.css';这个分号一定要写，要不会报错
+                    </style>
+
+        
+
+        鼠标事件：
+                
+                @click="click"        ////单击
+                @mousedown="down"       ////按下
+                @mouseup="up"          ////抬起
+
+                @dblclick="dblclick"      ////双击
+
+
+                @mousemove="move"     ////移动
+
+
+                @mouseleave="out"        ////离开
+                @mouseout ="out"         ////移出
+
+                @mouseenter="enter"     ////进入
+                @mouseover="enter"        ////在
+         
+                
+        图片渲染问题：
+
+               https://blog.csdn.net/fhjdzkp/article/details/105271862
+
+               从后台数据库拿过来的图片地址直接 :src会报错，需要 require()转换，requier还需要字符串拼接才会生效，所以必须采用拼接格式
+
+               数据库：
+                  
+                  src=b1.jpg
+               
+               接收：
+
+                this.$axios.post('ClothesController/selectallclothes',this.$qs.stringify(
+                    {
+                        sex:"男"
+                    }
+                    )).then(response=>{      //返回值部分
+                        this.men_clothes = response.data;
+                        //把拿到的每个图片的格式转换为VUE可识别正确格式
+                        for(let i=0;i<this.men_clothes.length;i++){
+                            this.men_clothes[i].src = require("../assets/men/"+this.men_clothes[i].src);
+                            console.log(this.men_clothes[i].src)
+                        }
+                    }).catch(error=>{
+                        console.log(error)
+                    });
+               
+               渲染结果：     
+                          <li v-for="(item,index) in men_clothes">
+
+                               <div>{{item.id}}</div>
+                               <img :src=item.src>    //图片
+
+
+
+                               <div>{{item.brand}}</div>
+                               <div>{{item.info}}</div>
+                               <div>{{item.money}}</div>
+                               <div>{{item.num}}</div>
+                               <div>{{item.src}}</div>
+                           </li>

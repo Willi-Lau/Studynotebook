@@ -1,0 +1,859 @@
+SpringMVC开发步骤
+
+        1.导包 spring-wenmvc
+        2.配置SpringMVC核心控制器DispathcerServlet
+        3.创建Controller类和视图页面
+        4.将Controller使用注解配置到Spring容器中，配置映射地址，GET方法等
+        5.配置springmvc.xml 组件扫描
+        6.测试
+
+        相关配置：
+
+                springmvc.xml mvc命名空间的引入：
+                
+                mvc和context
+
+                        <?xml version="1.0" encoding="UTF-8"?>
+                        <beans xmlns="http://www.springframework.org/schema/beans"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:context="http://www.springframework.org/schema/context"
+                        xmlns:mvc="http://www.springframework.org/schema/mvc"
+                        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                                http://www.springframework.org/schema/beans/spring-beans.xsd
+                                                http://www.springframework.org/schema/context
+                                                http://www.springframework.org/schema/context/spring-context.xsd
+                                                http://www.springframework.org/schema/mvc
+                                                http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+
+
+                web.xml:
+                                <!--    Spring web全局初始化参数   -->
+                                <servlet>
+                                        <servlet-name>DispatcherServlet</servlet-name>    
+                                        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+                                <!--    配置Spring mvc 初始化参数  -->
+                                        <init-param>
+                                                <param-name>contextConfigLocation</param-name>
+                                                <param-value>classpath:spring-mvc.xml</param-value>
+                                        </init-param>
+                                        <!--代表服务器启动时就创建这个Servlet-->
+                                        <load-on-startup>1</load-on-startup>
+                                </servlet>
+                                <servlet-mapping>
+                                        <servlet-name>DispatcherServlet</servlet-name>
+                                        <!-- 任何请求都会访问这个Servlet-->
+                                        <url-pattern>/</url-pattern>
+                                </servlet-mapping>
+
+                                <!--    初始化参数-->
+                                <context-param>
+                                        <param-name>contextConfigLocation</param-name>
+                                        <param-value>classpath:applicationContext.xml</param-value>
+                                </context-param>
+                                <!--   配置监听器-->
+                                <listener>
+                                        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+                                </listener>
+
+                                
+
+                                <!--    配置全局字符过滤器-->
+                                <filter>
+                                        <filter-name>characterEncodingFilter</filter-name>
+                                        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+                                        <init-param>
+                                        <param-name>encoding</param-name>
+                                        <param-value>UTF-8</param-value>
+                                        </init-param>
+                                </filter>
+                                <filter-mapping>
+                                        <filter-name>characterEncodingFilter</filter-name>
+                                        <url-pattern>/*</url-pattern>
+                                </filter-mapping>
+
+
+                spring-mvc.xml:
+
+                                <!--    组件扫描,只扫描controller的，别的 就不属于Spring mvc 了-->
+                                <context:component-scan base-package="com.controller">
+                                <!--        扫描@Controller-->
+                                        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+                                </context:component-scan>
+
+                                <!--    配置内部资源视图解析器(return 的信息)-->
+                                <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                                <!--        return 的头部信息（自动拼接到return值的前面）-->
+                                        <property name="prefix" value="/jsp/"></property>
+                                        <!--        return 的尾部信息（自动拼接到return值的后面）-->
+                                        <property name="suffix" value=".jsp"></property>
+                                </bean>
+
+                                <!--    注解驱动 自动配置JSON  等同上面-->
+                                <mvc:annotation-driven></mvc:annotation-driven>
+
+                                <!--    使用原始tomcat找资源在springmvc找不到的情况下   静态资源-->
+                                 <mvc:default-servlet-handler></mvc:default-servlet-handler>
+
+
+                 
+        包扫描：只需要对Spirng-mvc下的包进行扫描即可，和Spring扫描的分开
+
+                注解扫描：
+
+                         <context:component-scan base-package="com.controller"></context:component-scan>    //扫描com.controller
+
+                         子注解：
+
+                                <context:include-filter>
+
+                                <context:exclude-filter>
+
+                                参数：type:
+                                           assignable-指定扫描某个接口派生出来的类
+                                        　　annotation-指定扫描使用某个注解的类
+                                        　　aspectj-指定扫描AspectJ表达式相匹配的类
+                                        　　custom-指定扫描自定义的实现了org.springframework.core.type.filter.TypeFilter接口的类
+                                        　　regex-指定扫描符合正则表达式的类
+
+                                       expression：
+                                            根据type填写的值或包的位置
+
+                                例子：  
+                                        <context:component-scan base-package="com.controller">
+                                                //不扫描@Controller
+                                                <context:exclude-filter type="annotation"expression="org.springframework.stereotype.Controller" />
+                                                //扫描@Controller
+                                                <context:include-filter type="annotation"expression="org.springframework.stereotype.Controller" />
+                                               
+                                        </context:component-scan>  
+
+        配置内部资源视图解析器：（return 返回的信息部分进行加工）
+
+                                <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                                        <!-- return 的头部信息（自动拼接到return值的前面）-->
+                                        <property name="prefix" value="/jsp/"></property>       //拼接到头
+                                        <!--        return 的尾部信息（自动拼接到return值的后面）-->
+                                        <property name="suffix" value=".jsp"></property>       //拼接到尾巴
+                                </bean>         
+
+        注解： 
+                @RequestMapping
+
+                        作用：用于建立请求URL和处理请求方法之间的关系
+                        位置：类上，请求URL的第一级访问目录。此处不写的话，就是应用的跟目录
+                              方法上，请求URL的第二级访问目录。与类上写的@RequestMapping标注的一级目录一起构成访问虚拟路径
+
+                        属性：value 用于请求指定的URL，他和path属性的作用是一样的 value="/user"
+                             method 用于指定请求的方式，枚举类型，RequestMethod.GET 这种表达形式
+                             params 用于指定限制请求参数的条件。他支持简单的表达式要求参数的key和value必须配置的一模一样   
+                             例子：params = {"userName"}      表示请求的参数必须有userName
+                                   params = {"money!100"}       表示请求参数中money不能是100
+                   例子：
+                
+                        @Controller
+                        @RequestMapping("/user")        //类的上面写Request代表整个类访问都要以/user为头，后面的地址进行拼接
+                        public class UserController {
+
+
+                        
+                        //    访问地址  http://localhost:8080/user/quick   访问方法 get   参数必须有username
+                        @RequestMapping(value = "/quick",method = RequestMethod.GET,params = {"username"})   //    请求映射
+                        public String eat(){
+                                System.out.println("启动USerController 董世苹在吃屎");
+
+
+                                //返回一个视图
+                                //返回的路径是基于web包下的路径
+                                //没有配置视图解析器时返回的路径是  return "/jsp/success.jsp";
+                                //配置视图解析器把前面的包路径和后面的尾缀都去掉了
+                                //默认是转发 forward,如果想配置重定向，前面加上redirect:
+
+                                return "success";
+                        }
+                        }
+
+                @ResponseBody
+                          
+                          作用：告诉Spring 返回的是一个值而不是一个页面的名字
+                          位置：方法上
+
+                                @RequestMapping(value = "/quick6")
+                                @ResponseBody         //告诉Spring 返回的是一个值而不是一个页面的名字
+                                public String eat6(HttpServletResponse response) throws IOException {
+
+                                        return "qqqqqq666666";
+
+                                }
+                @RequestBody
+                           
+                           作用：接受JSON格式的数据，集合也可以，当传递的是集合时写在括号参数的前面
+                                 如果前端传送的是POST请求，并且传递的是一个bean对象的值，可以直接用@RequestBody 类名接收
+                           位置：括号里参数的前面
+
+                                @RequestMapping(value = "/son5")
+                                @ResponseBody
+                                public void son5(@RequestBody List<User> userlist){
+                                        //调用User的方法
+                                        System.out.println(userlist);
+                                }
+
+                                例2：
+                                        前端传送:
+                                                { name:'lwy',age:21,school:'LGD'}
+
+                                        User 类：
+                                                private String name;
+                                                private int age;
+                                                private String school;
+
+                                        Controller:
+                                                @RequestMapping("/user")
+                                                public void getUser(@RequestBody User user){   //这样就可以获取到了
+                                                        System.out.println(user)
+                                                }
+
+
+                @RequestParam
+                            
+                            作用：对传递进来的参数进行相关操作
+                                 传递进来的参数的名字和括号里名字不一样时可以别命名等
+                            
+                            位置：括号里参数的前面
+
+                            参数：value : 请求参数的名称
+                                  required : 设置这个参数是不是必须填写不能为null的，默认是true(not null)
+                                  defaultValue: 设置默认值在没有请求参数的时候
+
+                                @RequestMapping(value = "/son6")
+                                @ResponseBody
+                                public void son6(@RequestParam(value = "name",required = false,defaultValue = "liuweiyi") String username){
+                                        //调用User的方法
+                                        System.out.println(username);
+                                }
+                                                        
+                @CookieValue 获取Cookie值    用法同@RequestBody
+                @RequestHeader 获取请求头     用法同@RequestBody
+
+
+        Springmvc 自定注入数据：(ModelAndView,req,resp,等都可以直接注入，SpringMVC会自动注入)
+
+                        @RequestMapping(value = "/quick4")
+                        public String eat4(HttpServletRequest request) {    //这里通过 SpringMVC自动注入
+
+                                request.setAttribute("username","dashabi");
+
+                                return "success";
+
+
+                        }
+        
+        SpringMVC数据响应：(发送数据或跳转界面)
+
+             
+                  1.返回字符串形式（页面跳转 传递参数）
+                    
+                    将返回的字符串和视图解析器一起进行拼接
+
+                     @RequestMapping(value = "/quick",method = RequestMethod.GET,params = {"username"})   //    请求映射
+                        public String eat(){
+                                System.out.println("启动USerController 董世苹在吃屎");
+
+
+                                //返回一个视图
+                                //返回的路径是基于web包下的路径
+                                //没有配置视图解析器时返回的路径是  return "/jsp/success.jsp";
+                                //配置视图解析器把前面的包路径和后面的尾缀都去掉了
+                                //默认是转发 forward,如果想配置重定向，前面加上redirect:
+
+                                return "success";
+                        } 
+
+
+
+
+
+                 2.ModelAndView 返回值 （前端用 ${}  来接收） （页面跳转 传递参数）
+
+                       
+                        @RequestMapping(value = "/quick2")      //采取modelandview返回格式
+                        public ModelAndView eat2(){
+                                /*
+                                model 封装数据
+                                view  展示数据
+                                */
+                                ModelAndView modelAndView = new ModelAndView();
+                                
+                                modelAndView.setViewName("success");           //设置视图名称(跳转的页面) 
+                                
+                                modelAndView.addObject("username","liuweiyi");   //设置模型数据(添加传递的值)
+
+                                return modelAndView;
+
+                        }
+
+                    或
+                 
+                         
+                        @RequestMapping(value = "/quick3")                   //采取modelandview返回格式
+                       
+                        public ModelAndView eat3(ModelAndView modelAndView){        //这里通过 SpringMVC自动注入
+
+                                
+                                modelAndView.setViewName("success");         //设置视图名称(跳转的页面)  
+                               
+                                modelAndView.addObject("username","dongshiping");       //设置模型数据(添加传递的值)
+
+                                return modelAndView;
+
+                        }
+
+                3.返回JSON格式 （传递参数 返回JSON）
+
+                       在pom.xml中引入jackson
+
+                         spring 5.0.3.RELEASE 对应json 2.9.4版本
+
+                                <!--        json-->
+                                <dependency>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-core</artifactId>
+                                <version>2.9.4</version>
+                                </dependency>
+                                <dependency>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-databind</artifactId>
+                                <version>2.9.4</version>
+                                </dependency>
+                                <dependency>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-annotations</artifactId>
+                                <version>2.9.4</version>
+                                </dependency>
+
+                         在spring-mvc.xml中引入注解驱动，自动配置返回值为JSON
+
+                         <mvc:annotation-driven></mvc:annotation-driven>       
+
+
+                        Java类:
+                                @RequestMapping(value = "/quick8")
+                                @ResponseBody
+                                public User save2() throws JsonProcessingException {
+                                        //传入参数
+                                        User user = new User();
+                                        user.setAge("20");
+                                        user.setName("shabi");
+
+                                        //返回
+                                        return user;
+
+                                }
+
+
+                4.返回对象或集合
+
+                         同3
+
+
+        SpringMVC获得请求数据
+
+                可以接受以下类型数据：
+                  
+                       1.基本类型   （传参）
+                       2.POJO(对象) （传参）
+                       3.数组       （传参）
+                       4.集合       （Bean）  把集合存入一个对象中进行传参
+
+                       
+                       注意：
+                         
+                         传入参数的名字必须和方法中括号里定义的参数名一样，否则会有空指针异常
+
+
+                       1.基本类型：
+
+                          Controller中的业务方法参数名要与请求的参数名的Name 一样，参数的值会自动匹配
+
+                                @RequestMapping(value = "/son1")
+                                @ResponseBody                                      //    参数传递是通过 url拼接
+                                public void son1(String name,String age){           //    获取的参数通过变量传递进来  获取普通参数
+                                        System.out.println(name);
+                                        System.out.println(age);
+                                } 
+
+                       2.POJO（对象）
+                                
+                                需要设置getter setter 方法
+                                 
+                                注意：传入对象时直接传入对象的值就可以不用考虑对象的名字，例如User类有name，age两个属性，传入直接写
+                                      name=***&age=***即可
+
+                                @RequestMapping(value = "/son2")
+                                @ResponseBody
+                                public void son2(User user){                 //传入一个User  这种形式的就可以 name=liuweiyi&age=9999
+                                        //调用User的方法                       //剩下的操作Springmvc走动完成，传入值就够了
+                                        System.out.println(user.toString());
+                                }
+
+
+                       3.数组
+                                @RequestMapping(value = "/son3")
+                                @ResponseBody                                //传入一个数组  这种形式的就可以 str=111&str=222&str=333
+                                public void son3(String [] str){                  //剩下的操作Springmvc走动完成，传入值就够了
+                                        //调用User的方法                    //传入数组的名字必须和括号里的名字一样，不一样就会有空指针异常
+                                        for(String i:str){
+                                        System.out.println(i);
+                                        }
+                                }
+                       4.集合（类似对象）
+
+                                SpringMVC不能直接传入普通集合，要通过把集合放到一个类中，传入一个POJO来实现传入集合
+                                直接传入的集合必须是JSON格式的数据
+                                
+                                非JSON数据：
+
+                                        类：
+                                                public class UserList {     
+                                                List<User> list;           //目标集合，前端写入传入的集合名字看这里
+
+                                                public List<User> getList() {
+                                                        return list;
+                                                }
+
+                                                public void setList(List<User> list) {
+                                                        this.list = list;
+                                                }}         
+                                        MVC：
+                                                传入一个集合 集合不能直接在括号写入，需要新建一个类，类中建立一个和集合，再把这个类当作参数传入
+                                                剩下的操作Springmvc走动完成，传入值就够了
+                                                传入的值的名字一定要和括号里的参数名一致 这里传入集合的名字要和UserList类里面的那个集合名字一样 就是list
+
+                                                @RequestMapping(value = "/son4")
+                                                @ResponseBody
+                                                public void son4(UserList userlist){  //这里括号里的是对象的名字。不是传入集合的名字
+                                                
+                                                System.out.println(userlist.toString());       //调用User的方法
+                                                }
+                                        .jsp
+                                                <form action="${pageContext.request.contextPath}/son/son4 " method="post">
+                                                <%--在这里实现集合值的注入--%>
+                                                        <input type="text" name="list[0].name"> <br>   //list 是在自定义类中集合的名字
+                                                        <input type="text" name="list[0].age"> <br>
+                                                        <input type="text" name="list[1].name"> <br>
+                                                        <input type="text" name="list[1].age"> <br>
+                                                        <button type="submit">确定</button>
+                                                </form>
+
+                                JSON数据:
+                                         不需要使用POJO进行封装，只需要在括号参数的位置写RequestBody就可以(注意！！！是RequestBody 不是resp)
+
+                                         .jsp
+                                                <script>
+                                                var userlist2=new Array();
+                                                userlist2.push({name:"zhangsan",age:18})
+                                                userlist2.push({name:"zhangsan2",age:182})
+                                                $(function(){
+                                                        $.ajax(
+                                                        {
+                                                                url:"${pageContext.request.contextPath}/son/son5",
+                                                                data:JSON.stringify(userlist2),   //转换为JSON
+                                                                type:"POST",
+                                                                contentType:"application/json;charset=utf-8"
+
+
+                                                        }
+                                                        )
+
+
+                                                })
+                                                </script>
+                                        mvc:
+                                                @RequestMapping(value = "/son5")
+                                                @ResponseBody
+                                                //传入一个集合 JSON数据的集合可以直接写到括号里面
+                                                //剩下的操作Springmvc走动完成，传入值就够了
+                                                //传入的值的名字一定要和括号里的参数名一致 这里传入集合的泛型要在Bean里创建出来
+                                                public void son5(@RequestBody List<User> userlist){
+                                                        //调用User的方法
+                                                        System.out.println(userlist);
+                                                }
+
+        SpringMVC访问静态资源：
+
+                        任何的东西在Springmvc眼里都是Servlet我们需要告诉他什么是静态资源
+
+                        
+                        <!--    开放资源访问权限  一般是静态资源-->
+                        <mvc:resources mapping="/js/**" location="/js/"></mvc:resources>
+
+
+                        或：
+
+                        <!--    使用原始tomcat找资源在springmvc找不到的情况下-->
+                        <mvc:default-servlet-handler></mvc:default-servlet-handler>     
+
+        乱码：
+
+                <!--    配置全局字符过滤器-->
+                <filter>
+                        <filter-name>characterEncodingFilter</filter-name>
+                        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+                        <init-param>
+                        <param-name>encoding</param-name>
+                        <param-value>UTF-8</param-value>
+                        </init-param>
+                </filter>
+                <filter-mapping>
+                        <filter-name>characterEncodingFilter</filter-name>
+                        <url-pattern>/*</url-pattern>
+                </filter-mapping>
+
+        Spring-MVC 文件上传
+
+
+                文件上传三要素：（有图）
+
+                        表单项type="file"
+                        表单的提交方式是post
+                        表单的enctype属性是多部份表单形式，enctype = "multipart/form-data"  
+                            默认值是单部分：application/x-www-form-urlencoded  
+                            单部分时req.getParameter()有效，多部份时无效
+
+                单文件上传步骤：
+                        1.导入fileupload和io坐标 maven
+                        2.配置文件上传解析器
+                        3.编写文件上传代码
+
+
+                        1.  pom.xml
+                                <!--        文件上传部分-->
+                                <dependency>
+                                <groupId>commons-fileupload</groupId>
+                                <artifactId>commons-fileupload</artifactId>
+                                <version>1.3.1</version>
+                                </dependency>
+                                <dependency>
+                                <groupId>commons-io</groupId>
+                                <artifactId>commons-io</artifactId>
+                                <version>2.5</version>
+                                </dependency>
+
+
+                        2.   springmvc.xml
+
+                                <!--    使用原始tomcat找资源在springmvc找不到的情况下  静态资源-->
+                                <mvc:default-servlet-handler></mvc:default-servlet-handler>
+                                <!--    配置文件上传解析器-->
+                                <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+                                        <property name="defaultEncoding" value="UTF-8"></property>
+                                        <property name="maxUploadSize" value="500000"></property>
+
+                                </bean>
+
+                        3.实现
+                             
+                             jsp:
+                                  注意：表单必须有 enctype="multipart/form-data" 属性，文件部分必须为file
+                                
+                                 <form action="${pageContext.request.contextPath}/load/load1" method="post" enctype="multipart/form-data">
+                                        名称<input type="text" name="username"> <br>
+                                        图片 <input type="file" name="load"> <br>
+                                        <button type="submit">提交</button>
+                                 </form>
+                             
+                             mvc: 
+                                  注意：括号里文件的参数必须是    MultipartFile uploadFile 别的名字不行否则会报错
+
+                                        //单文件上传
+                                        @RequestMapping(value = "/load1",method = RequestMethod.POST)
+                                        @ResponseBody
+                                        public void up1(@RequestParam("username") String name, @RequestParam("load") MultipartFile uploadFile) throws IOException {
+                                                //这里的 MultipartFile 的名字必须是 uploadFile，是别的接收不到
+                                                //获取文件名字
+                                                String originalFilename = uploadFile.getOriginalFilename();
+                                                uploadFile.transferTo(new File("D:\\Java\\"+originalFilename));
+                                        }
+
+
+
+                                      
+                                        //多文件上传  用数组接收
+                                        @RequestMapping(value = "/load2",method = RequestMethod.POST)
+                                        @ResponseBody
+                                        public void up2(@RequestParam("username") String name, @RequestParam("load") MultipartFile[] uploadFile) throws IOException {
+                                                //这里的 MultipartFile 的名字必须是 uploadFile，是别的接收不到
+                                                System.out.println(name);
+                                                for(MultipartFile m : uploadFile){
+                                                m.transferTo(new File("D:\\Java\\"+m.getOriginalFilename()));
+                                                }
+
+
+                                        }
+
+
+
+        SpringMVC拦截器：
+                  
+                实现步骤：
+                        1.创建拦截器实现接口 HandlerInterceptor接口
+                        2.配置拦截器（在spring-mvc.xml里配置）
+                        3.测试
+
+                拦截器的执行顺序和在spring-mvc.xml里 <mvc:interceptors> 里 配置的顺序有关，谁在上谁先执行，一条一条执行，有图解
+
+                拦截器里的三个方法：
+
+                        preHandle 目标方法执行前执行，返回false不进行后续程序，true放行
+
+                        postHandle 目标方法执行后返回视图前执行
+
+                        afterCompletion 整个流程执行之后进行
+
+                spring-mvc.xml:
+
+                        <!--    配置拦截器-->
+                        <mvc:interceptors>
+                                <mvc:interceptor>
+                        <!--            对哪些资源进行拦截 类似aop urlpattern   /** 是对所有的方法进行拦截-->
+                                <mvc:mapping path="/**"/>
+                        <!--            拦截器的位置-->
+                                <bean class="com.interceptor.Myinterceptor"></bean>
+                                </mvc:interceptor>
+                        </mvc:interceptors>
+                
+                实现类：
+
+                        public class  Myinterceptor implements HandlerInterceptor {
+
+                        //在目标方法执行前执行
+                        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+                                System.out.println("执行pre");
+
+                                //返回false 后面都不执行 true 才执行
+                                if(request.getParameter("name").equals("liuweiyi")){
+                                System.out.println("t");
+                                return true;
+                                }
+                                else {
+                                request.getRequestDispatcher("/jsp/error.jsp").forward(request,response);
+                                System.out.println("f");
+                                return false;
+                                }
+
+                        }
+                        //在目标方法执行后，视图返回前执行
+                        public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+                        //主要是对midelandview更改   更改modelandview只需要对key 直接设置新的value就行，和新建的一样
+                                modelAndView.addObject("name","dsp");
+                                System.out.println("z执行post");
+                        }
+                        //整个流程结束后
+                        public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+                                System.out.println("执行after");
+                        }
+                        }
+
+
+        Springmvc异常处理
+
+                简单异常处理器（Spring-MVC默认提供好的）
+
+                功能：抛出异常时跳转对应的异常页面
+
+
+        springMVC处理multipart/form-data类型的表单数据
+
+                1、前端做好form表单
+
+               
+                <form action="${pageContext.request.contextPath}/fileUploadTest"
+                        method="post" enctype="multipart/form-data">
+                        <label>编号：</label> <input type="text" name="device" id="device">
+                        <br> <label>日期：</label> <input type="datetime-local"
+                        name="localDate" id="localDate"> <br> <label>选择文件：</label>
+                        <input type="file" name="file1" id="file1"> <br> <input
+                        type="submit" id="fileUpdate" value="点击上传文件"> <br> <input
+                        type="hidden" id="ssFile" name="ssFile">
+                </form>
+               
+                
+
+                2、在applicationContext.xml中进行配置
+
+               
+                <!-- 用于文件上传、下载的配置 -->
+                <bean id="multipartResolver"
+                        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+                        <property name="defaultEncoding" value="utf-8"></property>
+                        <property name="maxUploadSize" value="2097152"></property>
+                </bean>
+               
+                3、controller中直接获取
+
+              
+                /**
+                * 测试是否能上传文件
+                * 
+                * @return
+                */
+                @RequestMapping(value = "/fileUploadTest")
+                @ResponseBody
+                public String fileUploadTest(String device, String localDate, MultipartFile file1) {   //如果传递的值都是一个Bean对象里的，
+                        System.out.println(device + "," + localDate + "," + file1);return "yes";      //括号里直接写呢个对象就可以。例如User user
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

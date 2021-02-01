@@ -1,0 +1,119 @@
+
+
+MySQL数据库备份与恢复
+
+配置文件my.ini位置：C:\ProgramData\MySQL\MySQL Server 8.0
+
+数据库中的数据丢失或被破坏可能是由以下原因造成：
+1）计算机硬件故障。
+2）软件故障
+3）病毒
+4）误操作
+5）自然灾害
+6）盗窃
+有多种可能会导致数据表的丢失或者服务器的崩溃，一个简单的DROP TABLE或者DROP DATABASE的语句，就会让数据表化为乌有。更危险的是DELETE * FROM table_name，可以轻易地清空数据表，而这样的错误是很容易发生的。
+因此，拥有能够恢复的数据对于一个数据库系统来说是非常重要的。MySQL有三种保证数据安全的方法。
+
+（1）数据库备份：通过导出数据或者表文件的拷贝来保护数据。
+（2）二进制日志文件：保存更新数据的所有语句
+（3）数据库复制：MySQL内部复制功能建立在两个或两个以上服务器之间，通过设定它们之间的主从关系来实现的
+
+一 SQL语句备份导出数据
+
+1. 表数据导出
+SELECT INTO…OUTFILE格式：
+SELECT *  INTO  OUTFILE '文件名' 导出选项
+		| DUMPFILE '文件名' 
+
+2. 表数据导入
+LOAD DATA …INFILE语句是SELECT INTO…OUTFILE语句的补语，该语句可以将一个文件中的数据导入到数据库中。
+LOAD DATA …INFILE格式：
+
+
+
+【例8.1】备份xscj数据库中的kc表中数据到D盘file目录中，要求字段值如果是字符就用双引号标注，字段值之间用逗号隔开，每行以“?”为结束标志。最后将备份后的数据导入到一个和kc表结构一样的空表course表中。
+
+C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/
+
+use xscj;
+select * from kc 
+	 into outfile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/myfile3.txt'
+		fields  terminated by ','
+			optionally enclosed by '"'
+		lines terminated by '///';
+
+思考：1）生成结构数据都一样的表：create table kc2 as (select * from kc);
+      2）生成结构一样的空表: create table kc1 like kc;
+
+文件备份完后可以将文件中的数据导入到course表中,
+course是一个结构和kc一样的表（空不空都已可以）。
+
+load data infile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/myfile1.txt'
+	into table kc
+		fields  terminated by ','
+			optionally enclosed by '"'
+		lines terminated by '?';
+ 
+ create table course like kc;
+  create table course as (select * from kc where 1>2);
+
+二 客户端工具 mysqldump
+（ mysqldump.exe 路径： C:\Program Files\MySQL\MySQL Server 8.0\bin）
+
+1．使用mysqldump备份数据 mysqldump命令c:/提示符下运行的。
+
+配置路径：计算机-属性-高级系统配置-高级-环境变量-path编辑：C:\Program Files\MySQL\MySQL Server 8.0\bin 粘贴在最后就可以。 
+
+mysqldump客户端备份数据，它比SQL语句多做的工作是可以在导出的文件中包含表结构的SQL语句，因此可以备份数据库表的结构，而且可以备份一个数据库，甚至整个数据库系统。
+
+（1）备份表
+命令格式：
+mysqldump -h[主机名] -u[用户名] -p[密码] 数据库名 [表名] > 文件名
+
+-p选项和密码之间不能有空格。
+
+（2）备份数据库
+mysqldump程序还可以将一个或多个数据库备份到一个文件中。
+命令格式：
+mysqldump [用户选项] --databases [参数] DB1 [DB2 DB3...] > 文件名
+
+MySQL还能备份整个数据库系统，即系统中的所有数据库。
+
+例8.2】使用mysqldump备份xs表和kc表。
+具体命令如下：
+mysqldump -h localhost -uroot -p xscj xs kc > d:/file/twotables1.sql
+
+
+
+【例8.3】 备份xscj数据库和test数据库到D盘file文件夹下
+mysqldump -u root -p --databases xscj world>D:/file/data.sql
+
+【例8.4】备份MySQL服务器上的所有数据库。
+mysqldump -uroot -p --all-databases>d:/file/all1.sql
+
+
+2. 恢复数据库
+
+【例8.6】假设xscj数据库损坏，用备份文件将其恢复。
+
+1) mysql命令
+ 
+mysql -uroot -p ss<d:/file/s2.sql
+
+ 2）用source命令还原
+
+(source 命令在mysql环境下运行)
+ source filename.sql
+
+ source d:/file.ss.sql 
+
+
+如果只恢复表中的数据，就要使用mysqlimport客户端（了解）
+
+三 直接复制
+
+如果要把MyISAM类型的表直接复制到另一个服务器使用，首先要求两个服务器必须使用相同的MySQL版本，而且硬件结构必须相同或相似。在复制之前要保证数据表不被使用，保证复制完整性的最好方法是关闭服务器，复制数据库下的所有表文件（*.frm、*.MYD和*.MYI文件），然后重启服务器。文件复制出来以后，可以将文件放到另外一个服务器的数据库目录下，这样另外一个服务器就可以正常使用这张表了。
+
+默认的存储引擎是INNODB
+
+四 日志文件

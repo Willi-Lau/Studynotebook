@@ -1,0 +1,94 @@
+CyclicBarrier
+
+　　允许一组线程全部等待彼此达到共同屏障点的同步辅助。 循环阻塞在涉及固定大小的线程方的程序中很有用，这些线程必须偶尔等待彼此。 屏障被称为循环 ，因为它可以在等待的线程被释放之后重新使用。
+
+A CyclicBarrier支持一个可选的Runnable命令，每个屏障点运行一次，在派对中的最后一个线程到达之后，但在任何线程释放之前。 在任何一方继续进行之前，此屏障操作对更新共享状态很有用。
+
+　　实现原理：在CyclicBarrier的内部定义了一个Lock对象，每当一个线程调用await方法时，将拦截的线程数减1，然后判断剩余拦截数是否为初始值parties，如果不是，进入Lock对象的条件队列等待。如果是，执行barrierAction对象的Runnable方法，然后将锁的条件队列中的所有线程放入锁等待队列中，这些线程会依次的获取锁、释放锁。
+
+构造方法　
+
+    CyclicBarrier(int parties)
+    创建一个新的 CyclicBarrier ，当给定数量的线程（线程）等待它时，它将跳闸，并且当屏障跳闸时不执行预定义的动作。
+    CyclicBarrier(int parties, Runnable barrierAction)
+    创建一个新的 CyclicBarrier ，当给定数量的线程（线程）等待时，它将跳闸，当屏障跳闸时执行给定的屏障动作，由最后一个进入屏障的线程执行。
+
+
+
+方法
+
+    int await() 等待所有 parties已经在这个障碍上调用了 await 。   //把这个线程添加到等待队列里
+    int await(long timeout, TimeUnit unit) 等待所有 parties已经在此屏障上调用 await ，或指定的等待时间过去。
+    int getNumberWaiting() 返回目前正在等待障碍的各方的数量。
+    int getParties() 返回旅行这个障碍所需的parties数量。
+    boolean isBroken() 查询这个障碍是否处于破碎状态。
+    void reset() 将屏障重置为初始状态。
+
+
+
+Barrier被破坏的4中情形 （触发BrokenBarrierException 异常）
+
+
+    1.如果有线程已经处于等待状态，调用reset方法会导致已经在等待的线程出现BrokenBarrierException异常。并且由于出现了
+    BrokenBarrierException，将会导致始终无法等待。
+
+    2.如果在等待的过程中，线程被中断，也会抛出BrokenBarrierException异常，并且这个异常会传播到其他所有的线程
+
+    3.如果在执行屏障操作过程中发生异常，则该异常将传播到当前线程中，其他线程会抛出BrokenBarrierException，屏障被损坏。
+
+    4.如果超出指定的等待时间，当前线程会抛出 TimeoutException 异常，其他线程会抛出BrokenBarrierException异常。
+
+
+
+class H2O {
+
+     Semaphore semaphoreH = new Semaphore(2);
+     Semaphore semaphoreO = new Semaphore(2);
+     CyclicBarrier cyclicbarrier = new CyclicBarrier(3);
+
+
+    public H2O() {
+
+    }
+
+    public void hydrogen(Runnable releaseHydrogen) throws InterruptedException {
+        //每次获取一个 H
+        semaphoreH.acquire();
+        //添加到等待队列 三个才放行
+        try {
+            cyclicbarrier.await();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+
+        //每一个H 返回一个O
+        semaphoreO.release();
+
+        // releaseHydrogen.run() outputs "H". Do not change or remove this line.
+        releaseHydrogen.run();
+    }
+
+    public void oxygen(Runnable releaseOxygen) throws InterruptedException {
+        //每次获取两个 O
+        semaphoreO.acquire(2);
+        //添加到等待队列 三个才放行
+        try {
+            cyclicbarrier.await();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+
+        //每一个O 返回两个 H
+        semaphoreH.release(2);
+
+        // releaseOxygen.run() outputs "O". Do not change or remove this line.
+        releaseOxygen.run();
+    }
+}
+
+
+
+
+
+
+

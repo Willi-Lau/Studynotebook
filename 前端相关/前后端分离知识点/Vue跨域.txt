@@ -1,0 +1,274 @@
+
+
+	
+
+vue.config.js 文件 vue前后端分离端口号代理配置
+
+	
+		module.exports = {
+			devServer: {
+				port: 8081  //前端端口号
+			}
+		}
+
+main.js 文件：
+
+		引入axios:
+			
+			import axios from 'axios'
+			
+			axios.defaults.baseURL = 'http://localhost:8080/JavaWeb_TestAxiox_war_exploded/'; //设置axios的基础url部分
+			
+			Vue.prototype.$axios = axios;   //将axios挂载到vue实例上，使用时就可以 this.$axios 这样使用了
+		
+		引入qs
+
+			import qs from 'qs'
+
+			Vue.prototype.$qs = qs;
+
+JS：export（和import 作用相反 ）
+
+			在创建JavaScript模块时，export 语句用于从模块中导出实时绑定的函数、对象或原始值，以便其他程序可以通过 import 语句使用它们。
+			被导出的绑定值依然可以在本地进行修改。在使用import进行导入时，这些绑定值只能被导入模块所读取，但在export导出模块中对这些绑
+			定值进行修改，所修改的值也会实时地更新
+		
+
+axios:（前台后台交互）
+    
+		Vue methods:
+		
+		this.$axios.post('Axios/sb',   //URL首字母必须是大写不然会出错
+			this.$qs.stringify({       //传参部分 使用qs
+			num_inf :this.inf
+			})).then(response=>{      //返回值部分
+
+			console.log("yes")
+			}).catch(error=>{
+			console.log(error)
+			})
+
+this.$route.push (页面跳转)
+    
+	1.页面跳转
+	    this.$route.push({
+		  path:'' ,               	//目标URL，为注册的路由
+		  
+		  query:{
+                  key:value      	//传入参数，参数会写入URL，params用法同query，只不过参数不会写进URL
+		  		}
+		})
+	2.读取其他页面传进来的参数：
+	    this.$route.query.key      //key为接受的参数的名字
+
+
+
+
+localStorage 和 sessionStorage
+
+		localStorage:
+
+			localStorage 用于长久保存整个网站的数据，保存的数据没有过期时间，直到手动去删除。
+
+			语法
+
+				window.localStorage
+
+			保存数据语法：
+
+				localStorage.setItem("key", "value");
+
+			读取数据语法：
+
+				var lastname = localStorage.getItem("key");
+
+			删除数据语法：
+
+				localStorage.removeItem("key");
+
+			localStorage 的优势
+
+				1、localStorage 拓展了 cookie 的 4K 限制。
+				2、localStorage 会可以将第一次请求的数据直接存储到本地，这个相当于一个 5M 大小的针对于前端页面的数据库，
+				相比于 cookie 可以节约带宽，但是这个却是只有在高版本的浏览器中才支持的。 
+
+			localStorage 的局限
+
+				1、浏览器的大小不统一，并且在 IE8 以上的 IE 版本才支持 localStorage 这个属性。
+				2、目前所有的浏览器中都会把localStorage的值类型限定为string类型，这个在对我们日常比较常见的JSON对象类型需要一些转换。
+				3、localStorage在浏览器的隐私模式下面是不可读取的。
+				4、localStorage本质上是对字符串的读取，如果存储内容多的话会消耗内存空间，会导致页面变卡。
+				5、localStorage不能被爬虫抓取到。
+
+			localStorage 与 sessionStorage 的唯一一点区别就是 localStorage 属于永久性存储，而 sessionStorage 属于当会话结束的时候，
+			sessionStorage 中的键值对会被清空。
+
+
+
+	sessionStorage:
+
+			sessionStorage 用于临时保存同一窗口(或标签页)的数据，在关闭窗口或标签页之后将会删除这些数据。	
+
+			语法
+
+				window.sessionStorage
+
+			保存数据语法：
+
+				sessionStorage.setItem("key", "value");
+
+			读取数据语法：
+
+				var lastname = sessionStorage.getItem("key");
+
+			删除指定键的数据语法：
+
+				sessionStorage.removeItem("key");
+
+			删除所有数据：
+
+				sessionStorage.clear();
+
+
+JSON
+		JSON: JavaScript Object Notation(JavaScript 对象表示法)
+
+		JSON.parse()   JSON -> 普通数据 （读取）
+
+			JSON 通常用于与服务端交换数据。
+			在接收服务器数据时一般是字符串。
+			我们可以使用 JSON.parse() 方法将数据转换为 JavaScript 对象。
+			语法:
+
+				JSON.parse(text[, reviver])
+
+			参数说明：
+
+				text:必需， 一个有效的 JSON 字符串。
+				reviver: 可选，一个转换结果的函数， 将为对象的每个成员调用此函数。
+
+			例子：
+				例如我们从服务器接收了以下数据：
+				{ "name":"runoob", "alexa":10000, "site":"www.runoob.com" }
+
+				我们使用 JSON.parse() 方法处理以上数据，将其转换为 JavaScript 对象：
+				var obj = JSON.parse('{ "name":"runoob", "alexa":10000, "site":"www.runoob.com" }');
+	    
+		
+		JSON.stringify()    普通数据 ->JSON数据  （写入）
+
+			JSON 通常用于与服务端交换数据。
+			在向服务器发送数据时一般是字符串。
+			我们可以使用 JSON.stringify() 方法将 JavaScript 对象转换为字符串。
+
+			语法
+
+				JSON.stringify(value[, replacer[, space]])
+
+			参数说明：
+
+				value:
+
+					必需， 要转换的 JavaScript 值（通常为对象或数组）。
+
+				replacer:
+
+					可选。用于转换结果的函数或数组。
+					如果 replacer 为函数，则 JSON.stringify 将调用该函数，并传入每个成员的键和值。使用返回值而不是原始值。如果此函数返回 undefined，则排除成员。根对象的键是一个空字符串：""。
+					如果 replacer 是一个数组，则仅转换该数组中具有键值的成员。成员的转换顺序与键在数组中的顺序一样。当 value 参数也为数组时，将忽略 replacer 数组。
+				
+				space:
+
+					可选，文本添加缩进、空格和换行符，如果 space 是一个数字，则返回值文本在每个级别缩进指定数目的空格，如果 space 大于 10，则文本缩进 10 个空格。space 也可以使用非数字，如：\t。
+
+			JavaScript 对象转换
+
+				例如我们向服务器发送以下数据：
+					var obj = { "name":"runoob", "alexa":10000, "site":"www.runoob.com"};
+
+				我们使用 JSON.stringify() 方法处理以上数据，将其转换为字符串：
+					var myJSON = JSON.stringify(obj);
+
+
+
+Vue_cli 实现的项目中路由跳转的实现
+
+		路由：
+		     
+		    使用Vue-cli 手脚架时候，view里存放路由信息，每一个路由就是一个页面
+			                       router 里的index.js 里配置路由信息，底部引入：
+
+											const router = new VueRouter({    //router实例对象
+												mode: 'history',    		//history 模式，返回的是完整路径
+												base: process.env.BASE_URL,
+												routes
+												})
+
+												export default router
+
+
+                                   在app.vue里设置路由出口
+								         <template>
+											<div id="app">
+												<router-view/>
+											</div>
+											</template>
+
+                                    在main.js 中引入
+										new Vue({
+											router,   //传入router示例对象
+											render: h => h(App)
+											}).$mount('#app')
+
+                                    自己手动配置一些方法：
+									    //获取当前时间（XXXX-XX-XX）
+										export function getCurDate() {
+											var now = new Date();
+											var year = now.getFullYear();
+											var month = now.getMonth() + 1;
+											var day = now.getDate();
+											month = month < 10 ? "0" + month : month;
+											day = day < 10 ? "0" + day : day;
+											return year + "-" + month + "-" + day;
+										}
+
+										//向sessionStorage中存储一个JSON对象
+										export function setSessionStorage(keyStr, value) {
+											sessionStorage.setItem(keyStr, JSON.stringify(value));
+										}
+
+										//从sessionStorage中获取一个JSON对象（取不到时返回null）
+										export function getSessionStorage(keyStr) {
+											var str = sessionStorage.getItem(keyStr);
+											if (str == '' || str == null || str == 'null' || str == undefined) {
+												return null;
+											} else {
+												return JSON.parse(str);
+											}
+										}
+
+										//从sessionStorage中移除一个JSON对象
+										export function removeSessionStorage(keyStr) {
+											sessionStorage.removeItem(keyStr);
+										}
+
+										//向localStorage中存储一个JSON对象
+										export function setLocalStorage(keyStr, value) {
+											localStorage.setItem(keyStr, JSON.stringify(value));
+										}
+
+										//从localStorage中获取一个JSON对象（取不到时返回null）
+										export function getLocalStorage(keyStr) {
+											var str = localStorage.getItem(keyStr);
+											if (str == '' || str == null || str == 'null' || str == undefined) {
+												return null;
+											} else {
+												return JSON.parse(str);
+											}
+										}
+
+										//从localStorage中移除一个JSON对象
+										export function removeLocalStorage(keyStr) {
+											localStorage.removeItem(keyStr);
+										}
+

@@ -1,0 +1,157 @@
+
+
+线程不安全
+线程安全替换：new ConcurrentHashMap();
+
+线程不安全例子：
+
+        //HashMap 线程不安全的例子
+
+        HashMap hashMap = new HashMap();
+
+        //线程安全
+        ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap();
+
+        for (int i = 0; i < 10; i++) {
+            new Thread(()->{
+                concurrentHashMap.put(Thread.currentThread().getName(),UUID.randomUUID().toString().substring(0,8));
+                System.out.println(Thread.currentThread().getName()+concurrentHashMap);
+            },"线程："+Integer.toString(i)).start();
+        }
+
+
+
+
+底层：
+    一：HashMap的节点：HashMap是一个集合，键值对的集合,源码中每个节点用Node<K,V>表示
+
+        static class Node<K,V> implements Map.Entry<K,V> {
+            final int hash;
+            final K key;
+            V value;
+            Node<K,V> next;
+
+        Node是一个内部类，这里的key为键，value为值，next指向下一个元素，可以看出HashMap中的元素不是一个单纯的键值对
+        ，还包含下一个元素的引用。
+
+    二：HashMap的数据结构：HashMap的数据结构为 数组+(链表或红黑树)，
+
+        正常是用数组+链表存储。当链表长度大于8时链表转换为红黑树，当红黑树长度小于6时转换为链表
+
+        数组的特点：查询效率高，插入，删除效率低。
+
+        链表的特点：查询效率低，插入删除效率高。
+
+        在HashMap底层使用数组加（链表或红黑树）的结构完美的解决了数组和链表的问题，使得查询和插入，删除的效率都很高。
+
+
+    扩容机制：resize()
+    
+        那么hashmap什么时候进行扩容呢？当hashmap中的元素个数超过数组大小*loadFactor时，就会进行数组扩容，loadFactor的
+        默认值为0.75，也就是说，默认情况下，数组大小为16，那么当hashmap中元素个数超过16*0.75=12的时候，就把数组的大小扩
+        展为2*16=32，即扩大一倍，然后重新计算每个元素在数组中的位置，而这是一个非常消耗性能的操作，所以如果我们已经预知
+        hashmap中元素的个数，那么预设元素的个数能够有效的提高hashmap的性能。比如说，我们有1000个元素new HashMap(1000),
+        但是理论上来讲new HashMap(1024)更合适，不过上面annegu已经说过，即使是1000，hashmap也自动会将其设置为1024。
+        但是new HashMap(1024)还不是更合适的，因为0.75*1000 < 1000, 也就是说为了让0.75 * size > 1000, 我们必须这样
+        new HashMap(2048)才最合适，既考虑了&的问题，也避免了resize的问题。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

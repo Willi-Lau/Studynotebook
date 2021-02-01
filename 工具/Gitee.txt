@@ -1,0 +1,93 @@
+  gitee      
+                        11.如何将我们的前端项目通过Git上传到码云、github
+                        11.1 要在你的本地安装Git   https://git-scm.com/
+                        11.2 你要注册一个码云的账号(用邮箱注册)，然后确认邮箱
+                        11.3 我们要想利用vscode向码云上传代码，需要安装一个 git 并进行环境变量配置
+                              参考网址：
+                              https://www.cnblogs.com/qingmuchuanqi48/p/12052289.html
+                        11.4 生成/添加SSH公钥(按照文档操作就可以)
+                              参考网址
+                              https://gitee.com/help/articles/4181#article-header0
+                        11.5 新创建一个仓库
+                        11.6 从码云的仓库中克隆一个项目(https://gitee.com/liu705195178/vue_01.git)
+                                git clone https://gitee.com/liu705195178/vue_01.git
+                            此时就会从仓库中下载我们所创建好的项目 vues_demos 然后将我们的文件拖到这个文件夹中
+                        11.7 Git 全局设置:
+                                git config --global user.name "liu705195178"
+                                git config --global user.email "705195178@qq.com"
+                        11.8 将代码上传到码云
+                            1.cd master进入到我们的项目文件夹
+                            2. 先要查看一下当前git项目的状态  git status
+                            3. 将要提交的文件添加到git缓冲区  git add .
+                            你要提交的文件也经添加到缓冲区了，只有把要提交的文件添加到缓冲区，才能将这些文件提交到服务器上
+                            4. 添加一个远程连接
+                             git remote add origin https://gitee.com/liu705195178/vue_01.git
+                             
+                            如果已有远程连接可以使用 git remote rm origin 先删除，然后再添加
+                            5.将文件上传到码云服务器
+                                git push -u origin master (master表示主分支  -u表示强制   push上传   orgin远程连接名)
+                                提交的时候报错了，那是因为我们当前文件一直在添加新的内容，是在本地
+                                git init
+                                git add .
+
+                                git status
+                                git commit -m "project init" 提交一些项目的信息 project init 为提示信息，随意写
+                                git status 查看当前的状态如果为clean就可以了
+                                git push -u origin master 上传文件  master 为分支名称，别的分支就写别的名字
+                                
+
+                                如果成功了显示
+                                Enumerating objects: 16, done.
+                                Counting objects: 100% (16/16), done.
+                                Delta compression using up to 4 threads
+                                Compressing objects: 100% (16/16), done.
+                                Writing objects: 100% (16/16), 6.16 KiB | 3.08 MiB/s, done.
+                                Total 16 (delta 9), reused 0 (delta 0)
+                                remote: Powered by GITEE.COM [GNK-5.0]
+                                To git remote add origin https://gitee.com/liu705195178/vue.git
+                                * [new branch]      master -> master
+                                Branch 'master' set up to track remote branch 'master' from 'origin'.                                                        
+
+                                master是主分支，大家不可以把你们的代码上传到主分支所以你需要创建自己的分支，并
+                                在自己的分支下写代码，如果某个模块写完后，你可以提交到你自己的分支上面，如果管理员同意
+                                最后才能把你子分支的代码合并到master主分支
+
+                                如何创建一个分支？
+                                1. 查看目前都有哪些分支  git branch    使用Q就退出了。
+                                2. 创建自己的分支 git checkout -b 分支名称
+                                3. git push -u origin zhangjun  就可以将内容上传到子分支了
+                                
+                                切换分支
+                                    git checkout 分支名
+                                合并分支
+                                    git merge 其他分支名  （先切换到主分支）
+
+                                error: failed to push some refs to ‘https://gitee.com/*/.git’
+                                    解决办法就是执行如下命令
+                                    git pull --rebase origin master
+
+                                Git提交Everything up-to-date Branch 'master' set up to track remote branch 'master' from 'origin'如何解决?
+                                    
+                                    先执行命令 git log,这个老重要咯。。几乎决定生死。。。。
+
+                                    按键盘q键，Enter退出
+
+                                    执行命令git rebase --abort，则会看到右侧的（）里的内容已经变成咯主分支，并且没有咯REBASE 1/1
+
+                                fatal: remote origin already exists.
+                                    git remote rm origin
+                                 
+                                注意。 git 不能上传超过100M 文件，否则会停止push
+                                如果上传文件超过00M,即使本地删除，远程记录里也会有，会影响你其他文件的上传
+                                。
+                                清除远程记录找回远程记录的方法
+                                 Git: 删除commit记录方法(删除push失败的记录)
+
+                                https://blog.csdn.net/quiet_girl/article/details/79487966
+
+
+
+
+
+                           IDEA 配置GITee 插件
+                           https://blog.csdn.net/gozhuyinglong/article/details/88018053     

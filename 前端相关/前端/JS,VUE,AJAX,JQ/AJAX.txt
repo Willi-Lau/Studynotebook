@@ -1,0 +1,259 @@
+AJAX
+                            AJAX = Asynchronous JavaScript and XML（异步的 JavaScript 和 XML）。
+
+                            AJAX 不是新的编程语言，而是一种使用现有标准的新方法。
+
+                            AJAX 是与服务器交换数据并更新部分网页的艺术，在不重新加载整个页面的情况下。
+
+                            https://www.cnblogs.com/nanyang520/p/11206290.html
+
+                        原生AJAX的开发流程
+                        1.创建 XMLHttpRequest 对象
+                            所有现代浏览器均支持 XMLHttpRequest 对象（IE5 和 IE6 使用 ActiveXObject）。
+                            XMLHttpRequest 用于在后台与服务器交换数据。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。
+                        2.向服务器发送请求
+                            xmlhttp.open("GET",URL,true);
+                            xmlhttp.send();
+                        3.服务器响应
+                            如需获得来自服务器的响应，请使用 XMLHttpRequest 对象的 responseText 或 responseXML 属性。
+                            responseText	获得字符串形式的响应数据。
+                        4.onreadystatechange 事件
+                            当请求被发送到服务器时，我们需要执行一些基于响应的任务。
+
+                            每当 readyState 改变时，就会触发 onreadystatechange 事件。
+
+                            readyState 属性存有 XMLHttpRequest 的状态信息。
+
+                        说明：onload只有处于状态码为4表示请求已完成，响应已就绪的情况下才会进入到Onload中
+                            onreadystatechange它会执行其它的状态
+                            2: 请求已接收
+                            3: 请求处理中
+                            4: 请求已完成，且响应已就绪
+
+                        异步：表示多个操作可以同时进行的(基于ajax)
+                        在ES6中会给我们提供一下对象(Promise:承诺)来解决异步的问题
+                        作用：它就是一个对象，主要用来传递异步操作的数据的
+                        function ajax(url,fnSucc,fnFail){
+                                //1.创建XHR对象
+                                var oAjax = new XMLHttpRequest();
+                                //2.建立连接发送请求
+                                oAjax.open('GET',url,true);
+                                //发送
+                                oAjax.send();
+                                //设置事件
+                                oAjax.onload = function(){
+                                    //正确传输
+                                    if(oAjax.readyState==4 && oAjax.status==200){
+                                        fnSucc(oAjax.responseText)     // 通过传入的函数名字，对函数进行传参，括号里为传入的参数
+                                        //报错                         //传入的为AJAX实例化对象从URL处获取的内容信息
+                                    }else {
+                                        fnFail(oAjax.status)
+                                    }
+                                }
+                            }
+                            window.onload = function(){
+                                //获取按钮
+                                let oBtn = $('btn1');
+                                oBtn.onclick = function() {
+                                    //实例化
+                                    ajax('ajax.txt',function(str){
+                                        alert(str);   //传入url，第一个函数，第二和函数
+                                    },function(str){
+                                        alert(str);
+                                    })
+                                }
+
+
+
+
+                        Promise这个对象是具有状态的：
+                            pending(等待、处理中)->Resolve(完成、Fullfilled)->Rejected(拒绝、失败)
+                        
+                        Promise的基本语法：
+
+                            var p1 = new Promise(function(resolve,reject){
+                                if(异步处理成功了){
+                                    resolve(成功的数据);
+                                }else {
+                                    reject(失败的原因)
+                                }
+                            })
+
+                            p1.then(成功(resolve),失败(reject))
+
+
+                        在ES6中会提供模块化的功能，可以将模块进行导出，之后就可以在其它的文件中导入该模块，以达到重用的目的
+                                            function ajax(url,fnSucc,fnFail){
+                                //1.创建XHR对象
+                                var oAjax = new XMLHttpRequest();
+                                //2.建立连接发送请求
+                                oAjax.open('GET',url,true);
+                                //发送
+                                oAjax.send();
+                                oAjax.onload = function(){
+                                    正确传输
+                                    if(oAjax.readyState==4 && oAjax.status==200){
+                                        //为函数传入参数，括号里为传入的参数
+                                        fnSucc(oAjax.responseText)    //传入的为AJAX实例化对象从URL处获取的内容信息
+                                    }else {
+                                        fnFail(oAjax.status)
+                                    }
+                                }
+                            }
+
+                            window.onload = function() {
+                                let oBtn = document.getElementById('btn1');   //获取按钮
+                                let oBox = document.getElementById('box1');   //获取div
+                                oBtn.onclick = function(){
+                                    let p1 = new Promise(function(resolve,reject){   //实例化Promise对象，设定成功失败两个函数
+                                        ajax('ajax.txt',function(str){          //实例化AJAX,设置URL，传入失败成功函数，和Promise一致
+                                            resolve(str);
+                                        },function(str){
+                                            reject(str);
+                                        })
+                                    })
+
+                                    p1.then(function(str){        //完成promise 成功失败函数具体样式
+                                        oBox.innerHTML = str;
+                                    },function(){
+                                        oBox.innerHTML = str;
+                                    })
+                                }
+                            }
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+express 服务器;
+
+    // 引入 express
+    //这是一个微型服务器
+    //启动需要先右键此文件选择再集成终端打开，再输入 node hoo.js (这个文件名)
+    //默认操作
+    const express  = require('express');
+
+    //创建应用对象
+    //默认操作
+    const app = express();
+
+    //创建路由规则
+    //request 对请求报文的封装
+    //response 对响应报文的封装
+    //规则：获取所有/server 
+    app.get('/server',(request,response)=>{
+        //设置响应头,设置允许跨域
+        response.setHeader('Access-Control-Allow-Origin','*');
+        //设置响应
+        response.send('HELLO AJAX');
+
+    });
+
+
+    //监听端口，启动服务
+    app.listen(8000,()=>{
+        console.log("服务已经启动，8000正在监听")
+    })
+
+
+
+ajax:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ajax get</title>
+        <style>
+            #result{
+                width: 200px;
+                height: 300px;
+                border: 2px solid red;
+            }
+        </style>
+        <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+        </script>
+    </head>
+    <body>
+        <button id="inf">点击</button>
+        <div id="result">
+            
+        </div>
+        <script>
+            $('#result').mouseleave(function(){
+                alert("qqqqq");
+            });
+            
+            $(function(){
+                $('#inf').click(function(){
+                //执行原生AJAX对象   ----------------------------主要流程
+                //创建对象
+                var xhr = new XMLHttpRequest();              ------------------ 1
+                //配置方法和url 这个url为跳转的url
+                xhr.open('GET','http://127.0.0.1:8000/server');     ------------------ 2
+                //发送
+                xhr.send();                                   ------------------------ 3
+                //设置返回值
+                //readyState 状态有 0 1 2 3 4 
+                    //  0 代表未初始化时候
+                    //  1 代表open 调用完毕
+                    //  2 代表send 调用完毕
+                    //  3 代表服务端返回了部分的结果 现在处理不合适
+                    //  4 代表服务端返回了全部的结果 只有为4时才可以处理结果
+                //change   
+                xhr.onreadystatechange = function(){        ------------------------- 4
+                    //返回了所有结果时开始处理数据
+                    if(xhr.readyState === 4){
+                        //再判断响应状态码  200为成功
+                        if(xhr.status === 200){
+                            
+                            //处理服务端响应结果 行 头 空行 体
+                                //响应行
+                                console.log("状态码"+xhr.status); //状态码
+                                console.log("状态字符串"+xhr.statusText); //状态字符串
+                                console.log("所有响应头"+xhr.getAllResponseHeaders); //所有响应头
+                                console.log("响应体"+xhr.response); //响应体  ----------------------------5
+                                document.getElementById('result').innerHTML = xhr.response;   //可以
+                                $('#result').innerHTML = xhr.response;   //不可以
+                        }
+
+
+                在URL设置参数
+
+                     ? 开始
+                     & 分割   
+                     127.0.0.1:8000?a=100&b=200&c=300
+
+
+
+
+        JQuery  ajax:
+
+                 $.ajax({name:value, name:value, ... })
+
+
+                async	                    布尔值，表示请求是否异步处理。默认是 true。
+                beforeSend(xhr)	            发送请求前运行的函数。
+                cache	                    布尔值，表示浏览器是否缓存被请求页面。默认是 true。
+                complete(xhr,status)	    请求完成时运行的函数（在请求成功或失败之后均调用，即在 success 和 error 函数之后）。
+                contentType         	    发送数据到服务器时所使用的内容类型。默认是："application/x-www-form-urlencoded"。
+                context	                    为所有 AJAX 相关的回调函数规定 "this" 值。
+                data	                    规定要发送到服务器的数据。
+                dataFilter(data,type)	    用于处理 XMLHttpRequest 原始响应数据的函数。
+                dataType	                预期的服务器响应的数据类型。
+                error(xhr,status,error)	    如果请求失败要运行的函数。
+                global	                    布尔值，规定是否为请求触发全局 AJAX 事件处理程序。默认是 true。
+                ifModified	                布尔值，规定是否仅在最后一次请求以来响应发生改变时才请求成功。默认是 false。
+                jsonp	                    在一个 jsonp 中重写回调函数的字符串。
+                jsonpCallback	            在一个 jsonp 中规定回调函数的名称。
+                password            	    规定在 HTTP 访问认证请求中使用的密码。
+                processData	                布尔值，规定通过请求发送的数据是否转换为查询字符串。默认是 true。
+                scriptCharset	            规定请求的字符集。
+                success(result,status,xhr)	当请求成功时运行的函数。
+                timeout             	    设置本地的请求超时时间（以毫秒计）。
+                traditional	                布尔值，规定是否使用参数序列化的传统样式。
+                type	                    规定请求的类型（GET 或 POST）。
+                url                 	    规定发送请求的 URL。默认是当前页面。
+                username	                规定在 HTTP 访问认证请求中使用的用户名。
+                xhr	                        用于创建 XMLHttpRequest 对象的函数。         

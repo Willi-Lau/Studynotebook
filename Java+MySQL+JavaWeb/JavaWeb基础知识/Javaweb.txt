@@ -1,0 +1,783 @@
+
+p配置https://blog.csdn.net/czc9309/article/details/80304074
+          JavaWeb 中 web.html是核心    (前端后端的连接中转站)
+
+              cookie 客户端
+              session 服务器端
+
+              实现：extends HttpServlet
+
+          Servlet两种配置方法：
+                1：web.xml配置
+                2：通过@WebServlet(name="",urlPatterns="") 注解配置    
+
+                web.html对对象的描述：   （对src里的class 对象进行描述。JAVAWEB特有的实例化方法）
+
+                    <!--对我们创建的serverfemo进行描述-->
+                        <servlet>
+                            <servlet-name>first</servlet-name>  名字随便起  相当于变量的名字 相当于实例化 new 了   //前端的连接名字(action = “first”)
+                            <servlet-class>com.foreknow.contruller.ServleDemo</servlet-class>   描述具体所在的地址 具体在包中那个文件- //后端的链接地址,写在src包之后的路径，精确到class
+                        </servlet>
+
+                        <servlet-mapping>                        映射标签    根据URL地址找到映射对象
+                            <servlet-name>first</servlet-name>     通过名字找到具体对象所在位置 和前面的名字呼应
+                            <url-pattern>/demo</url-pattern>       一定要加斜杠 这个是网页所指向的地址
+                        </servlet-mapping>
+
+
+
+                @WebServlet配置
+                    参考：https://blog.csdn.net/mytt_10566/article/details/70173007
+                    @WebServlet常用属性
+
+                    属性	        类型	        是否必须	             说明
+                    asyncSupported	boolean	        否	                指定Servlet是否支持异步操作模式
+                    displayName 	String	        否	                指定Servlet显示名称
+                    initParams  	WebInitParam[]	否	                配置初始化参数
+                    loadOnStartup	int         	否	                标记容器是否在应用启动时就加载这个Servlet
+                    name	        String	        否	                指定Servlet名称
+                    urlPatterns/value	String[]	否	                这两个属性作用相同，指定Servlet处理的url        
+                    
+                    通过注解方式配置，web.xml中不需要配置该Servlet
+
+                    举例：
+                        @WebServlet(name = "ServletTest",urlPatterns = "/test01")
+
+                    注意：
+                            (1).loadOnStartup属性：标记容器是否在启动应用时就加载Servlet，默认不配置或数值为负数时表示客户端第一次请求
+                                Servlet时再加载；0或正数表示启动应用就加载，正数情况下，数值越小，加载该Servlet的优先级越高；
+                            (2).name属性：可以指定也可以不指定，通过getServletName()可以获取到，若不指定，则为Servlet的完整类名，如：
+                                cn.edu.njit.servlet.UserServlet
+                            (3).urlPatterns/value属性： String[]类型，可以配置多个映射，如：urlPatterns={"/user/test", "/user/example"}
+                            (4).在使用注解方式时，需要注意：
+                                <web-app> </web-app>根元素中不能配置属性metadata-complete="true"，否则无法加载Servlet。metadata-
+                                complete属性表示通知Web容器是否寻找注解，默认不写或者设置false，容器会扫描注解和Web分片，为Web应用程序
+                                构建有效的元数据；设置true，表示将由部署描述符为Web程序提供所有的配置信息web.xml中不能再配置该Servlet
+                            (5).urlPatterns的常用规则：
+                                /*或者/：拦截所有
+                                *.do：拦截指定后缀
+                                /user/test：拦截路径
+                                /user/*.do、/*.do、test*.do都是非法的，启动时候会报错
+                            (6).urlPatterns的配置规则：精确匹配、扩展名匹配、路径匹配以及会包含一些优先级，这些在以后会整理。    
+                        
+                   
+
+
+
+
+             常用方法：
+                    中文乱码
+                        resp.setContentType("text/html;charset=utf-8");    设置基本读取属性字符集
+                        req.setCharacterEncoding("utf-8");               设置基本读取属性字符集 
+
+                        1、pageEncoding=”UTF-8”的作用是设置JSP编译成Servlet时使用的编码。
+                        2、contentType=”text/html;charset=UTF-8”的作用是指定服务器响应给浏览器的编码。
+                        3、req.setCharacterEncoding(“UTF-8”)的作用是设置对客户端请求和数据库取值时的编码，不指定的话使用iso-8859-1。(只解决POST乱码)
+                        
+                        4、resp.setCharacterEncoding(“UTF-8”)的作用是指定服务器响应给浏览器的编码。
+                        5、resp.setContentType(“text/html;charset=utf-8”)的作用是指定服务器响应给浏览器的编码。同时，浏览器也是根据这个参数来对其接收到的数据进行重新编码（或者称为解码）。
+                        对于发送数据，服务器按照resp.setCharacterEncoding—contentType—pageEncoding的优先顺序，对要发送的数据进行编码。
+
+                    基本属性：
+                        req.getParameter("参数名")     获取参数，在doGet(),doPost()都可以用
+                        doGet(); 完成url，超链接传送等
+                        doPost(); 用来完成表单得验证，表单的数据等
+
+                    向浏览器提交：
+                        PrintWriter writer = resp.getWriter();   获取提交浏览器的对象
+                        String email = req.getParameter("email");    输入的email 必须和输入框 input 的name 属性一样  这一步获取前端数据
+                        writer.println("用户名"+email);         向浏览器提交获取的前端数据
+
+                 *** 后台向前台(jsp)传递数据 ****        
+                        1.req.setAttribute("list",list);        将数据保存到服务器   底层是Map k,v   保存完可以直接发送，并且不需要写     req 使用setAttribute必须发送，
+                        2.req.getRequestDispatcher("/list.jsp").forward(req,resp);    最终发送  填写URL
+                       
+                        req.getAttribute("list")               接收数据
+                        <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 引入标签库   使用JSPL标签库   c为标签的名字
+                        <c:forEach var="gb" items="${list}">    在jsp里接收数据，需要导入jstl标签库 c为标签的名字
+
+
+                    传递参数的方式：
+                        1.前台 通过表单传递 name=tom&password=123&email=tom@163.com   前台-->后台
+                            后台request.getParameter("name");
+
+                        2.也可以通过表单中的隐藏域 <input type="hidden" name="q" value="123">  前台-->后台
+                            后台： request.getParameter("q");
+
+                        3.可以通过超连接向后台传递参数                                      前台-->后台
+                            <a href="/全路径/映射地址?id=1&q=delete">这是一个超连接</a> 
+                            http://localhost:8080/项目映射地址/参数
+                            通过超链接传送的值由doGet() 处理，通过button 的值由doPost() 处理
+                            例子：a href="http://localhost:8080/JavaWebPro_war_exploded/delete?id=${gb.id}"   class="btn btn-danger" >删除</a>
+                            后台：request.getParameter("id");  request.getParameter("q");
+                        
+                        4.通过表单提交按钮进行自动提交                                  前台-->后台
+                             form action 设置 servlrt-name 的值
+                             button 的type  设置为 submit
+                             文本框 的name 属性名字与后台接受名字设置一样
+
+                             例子：  （前台）
+                                    <form action="test02" method="post">
+                                        <span>名字</span> <input name="name" type="text"> <br><br>
+                                        <span>年龄</span> <input name="age" type="text"> <br><br>
+                                        <span>学校</span> <input name="school" type="text"> <br><br>
+                                        <span>邮箱</span> <input name="email" type="text"> <br><br>
+                                        <button type="submit">确定提交</button>
+                                    </form>
+
+                                （后台）doPost()
+                                        String name = req.getParameter("name");
+                                        String age = req.getParameter("age");
+                                        String school = req.getParameter("school");
+                                        String email = req.getParameter("email");
+
+                        
+                         
+                        5.  req.setAttribute("list",list);    存储数据                                    后台-->前台
+                            req.getRequestDispatcher("/user/manager?q=list").forward(req,resp);   //转发    
+                            后台：request.getParameter("q");
+
+                        6. session 传递数据                                                             后台 -> 前台
+
+                            HttpSession session = req.getSession();    //创建Session对象
+                        
+                            session.setAttribute("name","zhangsan");    //向Session对象中保存数据
+                        
+                            String name = (String)session.getAttribute("name");     //如何从Session中获取数据
+
+                            req.getRequestDispatcher("/list.jsp").forward(req,resp);    //        将这个请求转达给list.jsp
+                            
+                            session 和 req 使用setAttribute 区别
+                            
+                            session 提交的 所有jsp，所有文件 都公用,也是需要 req.getRequestDispatcher("/list.jsp").forward(req,resp); 转发
+                            
+
+                            req 需要指定接收对象，并且只适用于接收对象   
+
+                            接受session信息    前面加sessionScope
+                                ${sessionScope.key}   
+                            接受request信息    前面加requestScope
+                                ${requestScope.key}  
+
+
+                    ** 如何将request中的数据传递给jsp页面(如何获取数据)  后台 -> 前台
+                        1.在服务器(servlet)中如何保存数据
+                            req.setAttribute("list",list);
+                            传送：
+                             req.getRequestDispatcher("/list.jsp").forward(req,resp);    最终发送  填写URL
+
+                        2.在jsp中如何获取到request中的集合
+                            ${list}        
+
+                        
+                        
+
+                     假定你的web application 名称为bainews,你在浏览器中输入du请求路径：zhi
+                            http://localhost:8080/news/main/list.jsp
+                            则执行下面dao向行代码后打印出如下结果：
+                                1、 System.out.println(request.getContextPath());
+                            打印结果：/news
+                                2、System.out.println(request.getServletPath());
+                            打印结果：/main/list.jsp
+                                3、 System.out.println(request.getRequestURI());
+                            打印结果：/news/main/list.jsp
+                                4、 System.out.println(request.getRealPath("/"));
+                            打印结果： F:\Tomcat 6.0\webapps\news\test 
+
+
+                    
+                   
+                   
+                   
+                   
+                   doPost(HttpServletRequest req, HttpServletResponse resp)
+                        req:输入 服务器端  请求体
+                        resp:输出  客户机端  响应体
+
+
+
+                   doPost() 在针对表单提交时，要对表单设置提交方法 method 和 后台连接 action
+
+                        <form method='post' action="liu">   //action 后面为在web中定义的组件名
+                                <span> 名字</span> <input name="name" type="text" required>
+                                    <button  type="submit">点击
+                                    </button>
+
+                        </form>
+
+                   doGet() :
+                        //        设置服务器向客户端响应类型
+                                    resp.setContentType("text/html;charset=utf-8");
+                        //        设置客户端反馈服务器为utf8
+                                    req.setCharacterEncoding("utf-8");
+                        //要使用这个对象PrintWriter中的方法在页面中输出内容
+                            PrintWriter out = resp.getWriter();
+                            out.println("<html>");
+                            out.println("<head>");
+                            out.println("<title>servlet</title>");
+                            out.println("</head>");
+                            out.println("<body>");
+                            out.println("<h1>这是一个测试程序servlet</h1>");
+                            out.println("</body>");
+                            out.println("</html>");
+                            out.flush();
+                            out.close();
+
+
+
+           什么是Servlet:这就是一个服务器端的应用程序   在src里创建
+           作用：
+               1.可以读取客户端发送的所有的数据
+               2.可以获取请求的参数
+               3.可以处理数据并成生结果
+               4.也可以设置合适的http响应参数
+               5.也可以将响应的信息发送给客户端
+
+           Servlet 生命周期
+                Servlet 生命周期可被定义为从创建直到毁灭的整个过程。以下是 Servlet 遵循的过程：
+
+                Servlet 通过调用 init () 方法进行初始化。    它在第一次创建 Servlet 时被调用，在后续每次用户请求时不再调用
+                Servlet 调用 service() 方法来处理客户端的请求。
+                Servlet 通过调用 destroy() 方法终止（结束）。   destroy() 方法只会被调用一次，在 Servlet 生命周期结束时被调用。
+                最后，Servlet 是由 JVM 的垃圾回收器进行垃圾回收的    
+
+           如何创建一个Servlet
+               1.要想创建一个Servlet，那么就一定要继承HttpServlet
+               2.要重写doGet或doPost方法
+                    这两个方法什么时候会调用：如果客户端向服务器端发送的请求为get请求，那么就会自动去调用Servlet中的doGet方法
+                                         如果客户端向服务器端发送的请求为post请求，那么就会自动去调用Servlet中的doPost方法
+
+            3.方法的参数
+                http会支持多种请求的方式：
+                  GET（SELECT）：从服务器取出资源（一项或多项）。
+                  POST（CREATE）：在服务器新建一个资源。
+                  PUT（UPDATE）：在服务器更新资源（客户端提供改变后的完整资源）。
+                  DELETE（DELETE）：从服务器删除资源。
+
+                  HttpServletRequest 接口:这个接口无需我们自己初始化，它是由tomcat服务器(Web容器)会自动进行初始化的
+                  会提供一些常用的方法:如何获取请求的参数
+
+                 HttpServletResponse接口:这个接口无需我们自己初始化，它是由tomcat服务器(Web容器)会自动进行初始化的
+                  例如：在服务器端设置响应的内容的类型
+           4.一些属性
+              //设置服务器端向客户端响应的内容的类型(MIME)      写在实现的doGet()中
+                   resp.setContentType("text/html;charset=utf-8");
+
+            设置全局初始化参数
+                <context-param>
+                    <param-name>encoding</param-name>
+                    <param-value>1234856789</param-value>
+                </context-param>       
+
+
+            设置初始化参数(局部初始化参数)
+                <!--life -->
+                <servlet>
+                    <servlet-name>life</servlet-name>
+                    <servlet-class>com.foreknow.controller.LifeServer</servlet-class>
+                <!--初始化参数-->
+                    <init-param>                         //初始化参数
+                    <param-name>pageSize</param-name>
+                    <param-value>10</param-value>
+                    </init-param>
+                </servlet>
+
+                <!--  映射标签-->
+                <servlet-mapping>
+                    <servlet-name>life</servlet-name>
+                    <!--映射地址    -->
+                    <url-pattern>/lifedemo</url-pattern>
+                </servlet-mapping>  
+
+            接受局部初始化参数
+
+                重写 init(ServletConfig config) 方法
+                
+                String pageSize = config.getInitParameter("pageSize");    //获取参数
+
+            接受全局初始化参数
+
+                重写 init(ServletConfig config) 方法
+
+                String encoding = config.getServletContext().getInitParameter("encoding");
+
+
+
+
+
+
+          实现资源的跳转：（实现页面跳转）
+                   跳转由doGet() 跳转，接受就由doGet()接受
+                   跳转由doPost() 跳转，接受就由doPost()接受
+
+                   可以实现后台跳转后台，前台页面跳转到前台等操作
+
+                   请求转发：发送一次请求，寻找目标，如果该目标无法实现，则由目标进行寻找
+                           请求转发多用于后台java文件直接的数据传输跳转
+                           转发只能转发站内资源
+                           req.getRequestDispatcher("url").forward(req,resp);
+                           发送完由目标的doGet()进行处理
+
+                           例子：
+                             （发送方）
+                              public class Delete extends HttpServlet {
+                                @Override
+                                protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                                    resp.setContentType("text/html;charset=utf-8");
+                                    String id = req.getParameter("id");
+
+
+                                    req.getRequestDispatcher("/manage?q=delete&id="+id).forward(req,resp);    执行请求转发，带参数跳转到manage
+                                                                      // q为随便定义的名字
+
+                                    PrintWriter writer = resp.getWriter();
+
+                                }
+
+
+
+                              （接收方）
+                              public class ManageServlet extends HttpServlet {
+
+                                    @Override
+                                    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                                        //我们只需 要在doGet中获取到请求的参数q=list，然后根据获取到的参数来决定调用哪一个方法
+                                        String method = req.getParameter("q");    //接受请求转发发送过来的数据  接受q的数据
+                                        if("delete".equals(method)) {
+                                            delete(req,resp);
+                                        }else if("update".equals(method)){
+                                            update(req,resp);
+                                        }else {
+                                            list(req,resp);
+                                        }
+                                    }    
+
+
+                   重定向：发送多次请求，多次寻找目标
+                         重定向可以定向到任意资源
+                         resp.sendRedirect("url");
+
+                        转发在服务器端完成的；重定向是在客户端完成的
+                        转发的速度快；重定向速度慢
+                        转发的是同一次请求；重定向是两次不同请求
+                        转发不会执行转发后的代码；重定向会执行重定向之后的代码
+                        转发地址栏没有变化；重定向地址栏有变化
+                        转发必须是在同一台服务器下完成；重定向可以在不同的服务器下完成
+                        转发只能转当前站内资源，重定向可以任意资源
+
+
+                   * 如何在从A资源转发到B资源的时候传递参数：目的是让服务器知道你想要做什么事情
+                       语法： url?key1=value1&key2=value2
+
+                       例子：req.getRequestDispatcher("/manage?q=list").forward(req,resp);   q为随便定义的名字
+
+                            String method = req.getParameter("q");    在跳转那里进行接收 这里就是在manage里进行接收
+
+
+
+
+
+                   细谈getRequestDispatcher()与sendRedirect()的区别
+
+                   首先我们要知道：
+
+                        (1)request.getRequestDispatcher()是请求转发，前后页面共享一个request ; 这个是在服务端运行的，对浏览器来说是透明的。
+                        (2)response.sendRedirect()是重新定向，前后页面不是一个request。而这个是在浏览器端运行的。
+
+                            1) redirect 方式
+                        　　 response.sendRedirect("/a.jsp");
+                        　　 页面的路径是相对路径。sendRedirect可以将页面跳转到任何页面，不一定局限于本web应用中，如：
+                        　　 response.sendRedirect("URL");
+                        　　 跳转后浏览器地址栏变化。
+                        　　 这种方式要传值出去的话，只能在url中带parameter或者放在session中，无法使用request.setAttribute来 传递。所以该方式只适用于无传值跳转
+                        　　2) forward方式
+                        　　 request.getRequestDispatcher("/路径（可以是jsp路径也可以是servlet）") .forward(request, response);
+
+                        如：
+
+                        request.getRequestDispatcher("/2.jsp）") .forward(request, response);
+
+                        request.getRequestDispatcher("/servlet/HomeServlet）") .forward(request, response);
+                        　　Servlet页面跳转的路径是相对路径。forward方式只能跳转到本web应用中的页面上。
+                        　　跳转后浏览器地址栏不会变化。
+                        　　使用这种方式跳转，传值可以使用三种方法：url中带parameter，session，request.setAttribute                 
+
+            JSP
+                    * jsp文件可以实现输出JAVA,js,html,css
+
+                   jsp向servlet传值大致有这么几种情况。
+                        1.1第一种超链接，在href='servletAction?id=xxx'，使用超链接时前面应该加上项目名
+                        1.2第二种form表单提交，当点击submit时，action="servletAction" method='get/post'//注意这个可是要按提交按钮的
+                        1.3第三种就是利用ajax,url='servletActionz',当然了，这里也有get和post两种情况，get直接在url后面加问号传参，post会把参数放在实体内容里面。
+                        2.最后在servlet那边 用 request.getParameter("参数名")；就可以拿到了
+
+                   JSP里的<$   $>
+                         意思为输出，等同于out.println()
+                         <% request.getContextPath()%>    获取项目总地址，在JSP使用<a>跳转需要写项目总地址 
+
+                   接收信息
+                       ${key} 
+
+                   接受session信息    前面加sessionScope
+                       ${sessionScope.key}   
+                   接受request信息    前面加requestScope
+                       ${requestScope.key}    
+
+        
+           Session
+                    什么是Session（公共存储库）
+                            Session是服务器端的会话技术，服务器在运行的时候可以为每一个用户的数据去创建一个单独的Session对象。
+                            Session可以用户游览器独享。所以当在访问Web资源的时候，可以把自睡在的数据保存在各自的Session中。
+                    
+                    Session的核心
+                            HttpSession：主要用于保存会话的数据. req.getSession()方法来获取HttpSession接口
+                            如何向Session中保存数据 session.setAttribute("name","zhangsan");
+                            如何获取到Session中的数据 session.getAttribute("name");  //zhangsan
+                        
+                    
+                    Session的原理：
+                            1.第一次创建一个Session对象，给Session分配一个唯一的id（JSESSIONID）
+                            2.要将JSESSIONID作为Cookie的值发送给游览器来保存
+                            3.在第二次访问的时候，游览器会携带JSESSIONID的cookie来访问服务器
+                            4.服务器要得到JSESSIONID，在服务器的内存中搜索是否存在对应编号的session对象
+                    
+                    注意：保存在session中的数据会被多个servlet/jsp所共享，只要游览器不关闭，那么保存在session中的数据会一直有效
+
+                    语句：
+                            HttpSession session = req.getSession();    //创建Session对象
+                        
+                            session.setAttribute("name","zhangsan");    //向Session对象中保存数据
+                        
+                            String name = (String)session.getAttribute("name");     //如何从Session中获取数据
+
+                            req.getRequestDispatcher("/list.jsp").forward(req,resp);    //        将这个请求转达给list.jsp
+                            
+                        session 和 req 使用setAttribute 区别
+                            
+                            session 提交的 所有jsp，所有文件 都公用,也是需要 req.getRequestDispatcher("/list.jsp").forward(req,resp); 转发
+                            
+
+                            req 需要指定接收对象，并且只适用于接收对象 
+            Cookie
+                                      
+                     1.什么是会话:它是指客户端与服务器端之间的数据传输(登录，购物车)
+                     2.会话管理：管理数据
+                     常用的会话技术：
+                        1.Cookie 数据会保存在客户端
+                        2.Session 数据会保存在服务器端
+                            
+                     什么是Cookie:它是客户端的技术，程序会把每个用户的数据以cookie的形式写给各自的游览器，当用户使用
+                            游览器再去访问Web服务器的资源的时候，它会有自自的数据
+                            
+                     Cookie类：主要用于存储会话的数据
+                             1. 构造Cookie对象  Cookie cookie = new Cookie("key","value");
+                            
+                             2. 设置Cookie 例如：可以设置Cookie的有效时间  cookie.setMaxAge(int expiry) 以秒为单位 1*24*60*60(一天)
+                            
+                             3. 发送客户端游览器来保存  response.addCookie(Cookie cookie)
+                            
+                             4. 客户端再向服务器端发送请求的时候，服务器端也可以接收cookie    Cookie[]	request.getCookies()
+
+                             5，删除Cookie 设置setMaxAge() 为0 ，并且通过resp 发送到响应头 
+                            
+                     Cookie的原理：
+                             1.要在服务器端创建一个Cookie对象，将数据保存到会话中
+                             2.服务器会发送Cookie的信息给游览器，之后会将Cookie保存到游览器端
+                             3.游览器会在下次访问服务的时候，会携带cookie的信息(这些信息会包含在http的请求中)
+                             4.服务器端会获取到游览器端携带的cookie
+                            
+                    注意：cookie的数据类型只能保存非中文字符串类型。你可以保存多个cookie，一个游览器只能保存300个cookie
+                                  一个站点最多可以存入20个cookie，每个cookie的大小限制为4kb
+
+
+
+
+
+
+
+                            
+             Servlet 编写过滤器(filter)：只对.jsp有作用
+
+                    实现javax.servlet 的 Filter 接口
+
+                    过滤器的核心拦截都写在doFilter 里     
+                    
+                      Filter是一个可重         用的组件
+                      创建一个过滤器，实现转换字符编码集
+                      过滤器只能对.jsp文件生效 .html不受影响
+
+                    **这里需要注意的是，session本身是属于HTTP协议的范畴，但是doFilter()方法中定义的是ServletRequest类型的对象，
+                      那么要想取得session，则必须进行向下转型，将ServletRequest变为HttpServletRequest接口对象，才能通过getSession()
+                      方法取得session对象。**
+
+                    
+                      init()方法：web 应用程序启动时，web 服务器将创建Filter 的实例对象，并调用其init方法，
+                      读取web.xml配置，完成对象的初始化功能，从而为后续的用户请求作好拦截的准备工作
+                     （filter对象只会创建一次，init方法也只会执行一次）。开发人员通过init方法的参数，
+                      可获得代表当前filter配置信息的FilterConfig对象。
+
+                           可以将一个或多个过滤器附加到一个 Servlet 或一组 Servlet。过滤器也可以附加到 JavaServer Pages (JSP) 文件和 HTML 页面。
+
+                            过滤器是可用于 Servlet 编程的 Java 类，可以实现以下目的：
+
+                            在客户端的请求访问后端资源之前，拦截这些请求。
+                            在服务器的响应发送回客户端之前，处理这些响应。
+
+                      一、Filter 的基本工作原理
+
+                        1、Filter 程序是一个实现了特殊接口的 Java 类，与 Servlet 类似，也是由 Servlet 容器进行调用和执行的。
+                        2、当在 web.xml 注册了一个 Filter 来对某个 Servlet 程序进行拦截处理时，它可以决定是否将请求继续传递给 Servlet 程序，
+                           以及对请求和响应消息是否进行修改。
+                        3、当 Servlet 容器开始调用某个 Servlet 程序时，如果发现已经注册了一个 Filter 程序来对该 Servlet 进行拦截，那么容器不
+                           再直接调用 Servlet 的 service 方法，而是调用 Filter 的 doFilter 方法，再由 doFilter 方法决定是否去激活 service 方法。
+                        4、但在 Filter.doFilter 方法中不能直接调用 Servlet 的 service 方法，而是调用 FilterChain.doFilter 方法来激活目标 
+                           Servlet 的 service 方法，FilterChain 对象时通过 Filter.doFilter 方法的参数传递进来的。
+                        5、只要在 Filter.doFilter 方法中调用 FilterChain.doFilter 方法的语句前后增加某些程序代码，这样就可以在 Servlet 进行响应
+                           前后实现某些特殊功能。
+                        6、如果在 Filter.doFilter 方法中没有调用 FilterChain.doFilter 方法，则目标 Servlet 的 service 方法不会被执行，这样通过 
+                           Filter 就可以阻止某些非法的访问请求。
+
+
+
+
+
+                    实现过滤器中的一些方法：
+                        
+
+                        1.  HttpServletRequest req=(HttpServletRequest)request;    ServletRequest是HttpServletRequest父接口,因此需要强转
+                        2.  HttpServletResponse resp=(HttpServletResponse)response;   ServletResponse是HttpServletResponse父接口,因此需要强转
+                        3.  req.getServletPath();  获取本页面的相对路径  例：/login.jsp  
+                        4.  req.getRequestURL(); 获取本页面绝对路径 例：http://localhost:8080/JavaWebPro_war_exploded/login.jsp
+                        5.  Filterchain.doFilter(req,resp);  继续执行接下来的程序，执行其他的Servlet或Filter
+
+
+                        HttpServletRequest 和ServletRequest  区别
+
+                            HttpServletRequest、 HttpServletResponse分别是ServletRequest和ServletResponse的子类 
+
+                            HttpServletRequest接口继承于ServletRequest，是ServletRequest对于Http协议的更具体抽象。
+
+                            servlet理论上可以处理多种形式的请求响应形式 ，http只是其中之一 。
+
+                            ServletRequest是为了多种协议设计的，目前主流还是Http协议。 
+
+                            
+
+                            HttpServletRequest和ServletRequest都是接口 
+
+                            HttpServletRequest继承自ServletRequest 
+
+                            HttpServletRequest比ServletRequest多了一些针对于Http协议的方法。 
+
+                            如 
+
+                                getHeader(String name)， 
+
+                                getMethod() ， 
+
+                                getSession() 
+
+                            等等。 
+
+                            他们对应的实现类： 
+
+                                javax.servlet.ServletRequestWrapper (implements javax.servlet.ServletRequest) 
+
+                                javax.servlet.http.HttpServletRequestWrapper (implements javax.servlet.http.HttpServletRequest)    
+
+                    
+
+
+                    配置：web.xml中
+
+                        过滤器
+                            <filter>
+                                <filter-name>characterenconding</filter-name>
+                                <filter-class>com.foreknow.fliter.CharacterEncodingFilter</filter-class>
+                                <init-param>                                //局部初始化
+                                    <param-name>encoding</param-name>
+                                    <param-value>UTF-8</param-value>
+                                </init-param>
+                            </filter>
+                            <filter-mapping>
+                                <filter-name>characterenconding</filter-name>
+                                <url-pattern>/*</url-pattern>             //全部请求都被拦截执行过滤器
+                            </filter-mapping>
+
+
+                        配置映射
+                            <servlet>
+                                <servlet-name>login</servlet-name>
+                                <servlet-class>com.foreknow.controller.LoginServlet</servlet-class>
+                            </servlet>
+
+                            <!--  映射标签-->
+                            <servlet-mapping>
+                                <servlet-name>login</servlet-name>
+                                <!--映射地址    -->
+                                <url-pattern>/login</url-pattern>
+                            </servlet-mapping>
+
+                    .class(字符集配置)
+                            /**
+                                * Filter是一个可重用的组件
+                                * 创建一个过滤器，实现转换字符编码集
+                                *
+                                * init()方法：web 应用程序启动时，web 服务器将创建Filter 的实例对象，并调用其init方法，
+                                * 读取web.xml配置，完成对象的初始化功能，从而为后续的用户请求作好拦截的准备工作
+                                * （filter对象只会创建一次，init方法也只会执行一次）。开发人员通过init方法的参数，
+                                * 可获得代表当前filter配置信息的FilterConfig对象。
+                                */
+                            public class CharacterEncodingFilter implements Filter {
+                                private String encoding = "ISO8859-1";
+                                private FilterConfig config;
+
+                                @Override
+                                public void init(FilterConfig config) throws ServletException {
+                                    this.config = config;
+                                    encoding = config.getInitParameter("encoding");
+                                }
+
+                                //核心的拦截处理方法
+                                @Override
+                                public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+                                    //设置服务器端向客户端响应的内容的类型(MIME)
+                                    response.setContentType("text/html;charset=utf-8");
+                                    //设置客户端向服务器端请求的字符编码集为utf-8
+                                    request.setCharacterEncoding(encoding);
+                                    //如果还有其它的过滤器，那么就要交给下一个过滤器来处理，如果没有其它过滤器，就将请求交给Servlet来处理
+                                    chain.doFilter(request,response);
+                                }
+
+                                @Override
+                                public void destroy() {
+                                    config = null;
+                                }
+                            }
+
+
+
+
+                       .class(登陆页面配置，防止没登陆就进入其他界面，强制登陆)
+                            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+                                    //注意：ServletRequest是HttpServletRequest父接口,因此需要强转
+                                    //同样，ServletResponse是HttpServletResponse父接口,因此需要强转
+                                    //在这里都是使用 HttpServletRequest 和  HttpServletResponse 所以需要强转类型
+                                    HttpServletRequest req=(HttpServletRequest)request;
+                                    HttpServletResponse resp=(HttpServletResponse)response;
+                                    //获取相对路径
+                                    String servletPath = req.getServletPath();
+                                    resp.getWriter().println(servletPath);
+                                    
+                                    //session的名字
+                                    HttpSession session = req.getSession();
+                                    String name_session = (String) session.getAttribute("name");
+
+                                    String name_login = req.getParameter("name");
+                                    String password_login = req.getParameter("password");
+
+                                    //如果不是登陆判定页面在进行拦截否则不拦截
+                                    //登陆界面为login.jsp 登陆完毕需要在 /login2进行登陆验证，所以这里的路径写的是 /login2
+                                    if(servletPath.equals("/login2")){
+
+                                        chain.doFilter(req,resp);
+                                    }
+                                    else{
+                                        //判断获取的session是否为空，空就跳转到登陆界面
+                                        if(name_session != null){
+                                            chain.doFilter(req,resp);
+                                        }
+                                        else{
+                                            req.getRequestDispatcher("/login.jsp").forward(req,resp);
+
+                                        }
+
+
+                                    }
+
+
+                                }
+
+
+
+
+                JavaWeb前端中的jsp的一些写法：
+                      
+                      表单提交：
+                            仅仅是表单提交的话，用button 设置type 为submit ，表单信息会根据每一个input 的name值自动读取信息，返回后台
+
+
+                            jsp: （发送数据）
+                                    <form action="test02" method="post">
+                                            <span>名字</span> <input name="name" type="text"> <br><br>
+                                            <span>年龄</span> <input name="age" type="text"> <br><br>
+                                            <span>学校</span> <input name="school" type="text"> <br><br>
+                                            <span>邮箱</span> <input name="email" type="text"> <br><br>
+                                            <button type="submit">确定提交</button>
+                                    </form>
+                            .class (接受数据)
+                                    String name = req.getParameter("name");
+                                    String age = req.getParameter("age");
+                                    String school = req.getParameter("school");
+                                    String email = req.getParameter("email");
+
+
+                全局初始化参数
+
+
+
+                    <context-param>
+
+                        <param-name>username        (key)
+
+                        <param-value>liuweiyi              (value)
+
+                    </context-param>
+
+                    想再添加必须再写一个context-param
+
+
+
+
+
+                    局部初始化参数
+
+                    写在Servlet 或 Filter 里的参数
+
+                    <init-param>
+
+                        <param-name>username
+
+                        <param-value>77777777
+
+                    </init-param>
+
+
+
+
+
+                    读取参数
+
+                    //      接受全局变量信息
+
+                            ServletContext servletContext =this.getServletContext();
+
+                            String username = servletContext.getInitParameter("username");
+
+                            out.println("全局信息是"+username);
+
+                    //       接受局部信息
+
+                            ServletConfig servletConfig =this.getServletConfig();
+
+                            String username1 = servletConfig.getInitParameter("username");
+
+                            out.println("局部信息是"+username1);                    
+
+
+
+
+
+
+
