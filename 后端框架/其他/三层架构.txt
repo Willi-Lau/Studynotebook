@@ -21,5 +21,5 @@ service是业务层，dao是数据访问层
 ③ 表现层：采用MVC模式。
 
                 MVC: model          也就是实体类。用于数据的封装和数据的传输。
-                     controller     也就是GUI组件，用于数据的展示
-                     view           也就是事件，用于流程的控制   
+                     controller     也就是事件，用于流程的控制
+                     view           也就是GUI组件，用于数据的展示   
