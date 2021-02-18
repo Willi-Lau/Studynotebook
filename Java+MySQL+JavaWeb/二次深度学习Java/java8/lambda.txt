@@ -1,0 +1,23 @@
+
+当一个接口里只有一个方法时可以用lambda 来实现
+
+
+interface Foo{
+    public void speak();
+}
+public class Test {
+    public static void main(String[] args) {
+        
+          Foo foo = new Foo() {              //普通实现
+              @Override
+              public void speak() {
+                  System.out.println("sb");
+              }
+          };
+
+            Foo foo2 = () ->{         //lambda
+                System.out.println("sb");
+            };
+
+    }
+}
