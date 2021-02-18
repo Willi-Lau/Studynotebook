@@ -2,12 +2,18 @@
 当一个接口里只有一个方法时可以用lambda 来实现
 
 
+//函数式接口
+@FunctionalInterface
 interface Foo{
     public void speak();
 }
+//有返回值的接口
+interface Fooo{
+    public int add(int a,int b);
+}
 public class Test {
     public static void main(String[] args) {
-        
+
           Foo foo = new Foo() {              //普通实现
               @Override
               public void speak() {
@@ -15,9 +21,17 @@ public class Test {
               }
           };
 
-            Foo foo2 = () ->{         //lambda
+            Foo foo2 = () ->{              //lambda
                 System.out.println("sb");
             };
+
+            Fooo fooo = (int a,int b)->{    //有返回值的接口
+                System.out.println("come in fooo add");
+                return a + b;
+            };
+
+
+            System.out.println(fooo.add(5,10)); //调用有返回值的接口
 
     }
 }
