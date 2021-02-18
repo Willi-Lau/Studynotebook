@@ -11,6 +11,10 @@ OutOfMemoryError (Heap)
 
     JVM Heap 溢出异常
 
+UnsupportedOperationException()
+
+    给通过Arrays.asList 创造的list 执行add 或 remove 时会报错。这个ArrayList不是java.util包下的，而是java.util.Arrays.ArrayList.
+
 
 
 
