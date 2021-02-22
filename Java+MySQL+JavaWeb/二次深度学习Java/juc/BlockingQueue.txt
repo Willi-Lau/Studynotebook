@@ -9,7 +9,7 @@ BlockingQueue  FIFO   interface
 
 
     e.g.:
-        蛋糕店，一个蛋糕店只能同时做10份蛋糕，100个人过来只能先做10个然后依次放人，就是FIFO
+        海底捞等位，等出来一个才能放人，没人出来就一直等着，就是FIFO
 
 
     实现类：前两个常用
@@ -22,9 +22,24 @@ BlockingQueue  FIFO   interface
             LinkedBlockingDeque     由链表组成双向有序队列
 
 
+    用法：
 
+        方法类型        返回异常     返回特殊值         阻塞       阻塞超时***
+        插入             add(e)       offer(e)        put(e)        offer(e,time,util)
+        移除            remove()      poll()          take()       poll(time,util)
+        检查            element()     peek()          无            无
 
-
+    抛出异常：
+            当阻塞队列满时，再使用add()添加就会返回IllegalStateException:Queue full
+            当阻塞队列空的时候，再使用remove()删除元素会返回NoSuchElementException
+    特殊值：
+            插入 true false
+            删除  成功返回元素值，失败返回null
+    阻塞：
+            阻塞队列满的时候再往里添加值，队列会一直阻塞直到成功添加值或者中断
+            阻塞队列空的时候再删除值，队列会一直阻塞直到成功删除值或者中断
+    阻塞超时：
+            阻塞一段时间后退出
 
 
 
