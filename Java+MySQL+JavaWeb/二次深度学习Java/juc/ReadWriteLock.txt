@@ -1,0 +1,82 @@
+
+
+读 并发读  写 唯一写
+
+多个线程同时读取一个资源类没有问题。所以为了解决并发问题，读取共享资源应该可以同时进行。
+但是，如果有一个线程想去写共享的资源，就不可以有其他线程对该资源的读或写
+
+规律：  
+    读-读 可以共存
+    读-写 不能共存
+    写-写 不嫩共存
+
+
+     首先创建一个读写锁，然后再执行读操作的地方套入读锁，在写入的地方套入写锁
+
+     //创建读写锁
+        ReadWriteLock  lock = new ReentrantReadWriteLock(); 
+     //开启/关闭写锁
+        lock.writeLock().lock();
+        lock.writeLock().unlock();
+     //开启/关闭读锁
+        lock.readLock().lock();
+        lock.unreadLock().lock();
+
+
+
+     e.g.
+
+         //资源类
+        volatile HashMap<Integer,String> hashmap = new HashMap();
+
+        //加入读写锁
+        ReadWriteLock  lock = new ReentrantReadWriteLock();
+
+        //写
+        public void writeHashMMap(Integer key,String value) throws Exception {
+            //选用读写锁的写入锁 并开启
+            lock.writeLock().lock();
+
+            try {
+                System.out.println("正在写入 线程："+ Thread.currentThread().getName());
+                hashmap.put(key,value);
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println("写入完成"+ Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                //关闭写入锁
+                lock.writeLock().unlock();
+            }
+        };
+        //读
+        public void readHashMap(Integer key){
+            //开启读写锁中的读锁
+            lock.readLock().lock();
+
+            try {
+                System.out.println("开始读取");
+                TimeUnit.SECONDS.sleep(1);
+                String s = hashmap.get(key);
+                System.out.println("读取成功"+s+"  线程："+Thread.currentThread().getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                //关闭读锁
+                lock.readLock().unlock();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

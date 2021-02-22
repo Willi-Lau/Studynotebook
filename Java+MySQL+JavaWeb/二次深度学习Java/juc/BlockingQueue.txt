@@ -1,0 +1,34 @@
+
+
+BlockingQueue  FIFO   interface
+
+    在多线程领域：所谓阻塞，就是在某些情况下会挂起线程 (即阻塞),一旦条件满足，被挂起的线程又会被唤醒。
+
+    为什么需要BlockingQueue:我们不需要关心什么时候阻塞线程，什么时候唤醒线程，这一切BlockingQueue都给你办了
+
+
+
+    e.g.:
+        蛋糕店，一个蛋糕店只能同时做10份蛋糕，100个人过来只能先做10个然后依次放人，就是FIFO
+
+
+    实现类：前两个常用
+            ArrayBlockingQueue：    数组结构有界阻塞队列   *
+            LinkedBlockingQueue:    链表结构有界(默认大小为integer.MAX_VALUE)阻塞队列   *
+            PriorrityBlockingQueue: 支持优先级排序的无界阻塞队列
+            DelayQueue:             使用优先级队列实现的延迟无阻界队列。
+            SynchrounousQueue:      不存储元素的阻塞队列，即单个阻塞队列  *
+            LinkedTransferQueue     由链表组成的无界阻塞队列
+            LinkedBlockingDeque     由链表组成双向有序队列
+
+
+
+
+
+
+
+
+
+
+
+
