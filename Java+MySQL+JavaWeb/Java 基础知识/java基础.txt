@@ -266,7 +266,7 @@ TreeMap():
  String value=m2.getValue();
  Syso(key,value) 
  }
- 3map.forEach((k, v)->(Sout(k,v)))
+ 3map.forEach((String k,String v)->(Syso(k,v)))
  
 **********************************************************************************
 Properties集合（无泛型）

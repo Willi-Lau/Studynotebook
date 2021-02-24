@@ -4,3 +4,8 @@
 databases:数据库名称
 table : 表名称
 SELECT auto_increment FROM information_schema.tables where table_schema="datebases" and table_name="table";
+
+
+在 CREATE TABLE 语句中，通过 FOREIGN KEY 关键字来指定外键，具体的语法格式如下：
+[CONSTRAINT <外键名>] FOREIGN KEY 字段名 [，字段名2，…]
+REFERENCES <主表名> 主键列1 [，主键列2，…]
