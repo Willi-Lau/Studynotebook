@@ -1,2 +1,43 @@
 优点：线程复用，控制最大并发数，管理线程  类似Spring控制对象池 可以提供最大得性能复用线程
 
+
+          线程池7大参数  底层源码
+          public ThreadPoolExecutor(int corePoolSize,    //线程池中常驻核心线程数
+                  int maximumPoolSize,           //线程池最大线程数，此值必须大于1
+                  long keepAliveTime,            //多余线程存活时间，线程池中线程超过corePoolSize ,存活时间超过 keepAliveTime ，多余线程会呗销毁
+                  TimeUnit unit,               //keepAliveTime 的单位
+                  BlockingQueue<Runnable> workQueue,    //任务队列，被提交没有被执行的队列
+                  ThreadFactory threadFactory,           //线程池中的工作工厂，用于创建线程，可以缺省吗，即默认   就是品牌
+                  RejectedExecutionHandler handler)   //拒绝策略 表示队列满了，并且工作线程大于等待线程的最大 线程数时如何拒绝请求执行的Runnable策略 可以缺省
+        
+
+ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(4, 5, 1L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+
+
+        for (int i=0;i<30;i++)
+            //线程池使用 传入 Runnable
+        poolExecutor.execute(()->{
+            System.out.println("hahah         "+ Thread.currentThread().getName());
+        });
+
+
+        //线程池停止
+        poolExecutor.shutdown();
+
+
+
+        线程池扩容机制
+
+        首先线程进来会到常驻线程中 corePoolSize 如果常驻线程满了，那就把再新增的线程送到阻塞队列 BlockingQueue 如果祖泽队列也满了，
+        就开启备用线程，慢慢增加到线程池最大线程数 maxinumPoolSize 如果最大线程也满了，那么就开始劝退，拒绝策略开始起作用
+
+
+
+
+
+
+
+
+
+
+

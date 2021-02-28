@@ -74,6 +74,8 @@ SQL语句不区分大小写，字符串区分大小写
  primary key                   主键约束，不能重复
       主键值后加 auto_increment 主键空间自动增大
 
+修改自增
+alter table `gray_week_analysis_0` modify id int auto_increment;
 
 在mysql中新建数据库，如果只写数据库名，没有设置字符集和排序规则，默认字符集为latin1 ，排序规则为latin1_swedish_ci 
 latin1_swedish_ci 不能存放中文，存放中文需把格式设定为UTF-8

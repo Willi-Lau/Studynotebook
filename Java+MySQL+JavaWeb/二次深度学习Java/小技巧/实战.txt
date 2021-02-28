@@ -1,0 +1,28 @@
+msqyl  datetime 对应 java timestamp 
+
+写入方式 记录当前时间 包括时分 giftcord.setVotetime(new Timestamp(new Date().getTime()));
+
+
+
+字符转日期：
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
+        Date parse = simpleDateFormat.parse("2021-02-27");
+
+日期转字符：
+        Date date=new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        String date2=sdf.format(date);
+
+日期加一天：
+        Date date=new   Date();//取时间
+
+        Calendar   calendar   =   new   GregorianCalendar(); 
+        calendar.setTime(date); 
+        calendar.add(calendar.YEAR, 1);//把日期往后增加一年.整数往后推,负数往前移动
+        calendar.add(calendar.DAY_OF_MONTH, 1);//把日期往后增加一个月.整数往后推,负数往前移动
+        calendar.add(calendar.DATE,1);//把日期往后增加一天.整数往后推,负数往前移动 
+        calendar.add(calendar.WEEK_OF_MONTH, 1);//把日期往后增加一个月.整数往后推,负数往前移动
+        date=calendar.getTime();   //这个时间就是日期往后推一天的结果 
+    
