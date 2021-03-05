@@ -47,11 +47,11 @@ axios:（前台后台交互）
 			}).catch(error=>{
 			console.log(error)
 			})
-
+r
 this.$route.push (页面跳转)
     
 	1.页面跳转
-	    this.$route.push({
+	    this.$router.push({
 		  path:'' ,               	//目标URL，为注册的路由
 		  
 		  query:{

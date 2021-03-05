@@ -3,7 +3,7 @@
 
           线程池7大参数  底层源码
           public ThreadPoolExecutor(int corePoolSize,    //线程池中常驻核心线程数
-                  int maximumPoolSize,           //线程池最大线程数，此值必须大于1
+                  int maximumPoolSize,           //线程池最大线程数，此值必须大于1  一般是Cpu核数+1
                   long keepAliveTime,            //多余线程存活时间，线程池中线程超过corePoolSize ,存活时间超过 keepAliveTime ，多余线程会呗销毁
                   TimeUnit unit,               //keepAliveTime 的单位
                   BlockingQueue<Runnable> workQueue,    //任务队列，被提交没有被执行的队列
@@ -43,12 +43,17 @@ ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(4, 5, 1L, TimeUnit.MILL
                 允许的队列请求长度为Integer.MAX_VALUE 可能会堆积大量的请求，导致OOM
             2：CacheThreadPol 和ScheduledThreadPool:
                 允许创建的线程数量为Integer.MAX_VALUE ,可能会创建大量的线程，导致OOM
-
-
-                
         
 
+        线程池最大承载量即 最大存活数(maximumPoolSize) + 阻塞队列容量(workQueue) 不指定容量默认值未Integer.MAX_VALUE ，如果超过这两个数
+        的和之外还有需要执行的任务，那么线程池就会执行拒绝策略。
 
+    四种拒绝策略：
+
+        AbortPolicy(默认)：直接抛出RejectedExecutionException异常阻止系统正常运行。
+        CallerRunsPolicy: “调用者运行”一种调节机制，该策略既不会抛弃任务，也不会抛出异常，而是将某些任务回退到调用者，从而降低任务量 (回退)
+        DiscardOldestPolicy:抛弃队列中等待最久的任务，然后把当前任务加入队列中尝试再次提交当前任务
+        DiscardPolicy:该策略默默的丢弃无法处理的任务，没有任何处理也不抛出异常。如果允许任务丢失，这是最好的策略 
 
 
 

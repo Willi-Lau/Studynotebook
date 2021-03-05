@@ -32,7 +32,28 @@ JSR107规范：
     serialize 缓存数据时value 序列化策略
 
 
+Redis:
+        聚合模型：
+                KV对
+                Bson 类似Json  文档存储
+                列族
+                图形
 
+       传统数据库ACID   :A Atomicity 原子性
+                        C Consistency 一致性
+                        I Isolation 独立性
+                        D Durability 持久性
+
+       NoSQL数据库  CAP:  C Consistency 强一致性  
+                          A Availability 可用性
+                          P Paration tolerance 分区容错性   （重要）
+
+
+                        CAP只能三选二 三个特点不可能都满足，一个分布式系统不可能同时满足C,A,P这三个需求，最多只能完成两个 
+
+                        CA : 单点集群，满足一致性，可用性得系统，通常在可扩展性不太强大   RDBMS  Oracle
+                        CP:  满足一致性，分区容错性，通常性能都不好           MongoDB HBase Redis
+                        AP: 满足可用性，分区容错性得系统，一致性都不好   大多数选择  数据量太大不能保证一致性  memcached
 
 
 

@@ -407,6 +407,31 @@ SpringMVC开发步骤
                                         System.out.println(i);
                                         }
                                 }
+
+                                数组对象：
+                                        @RequestMapping("/upAllitems")
+                                        @ApiOperation("提交检查检验结果，到检查表，检验表，和消费记录")
+                                        public void upAllitems( @RequestBody Allitems[] thisAllitems){
+                                                for (int i=0;i<thisAllitems.length;i++){
+                                                        System.out.println(thisAllitems[i].getName());
+                                                }
+                                        }
+
+                                        前端：
+                                          //提交检查检验
+                                                upthisAllitems(){
+                                                        console.log(this.thisAllitems)
+                                                        //upAllitems
+                                                        this.$axios.post('DoctorHomeController/upAllitems',
+                                                        this.thisAllitems
+
+                                                        ).then(response => {      //返回值部分
+
+                                                        }).catch(error => {
+                                                        console.log(error)
+                                                        })
+                                                },
+
                        4.集合（类似对象）
 
                                 SpringMVC不能直接传入普通集合，要通过把集合放到一个类中，传入一个POJO来实现传入集合
