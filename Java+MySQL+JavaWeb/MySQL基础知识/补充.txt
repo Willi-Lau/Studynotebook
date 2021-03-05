@@ -11,4 +11,5 @@ SELECT auto_increment FROM information_schema.tables where table_schema="datebas
 REFERENCES <主表名> 主键列1 [，主键列2，…]
 
 
+
 DECIMAL	=	java.math.BigDecimal
