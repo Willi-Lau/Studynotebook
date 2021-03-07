@@ -82,17 +82,42 @@ Redis:
                         e.g. 选择第一个库 select 1   显示： 127.0.0.1:6379[1]>
 
         Redis命令：
-                set 名字 "内容"         设置key  set mykey1 "I love you all!”
+                  
+            Key：
+                set 名字 "内容"         设置key  set mykey1 "I love you all!”   如果有此Key 再次执行时会覆盖原来的值
                 get 名字                获取key  get mykey1
                 select  Num             选择第num 个库 0<num<15
                 dbsize                  获取此库中 key得数量
                 flushdb                 清空当前库
                 flushall                清空所有库
-                Key：
+                del keyname             删除key
                 keys *                  查看此库所有的 key
                 keys m?                 查找所有m开头得key 例如 m1,m2,mmm
                 exists m                查找此库中是否有这个key 
-   
+                expire keyname m        给指定的key(keyname) 设定存活秒数
+                ttl keyname             查看还有多久过期  -1 表示永不过期 -2表示已经过期
+                type keyname            查看你的key是什么类型得     
+                
+            String:
+            
+                append keyname str      对keyname 后面追加字符串 str
+                strlen  keyname         查看指定String 类型 key 得长度
+                incr keyname            指定keyname +1  必须是数字 否则会报错
+                incrby keyname num      指定keyname + num  必须是数字 否则会报错
+                decr keyname            指定keyname -1  必须是数字 否则会报错
+                decrby keyname num      指定keyname - num  必须是数字 否则会报错
+                getrange keyname num1 num2   获取指定keyname 得 num - num1 范围（左右都闭） 得内容  
+                                            e.g.  set k1 = "abc123" getrange k1 0,-1  -> abc123   getrange k1 0,3  -> abc1 
+                setrange keyname num1 str   设置指定keyname 得 num 位置开始 值为str 后面如果有值就替换 
+                                            e.g.   set k1 = "abc123"  setrange k1 1 mmm  -> ammm23
+                setex  keyname s str    设置keyname 存活s 秒 值为 str 
+                setnx keyname value     如果keyname不存在 就新建设置值为value 如果存在就不做操作
+                mset k1 v1 k2 v2  ..    同时设置多个 key,value
+                mget k1 k2 k3  ...      同时获取多个key    
+                msetnx k1 v1 k2 v2...   同时设置多个k v 如果多个key 都不存在则成功，有一个存在所有的都失败
+                                        e.g. set k1 v1  msetnx k1 v2 k2 v2  -> (integer) 0     失败  因为k1 存在 则此次存的所有值都存不进去
+                                             set k1 v1  msetnx k2 v2 k3 v3  -> （Integer）1 成功 
+
 
 
 
