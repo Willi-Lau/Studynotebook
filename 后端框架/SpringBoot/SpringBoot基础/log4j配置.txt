@@ -1,5 +1,8 @@
 https://blog.csdn.net/weixin_43759352/article/details/104298332
 
+https://blog.csdn.net/zzq900503/article/details/87629782
+
+
 1.在resource下新建log4j.properties
 
 2.写入以下信息：

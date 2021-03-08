@@ -181,6 +181,29 @@ Redis:
                 hincrby mapname k num              给mapname得k属性得 v + num (num 为 int)
                 hincrbyfloat mapname k num         给mapname得k属性得 v + num (num 为 float)
                 hsetnx mapname k v                 给mapname设置k属性如果存在就不设置不存在再设置
+        
+        Zset:有序集合
+                zset就是在之前得set基础上加一个score值
+                set setname k1 k2 k3
+                zset zsetname score1 k1 score2 k2 score3 k3  
+
+                zset zsetname score1 k1 score2 k2 score3 k3     设置zsetname score1 k1 ..属性  
+                                        e.g. zadd zset1 60 k1 70 k2
+                zrange zsetname start stop      遍历zsetname 
+                                        e.g.    zrange zset1 0 -1 -> k1 k2
+                zrange  zsetname start stop withscores  遍历出所有k 和score
+                                        e.g.  zrange zset1 0 -1 withscores -> k1 60 k2 70
+                zrangebyscore zsetname startscore stopscore 在zsetname中查找出score范围在 startscore - stopscore 中得值
+                                       （ 为不包含  （startscore 为不包含startscore
+                                       limit  对结果集进行截取
+                zrem zsetname k       根据k值删除对应的k和score值
+                zcard zsetname        获取下一个坐标值 (一个k 加一个score算一组)
+                zcount zsetname startscore stopscore   统计指定score区间内个数
+                zranke zsetname k                      获取指定k得下标值
+                zscore zsetname k                      获取指定k得score值
+                zrevrange zsetname start stop      倒叙遍历zsetname
+
+
 
 
                                       
@@ -213,9 +236,66 @@ Redis:
                         zset得成员是唯一的，但分数可以重复
         
 
-                   
+        Redis持久化：
+
+                 RDB: Redis DATABASES 
+                 AOF: Append only File
+                 rdb aof都存在时首先备份查找aof
 
 
+                 RDB：  
+                        rdb是整个内存的压缩过程的Snapshot ,RDB的数据结构，可以配置复合快照触发条件 (就是隔一段时间自动备份一次数据)，
+                        rdb是一个非常紧凑的文件
+                        rdb工作过程：
+                                  复制出一份完全一模一样的子进程，所有rdb工作都由子进程来做，父进程不需要做任何IO操作，子进程根据默认
+                                  规则定时备份，备份到磁盘里drum.rdb文件中，这样性能很好，效率高，不过数据丢失风险大（一边操作一遍备份）
+                        坑： 执行flushall数据大时也会执行 就可能回复失败，所以需要额外备份
+
+                        优势：适合大规模数据的恢复，对数据完整性一致性要求不高
+                        劣势：在一定间隔时间做一次备份，所以如果Redis意外Down时候，就会丢失下最后一次快照的所有的修改
+                              复制的时候，内存中的数据被克隆一份，大致两倍膨胀性需要考虑
+
+                        默认文件：dump.rdb
+                        默认自动备份规则：
+                                1分钟内修改一万次
+                                或 5分钟内修改10次
+                                或 1分钟内修改了一次
+
+                                就开启默认备份
+  
+                        禁用： save ""  
+                        常用命令：
+                                save   立刻执行备份
+        
+
+                 AOF:
+                        工作过程：以日志的形式来记录每一个写操作，将Redis执行过的所有指令写下来（读 get 操作不进行记录），只追加文件但不改写文件，
+                                 redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据恢复
+                                 最小误差 1s
+                        默认文件名：appendonly.aof
+                        坑： 如果执行Flushall aof也会默认记录下来，所以恢复时候也会执行flushall的操作，必须干掉flushall才可以   
+                        修复： rdb aof同时存在并且aof文件有错误有乱码时：执行redis-check-aof 进行修复   
+                
+                        配置位置： appendonly no 默认 
+                                   appendonly yes 打开aof持久化    
+                        配置策略：Appendfsync :Always 同步持久化 每次数据发生变化会被立刻执行记录到磁盘，性能差但是数据完整性好
+                                              Everysec 默认设置，每秒记录一次
+                                              nO 不同步
+                        Rewrite:
+                                是什么：aof采用文件追加方式记录数据，这样文件会越来越大，为了避免这种情况，新增了重写机制，
+                                        当aof文件大小超过所设定的阀值时，Redis就会启动ROF文件压缩，只保留可以恢复数据的
+                                        最小指令集，可以使用命令bgrewriteaof
+                                工作过程：aof问价持续增长时，会foke一条新的进程来将文件重写，先临时写再rename，遍历新的进程的内存数据，
+                                        每条记录会有一条set语句。重写aof的操作不是直接读取旧的aof而是将整个所有的数据用命令的方式重写了一个
+                                        新的aof文件，这个快照有点相似
+                                触发机制：默认配置是当aof文件大小是上次rewrite大小的一倍且文件大于64m时触发
+
+                                no-appendfsync-on-rewrite 重写时是否可以运用appendfsync 默认no 
+                                auto-aof-rewrite-min-size:设置重写基准值
+                                auto-aof-rewrite-percentage:设置重写基准值
+                        优势：同步数据更好，数据完整性更好      
+                        劣势：要存储的数据量远远大于rdb,运行效率比rdb慢
+                                
 
 
 
