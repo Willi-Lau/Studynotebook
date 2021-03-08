@@ -81,7 +81,7 @@ Redis:
         默认16个数据库  通过select num 选择   库得下标是 0-15  初始默认选择得是0号
                         e.g. 选择第一个库 select 1   显示： 127.0.0.1:6379[1]>
 
-        Redis命令：
+        Redis命令： -1 下标代表到所有
                   
             Key：
                 set 名字 "内容"         设置key  set mykey1 "I love you all!”   如果有此Key 再次执行时会覆盖原来的值
@@ -97,7 +97,7 @@ Redis:
                 expire keyname m        给指定的key(keyname) 设定存活秒数
                 ttl keyname             查看还有多久过期  -1 表示永不过期 -2表示已经过期
                 type keyname            查看你的key是什么类型得     
-                
+
             String:
             
                 append keyname str      对keyname 后面追加字符串 str
@@ -118,7 +118,72 @@ Redis:
                                         e.g. set k1 v1  msetnx k1 v2 k2 v2  -> (integer) 0     失败  因为k1 存在 则此次存的所有值都存不进去
                                              set k1 v1  msetnx k2 v2 k3 v3  -> （Integer）1 成功 
 
+            List：  链表
+                lpush  listname1 n1 n2 n3 n4 n5      创建(存在则添加)一个Stack filo 式链表 名字为 listname 值为n1 n2 n3 n4 n5   
+                rpush  listname2 n1 n2 n3 n4 n5      创建(存在则添加)一个Queue fifo 式链表 名字为 listname 值为n1 n2 n3 n4 n5
+                lrange listname start end           遍历集合listname start为开始下标 end 为结束下标 end 为 -1 就是遍历剩下所有 
+                                                  e.g. 遍历 lpush 时是 n5 n4 n3 n2 n1 rpush 是 n1 n2 n3 n4 n5
+                lpop listname          删除并显示链表顶部数字
+                                        e.g. lpop listname1 -> n5   lpop listname2 -> n1
+                rpop listname          删除并显示链表底部数字      
+                                         e.g. rpop listname1 -> n1   rpop listname2 -> n5 
+                                
+                lindex listname index   查找 listname 链表下 下标 index 得元素
+                llen  listname          返回链表长度 
+                lrem listname  num value   删除listname得 num个值为value 得元素
+                                        e.g. rpush list3 1 1 1 2 3 4 5 6 lrem list3 3 1 //删除3个1 -> lrange list3 -> 2 3 4 5 6
+                ltrim listname start stop 截取list1 从start下标开始到stop得元素,清空listname所有得值，并把截取得元素重新赋值给listname
+                                        e.g. rpush list3 1 2 3 4 5 6 l  trim list3 3 4  ->    lrange list3 ->  4 5
+                rpoplpush listfrom listto 截取 listfrom 最后一个元素到 listto 第一个上
+                                        e.g. rpush list1 1 2 3
+                                             rpush list2  10 11 12
+                                             rpoplpush list1 list2 ->   lrange list1  -> 1 2 
+                                                                        lrange list2   -> 3  10 11 12
+                lset listname index value  设置Listname 得index 位置元素值为value
+                                        e.g.   rpush list1 1 2 3 lset list1 1 haha  -> 1 haha 3
+                linsert listname before/after index num   在listname index 位置元素前/后插入 元素 num
+                                         e.g.   rpush list1 1 2 3  linsert list1 before 1 fff -> 1 fff 2 3 
+            
+            Set:集合（不允许重复）
+                sadd setname s1 s2 s3...   新建(存在则添加)set 集合 setname 值为 s1,s,s3.. 如果有重复值会自动删除
+                                        e.g. sadd set1 1 1 1 2 2 2 3 -> smembers set1-> 1 2 3
+                smembers setname      显示setname 得所有元素
+                sismenbers setname s      查找 元素 s是否在集合 setname中
+                scard setname           获取setname 集合元素个数
+                srem setname s          删除 setname 中 值为s得元素（注意不是下标）
+                srandmember setname num 从setname中随机选择num个元素并返回（不删除）
+                spop setname          随机删除一个元素，并显示这个元素
+                smove setname1 setname2 num 把setname1中 num（这个值必须在setname1中） 添加到setname2得末尾上
+                                        e.g. sadd set1 a b c 
+                                             sadd set2 1 2 3
+                                             smove set1 set2 a -> smembers set2 1 2 3 a
+                                                               -> smembers set1 b c
+                sdiff set1 set2      查找在set1 不在sert2得元素
+                                        e.g. sadd set1 1 2 3 4 5 
+                                             sadd set2 1 2 3 a b 
+                                             sdiff set set2 -> 4 5
+                sinter set1 set2      查找set1 set2得交集
+                sinion set1 set2      查找set1 set2得并集
+             
+         ***  Hash:集合  *** 可以映射对象
+                hset mapname k v    新建（存在则更新） mapname 值得键位 k  值得值为 v
+                                        e.g. hset user age 11
+                hget mapname k      获取 mapname 中 键为k 得值
+                                        e.g. hget user age - > 11
+                hmset mapname k1 v1 k2 v2 k3 v3    新建（存在则更新） mapname 多个 键值信息
+                hmget mapname k1 k2 k3..           获取多个k值对应的v值
+                hgetall mapname                    获取所有的k值对应得v值
+                hdel mapname k                     删除指定map下得指定key  
+                hlen mapname                       返回这个hash得长度
+                hexist mapname k                   查找mapname里是否包括 指定key
+                hkeys mapname                      查找mapname下所有的key
+                hvals mapname                      查找mapname下所有的value
+                hincrby mapname k num              给mapname得k属性得 v + num (num 为 int)
+                hincrbyfloat mapname k num         给mapname得k属性得 v + num (num 为 float)
+                hsetnx mapname k v                 给mapname设置k属性如果存在就不设置不存在再设置
 
+
+                                      
 
 
 
@@ -141,7 +206,7 @@ Redis:
                 List类型：   Redis列表是简单的字符串列表，按照插入顺序存储，你可以添加一个数据在链表头部得左边或者尾部得右边 
                         类似 LinkedList
                 
-                Set类型：    Redis得set是String类型无序集合，通过HashTable实现得
+                Set类型：    Redis得set是String类型无序集合，通过HashTable实现得 （不允许重复）
 
                 Zset类型：   Redis得zset和set 一样也是String类型得元素集合，且不允许有重复得成员，不同的是 zset是有序得
                         有序是通过每一个元素都会关联一个double 类型得分数，Redis通过分数为集合中得元素从小到大进行排列，
