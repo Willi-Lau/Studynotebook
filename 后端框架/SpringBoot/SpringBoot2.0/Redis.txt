@@ -5,6 +5,9 @@ Redis安装：https://www.cnblogs.com/liuqingzheng/p/9831331.html
 Redis命令大全：http://redisdoc.com/
 
 缓存  不同于数据库 读取更快 临时文件可以放在缓存中
+Redis启动： cd c:\program files\redis
+            redis-cli
+            auth 12345
 
 
 JSR107规范：
@@ -46,6 +49,84 @@ Jedis
                 获取连接：             Jedis jedis = new Jedis("127.0.0.1",6379);
                 设置密码：             jedis.auth("12345");
                 返回连接结果：         System.out.println(jedis.ping());
+
+                提交Hash
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put("name","李四");
+                        map.put("age","12");
+                        map.put("inf","aaaa");
+                        jedis.hmset("person2",map);
+                事务执行： 
+                         //设置事务
+                        Transaction multi = jedis.multi();
+                        //事务的提交
+                        multi.set("str011","1");
+                        multi.set("str0111","1");
+                        multi.set("str01111","1");
+                        //提交
+                        multi.exec();
+
+                主从复制：
+                        jedis.slaveof("127.0.0.1",6379);
+               
+                JedisPool:
+                         //池子的使用
+                        //建立对象
+                        Jedis jedis1 = null;
+                        //获取池子
+                        JedisPool pool = JedisPoolUtil.getJedisPool();
+                        //获取连接
+                        try {
+                        jedis1 = pool.getResource();
+                        } catch (Exception e) {
+                        e.printStackTrace();
+                        } finally {
+                        //退回给池子
+                        JedisPoolUtil.release(pool,jedis1);
+                        }
+
+
+
+                        //单例
+                        class JedisPoolUtil{
+                        private static volatile JedisPool jedisPoolutil = null;
+                        private  JedisPoolUtil (){};
+                        //实例化
+                        public static JedisPool getJedisPool(){
+                                if(jedisPoolutil == null){
+                                synchronized (JedisPoolUtil.class){
+                                        if(jedisPoolutil == null){
+                                        //jedis 池配置 保证返回的永远是一个池
+                                        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+                                        //最大连接数  老版本是setMaxActive
+                                        jedisPoolConfig.setMaxTotal(1000);
+                                        //最多空闲数
+                                        jedisPoolConfig.setMaxIdle(32);
+                                        //最大等待时间 毫秒
+                                        jedisPoolConfig.setMaxWaitMillis(100*1000);
+                                        //获取Redis示例时是否检查可用性
+                                        jedisPoolConfig.setTestOnBorrow(true);
+
+
+                                        jedisPoolutil = new JedisPool(jedisPoolConfig,"127.0.0.1",6379);
+                                        }
+                                }
+                                }
+
+
+                                return jedisPoolutil;
+                        }
+                        //执行退回 池子的东西用完了还要退回去  退回哪个池子那个对象
+                        public static void release(JedisPool jedisPool,Jedis jedis){
+                                //不是空再执行
+                                if(null != jedis){
+                                //这里close() 代替了  jedisPool.returnBrokenResource();
+                                //关闭连接
+                                jedis.close();
+                                }
+                        }
+
+                        }
 
 Redis:
         聚合模型：
@@ -295,7 +376,46 @@ Redis:
                                 auto-aof-rewrite-percentage:设置重写基准值
                         优势：同步数据更好，数据完整性更好      
                         劣势：要存储的数据量远远大于rdb,运行效率比rdb慢
-                                
+                
+        Redis事务：
+                命令：mulit     标记事务开始
+                     discard    取消事务，放弃执行事务内的所有命令
+                     exec       执行所有事务块的命令（提交事务）
+                     Unwatch    取消watch命令的监视
+                     watch key ..  监视一个或多个key,如果事务执行之前这些（一个或多个）key被其他命令改动，那么事务会被打断 类似CAS 
+
+                事务执行：
+                        multi              开始
+                        ...                若干redis操作语句
+                        exec/discard       提交/放弃提交
+                事务特性：
+                        全体连坐，错一个都不提交（指redis命令语句就是有问题 比如打一堆乱码）
+                        不保证原子性无回滚：单独针对，对的放行（编译阶段redis语句都没有问题，执行exec时发现问题例如incr一个字符串 这时除了incr这儿命令，其他正确的都可以提交）
+                        没有隔离级别
+
+        Reids主从复制：
+                用法：配从库不配主库
+                从库配置：
+                        slaveof 主库ip 主库端口  从机断开了要重新执行slaveof 连接，除非写进了配置文件
+                        slaveof no one   从 从机变主机
+
+                        info replication 查看当前redis信息，连接状态  主库master 从库 slave
+
+                 读写分离 从机没有写的权限
+
+                 复制原理：
+                        Slave启动成功后连接到master 会发送一个sync命令 （同步命令）
+                        master接到命令启动后台后台存盘进程，同时接收收集所有的用于修改数据的命令，再后台进程执行完毕后，master将传送整个数据文件
+                        到slave,完成一次同步
+
+                        全量复制：刚启动时将master所有数据全部加载复制
+                        增量复制：建立连接后，进行全量复制后，开始进行增量复制只记录增加的部分，但是要是断开连接重连，还要进行一次全量复制
+                
+                
+                
+                哨兵模式：
+                        主库死亡不用再手动选定新主库，由Redis从库通过投票选出来
+                        https://www.jianshu.com/p/06ab9daf921d
 
 
 
