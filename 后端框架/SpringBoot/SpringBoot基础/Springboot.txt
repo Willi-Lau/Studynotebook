@@ -45,6 +45,8 @@
                                             Fruit querybyig = fruitService.querybyig(id);
                                             return querybyig;
                                         }
+            @ConditionalOnMissingBean 如果Spring容器中有了此对象，这个自动配置的不会被实例化
+            @SuppressWarnings("all")  忽略所有的警告
 
     返回json
 
