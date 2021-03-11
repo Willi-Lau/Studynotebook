@@ -1,3 +1,4 @@
+https://blog.csdn.net/eric520zenobia/article/details/103286011
 
 SpringBoot 整合Redis
 自动配置类：RedisAutoConfiguration
