@@ -1,0 +1,27 @@
+    
+    依赖：
+        <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-log4j2</artifactId>
+            </dependency>
+
+    allpication.yml配置
+
+        #配置日志级别  debug info 常用
+        logging:
+        level:
+            root: debug
+        #    输出到文件  不指定路径再当前项目下生成  name 为文件的名字
+        file:
+            name: springbootstudy-file.log

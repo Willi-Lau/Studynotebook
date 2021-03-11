@@ -1,0 +1,184 @@
+
+SpringBoot 整合Redis
+自动配置类：RedisAutoConfiguration
+
+        1.启动类配置@EnableCache
+            @EnableCaching
+            @SpringBootApplication
+            public class DemoApplication {
+
+                public static void main(String[] args) {
+                    SpringApplication.run(DemoApplication.class, args);
+                }
+
+            }
+
+        2.缓存的POJO欲要实现Serializable
+            @Data
+            public class Student implements Serializable {
+                String name;
+                int age;
+                String school;
+            }
+
+        3.maven
+                <!--        缓存-->
+                        <dependency>
+                            <groupId>javax.cache</groupId>
+                            <artifactId>cache-api</artifactId>
+                        </dependency>
+                <!--        springboot 缓存-->
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-cache</artifactId>
+                        </dependency>
+                <!--        Redis-->
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-data-redis</artifactId>
+                        </dependency>
+                <!--        jedis-->
+                        <dependency>
+                            <groupId>redis.clients</groupId>
+                            <artifactId>jedis</artifactId>
+                        </dependency>
+
+        4.springboot 核心文件配置redis
+
+                
+               spring:
+                redis:
+                # Redis数据库索引（默认为0）
+                database: 0
+                # Redis服务器地址
+                host: 192.168.133.128
+                # Redis服务器连接端口
+                port: 6379
+                # Redis服务器连接密码（默认为空）
+                password: redis
+                jedis:
+                pool:
+                        #连接池最大连接数（使用负值表示没有限制）
+                        max-active: 8
+                        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+                        max-wait: -1
+                        # 连接池中的最大空闲连接
+                        max-idle: 8
+                        # 连接池中的最小空闲连接
+                        min-idle: 0
+                        # 连接超时时间（毫秒）
+                        timeout: 10000
+
+        5.配置自定义RedisConfig RedisUtil  
+
+
+             查看RedisConfig.txt RedisUtil.txt 
+
+
+    SpringBoot原生Redis 用法：//StringRedisTemplate  RedisTemplate 用法相同
+
+                @Autowired
+                StringRedisTemplate stringRedisTemplate;   //操作字符串
+
+                @Autowired
+                RedisTemplate redisTemplate;  //存k v
+
+                @Test
+                void contextLoads() {
+                    //设置
+                    stringRedisTemplate.opsForValue().set("springboot1","20210310");
+                    //读取
+                    stringRedisTemplate.opsForValue().get("springboot1");
+                    
+                }
+    
+    SpringBoot 注解开发：（需要设置缓存为Redis）
+
+        JSR107规范：
+
+        Java Caching 定义了5个核心接口，分别是CachingProvider,CacheManager,Cache,Entry,Expiry
+
+        CachingProvider :定义了创建，配置，获取，管理，和控制多个CacheManager.一个应用可以再运行期间访问多个CachingProvider
+        CacheManager: 定义了创建，配置，获取，管理和控制多个唯一命名的Cahce,这些Cache存在于Cache存在于CacheManager的上下文中，
+                    一个CacheManager仅被一个CachingProvide拥有
+        Cache:是一个类似Map的数结构并临时存储以Key为索引的值，一个Cache仅被一个CacheManager所拥有，
+        Entry:是一个存储在Cache中的key-value对
+        Expiry:每一个存储在Cache中的条目有一个定义的有效期，一旦超过这个时间，条目为过期的状态。一旦过期，条目将不可访问，更新和删除。
+                缓存有效期通过设置ExpirtyPolicy设置
+
+        CacheManager 可以理解为数据库连接池，每一个Cache是一个连接
+
+
+
+        缓存重要概念+注解
+
+        Cache:缓存接口，定义缓存操作。实现有RedisCache,EhCacheCache,ConcurrentMapCache 等
+        CacheManager:缓存管理器，管理各种缓存。
+        @Cacheable:主要针对方法配置，能够根据方法的请求参数对其结果进行缓存
+        @CacheEvict 清空缓存
+        @CachePut 保证方法被调用，有希望结果被缓存
+        @EnableCaching：开启基于缓存的注解
+        keyGenerator 缓存数据时key生成策略
+        serialize 缓存数据时value 序列化策略
+
+    SQEL:
+        #result    代表当前方法的返回值
+        #root.methodName  当前被调用的方法名
+        #root.args[]      当前被调用方法的参列表
+
+
+    @Cacheable
+        作用：调用方法前执行，对方法返回的结果进行缓存，从缓存中查询时候方法都不会进，只有第一次才会进方法
+        注意：不可以用 #result 
+        参数：
+            value/cachename    指定缓存名字
+            key                指定缓存key
+            keyGenerator       指定缓存key命名规则（通常是自定义的@bean） 
+            condition          缓存条件
+            unless             不缓存条件
+            cacheManager       指定缓存管理器 空则使用默认  在这里弄人设置成Redis 旧不用指定
+
+            e.g.
+
+            @Cacheable(cacheNames = {"fruit1","fruit_info"},key = "#id"，condition = "#id > 0",unless = "#id < 15") 
+            //cachename 里有多个名字 创建多个缓存
+            //keu #id 使用 传递进来的id作为缓存名字
+            //condition #id大于0 时候才缓存
+            //unless #id小于15时候不缓存
+
+            @GetMapping("/fruit/{id}")
+            @Cacheable(cacheNames = {"fruit1","fruit_info"},key = "#id")   //##result.id 作用是取出返回的结果里的id的值
+            public Fruit test1(@PathVariable String id){
+
+                Fruit fruit = service.selectFruitByid(id);
+                System.out.println(fruit.toString());
+                return fruit;
+            }
+
+
+    @CachePut
+        作用：先调用方法，再把方法的返回结果放进缓存中
+        参数：
+            value/cachename    指定缓存名字
+            key                指定缓存key 这里一般都是用#result.    返回结果进行存入
+            keyGenerator       指定缓存key命名规则（通常是自定义的@bean） 
+            condition          缓存条件
+            unless             不缓存条件
+            cacheManager       指定缓存管理器 空则使用默认  在这里弄人设置成Redis 旧不用指定
+
+            /**
+            * @CachePut 先调用方法，再把方法的返回结果放进缓存中
+            * 注意这里的key 需要从返回的结果里获取 不然会报错
+            * 注意 更新数据 cacahename 和 key 必须和存入时@Cacheable 的一模一样
+            */
+            @GetMapping("/updatefruit/{id}")
+            @CachePut(cacheNames = {"fruit1","fruit_info"},key = "#result.id")   //##result.id 作用是取出返回的结果里的id的值
+            public Fruit test2(@PathVariable String id){
+
+                service.updateFruitByid(id);
+                //再次查询 更新缓存
+                Fruit fruit = service.selectFruitByid(id);
+                return fruit;
+            }
+
+    @CacheEvict 清空缓存  用法同上
