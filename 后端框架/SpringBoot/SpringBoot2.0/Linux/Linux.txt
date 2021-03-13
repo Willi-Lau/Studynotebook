@@ -1,5 +1,14 @@
+
+获取权限：https://blog.csdn.net/qq_43667669/article/details/84028354
+https://zhidao.baidu.com/question/1673749280030097347.html
+
+常用命令：https://blog.csdn.net/qq_23329167/article/details/83856430
+
+输入 su  变成root 权限  变成 #
 Linux 指令:
-    
+       查找帮助：
+                men 命令 
+                e.g.   men ls 查找ls相关的帮助
 
         init[0-6] 切换状态 
                     运行级别：
@@ -8,3 +17,51 @@ Linux 指令:
         ps    进程状态，类似于windows的任务管理器
         pwd   打印当前目录 显示出当前工作目录的绝对路径
         top   任务管理器
+        uname-r  查看虚拟机版本
+        su   切换到管理员权限
+        
+        命令：cd 目录
+
+                cd /        切换到根目录
+                cd /usr        切换到根目录下的usr目录
+                cd ../        切换到上一级目录 或者  cd ..
+                cd ~        切换到home目录
+                cd -        切换到上次访问的目录
+        
+        命令：ls [-al]
+
+                ls                查看当前目录下的所有目录和文件
+                ls -a            查看当前目录下的所有目录和文件（包括隐藏的文件）
+                ls -l 或 ll       列表查看当前目录下的所有目录和文件（列表查看，显示更多信息）
+                ls /dir            查看指定目录下的所有目录和文件   如：ls /us
+        
+        命令：touch 文件名
+                touch  aa.txt        示例：在当前目录创建一个名为aa.txt的文件     
+
+        命令： vi 文件名  打开文件
+
+                编辑文件 使用vi编辑器打开文件后点击按键：i ，a或者o即可进入编辑模式。
+
+                保存文件：
+
+                第一步：ESC  进入命令行模式
+                第二步：:     进入底行模式
+                第三步：wq     保存并退出编辑
+
+                取消编辑：
+
+                第一步：ESC  进入命令行模式
+                第二步：:     进入底行模式
+                第三步：q!     撤销本次修改并退出编辑
+        
+        ps -ef    查看所有正在运行的进程 
+        
+        ping：查看与某台机器的连接情况 命令：ping ip
+
+        ifconfig -a 查看本机（linux）的ip地址
+
+        命令：mkdir 目录
+
+                mkdir    aaa            在当前目录下创建一个名为aaa的目录
+                mkdir    /usr/aaa    在指定目录下创建一个名为aaa的目录
+

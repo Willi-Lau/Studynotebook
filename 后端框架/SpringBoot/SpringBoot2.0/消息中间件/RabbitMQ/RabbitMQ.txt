@@ -1,0 +1,12 @@
+
+
+
+安装windows :https://www.cnblogs.com/java-spring/p/13645715.html
+
+本地网址：
+
+http://localhost:15672/
+
+
+
+
