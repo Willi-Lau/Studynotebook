@@ -1,0 +1,166 @@
+
+在何种场景下使用消息中间件
+
+为什么要在系统里引入消息中间件
+
+http://localhost:8161/ 前台端口号
+
+windows 启动：cd D:\ActiveMQ\apache-activemq-5.16.1\bin\win64
+             选择 activemq.bat 点击 或者 输入 activemq.bat start
+
+本机ip+:61616 后端端口号
+
+MQ作用：解耦 削峰 异步
+
+    同步： 类似打电话 双方一直在线
+    异步： 类似短信，微信 不一定立刻恢复
+
+ 1.大多数应用中，可以通过消息服务中间件来提升系统的异步通信，扩展解耦能力
+    2.消息服务两个重要的概念：
+        消息代理和目的地
+        当消息发送者发送消息后，将由消息代理接管，消息代理保证消息传递到指定目的地
+
+    3.消息队列有两种形式的目的地
+        1.  queue 队列  点对点式：
+                    消息发送者发送消息，消息代理将其放入一个队列中，消息接收者从队列中获取消息，消息读取后被移除队列
+                    消息只有唯一的发送者和接受者 ，但并不是只有一个接收者
+
+        2.  Topic 主题  发布订阅式：
+                    发送者发布消息到主题，多个接收者监听这个主题，那么就会再消息到达同时收到消息
+
+        JMS java消息服务 基于jvm    ActiveMQ    只能再java里使用
+
+        AMQP 高级消息队列 兼容jms   RabbitMQ   支持跨平台
+
+    Java:
+        消息生产者： 
+
+                public class Productor {
+                    //连接位置 根据主机ip地址  查看IP  ipconfig
+                    public static final String ACTIVEMQ_URL = "tcp://127.0.0.1:61616";
+                    public static final String QUEUE_NAME = "queue01";
+
+                    @Test
+                    void test0() throws Exception{
+
+                        //创建连接工厂
+                        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ACTIVEMQ_URL);
+                        //通过连接工厂获得连接Connection
+                        Connection connection = factory.createConnection();
+                        //启动访问
+                        connection.start();
+                        //创建会话 session  参数 事务/接收
+                        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                        //创建目的地 具体是队列还是主题
+                        Queue queue = session.createQueue(QUEUE_NAME);
+
+                        //创建消息的生产者
+                        MessageProducer producer = session.createProducer(queue);
+                        //通过使用消息生产者生产三条消息到MQ队列里
+                        for (int i=0;i<3;i++)
+                        {
+                            //创建消息   留言卡
+                            TextMessage textMessage = session.createTextMessage("message" + Integer.toString(i + 1));//一个字符串
+                            //发送到MQ
+                            producer.send(textMessage);
+                        }
+                        //释放资源
+                        producer.close();
+                        session.close();
+                        connection.close();
+
+
+                    }
+                }
+
+        消息消费者：
+
+                public class Consumer {
+                    //连接位置 根据主机ip地址  查看IP  ipconfig
+                    public static final String ACTIVEMQ_URL = "tcp://127.0.0.1:61616";
+                    public static final String QUEUE_NAME = "queue01";
+                    public static void main(String[] args) throws Exception{
+                        /**
+                        * 消费者 获取MQ的地址和名字要和生产者一样
+                        */
+                        //创建连接工厂
+                        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ACTIVEMQ_URL);
+                        //通过连接工厂获得连接Connection
+                        Connection connection = factory.createConnection();
+                        //启动访问
+                        connection.start();
+                        //创建会话 session  参数 事务/接收
+                        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                        //创建目的地 具体是队列还是主题
+                        Queue queue = session.createQueue(QUEUE_NAME);
+
+                        //创建消息消费者
+                        MessageConsumer consumer = session.createConsumer(queue);
+
+                        /**
+                        *   1.同步阻塞方法 receive 再接收到消息前及超时之前会一直阻塞。 
+                        */
+                            while (true){
+                                //这里消费者接收的类型必须和生产者发送的类型一样所以要进行类型转换
+                                //如果 .receice() 没有参数就会一直霸占资源 应该设置时间
+                                TextMessage textMessage = (TextMessage)consumer.receive(4000L);
+                                //消息不是空再开始
+                                if(textMessage != null){
+                                    //获取消息的信息
+                                    System.out.println("消费者1接收到消息" + textMessage.getText());
+                                }
+                                else {
+                                    //跳出循环
+                                    break;
+                                }
+                            }
+
+
+                        /**
+                        *    2。通过监听器监听 异步非阻塞
+                        */
+                        consumer.setMessageListener(new MessageListener() {
+                            //随时监听 只有有小细腰处理了才打开处理
+                            @SneakyThrows
+                            @Override
+                            public void onMessage(Message message) {
+                                if(null != message && message instanceof TextMessage){
+                                    //接收信息
+                                    TextMessage textMessage = (TextMessage) message;
+                                    //获取接收的消息
+                                    System.out.println("消费者2接收到消息" + textMessage.getText());
+                                }
+                            }
+                        });
+                        //保证不饿能错过信息
+                        System.in.read();
+
+
+
+                        //关闭资源
+                        consumer.close();
+                        session.close();
+                        connection.close();
+
+                        /**
+                        *
+                        */
+
+
+
+                    }
+                }
+
+
+        消息队列生产者消费者相关问题：
+            1.生产者01先生产， 消费者01再消费
+                ->   消费者01 得到消息
+            
+            2.生产者01先生产， 然后先启动消费者01 再启动消费者02
+                ->    消费者01 得到消息 
+                      消费者02 无消息
+            
+            3.启动 01 02两个消费者 然后再让生产者01生产6条消息
+                ->   消费者01 得到3条消息
+                     消费者02 得到3条消息   平均分配
+    
