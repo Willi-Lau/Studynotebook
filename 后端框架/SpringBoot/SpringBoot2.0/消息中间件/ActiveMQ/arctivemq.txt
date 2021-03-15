@@ -28,11 +28,29 @@ MQ作用：解耦 削峰 异步
         2.  Topic 主题  发布订阅式：
                     发送者发布消息到主题，多个接收者监听这个主题，那么就会再消息到达同时收到消息
 
+                    一定要先启动消费者再启动生产者不然消费者收不到消息
+
         JMS java消息服务 基于jvm    ActiveMQ    只能再java里使用
 
         AMQP 高级消息队列 兼容jms   RabbitMQ   支持跨平台
 
-    Java:
+        ActiveMQ Topic Queue 生产者消费者区别总结
+
+            Queue:
+                 1. 负载均衡
+                    先启动 1，2两个消费者 在启动一个生产者发布6条消息 这时两个消费者分布i额接收到三条消息（负载均衡）
+                 2. 先来先得
+                    生产者先生产 6条消息，然后启动消费者1，再启动消费者2，消费者1得到6条消息，消费者2不能获得消息
+            Topic:
+                 1. 公众号
+                    先启动 1，2两个消费者 在启动一个生产者发布6条消息，这是两个消费者都得到6个消息
+                2.历史记录不可察
+                    先启动一个生产者，发布消息，再启动一个消费者，这时消费者无法接收消息，只能接收订阅之后发布的消息
+
+
+
+    Java Queue:
+
         消息生产者： 
 
                 public class Productor {
@@ -164,3 +182,298 @@ MQ作用：解耦 削峰 异步
                 ->   消费者01 得到3条消息
                      消费者02 得到3条消息   平均分配
     
+    Java Topic:（类似微信公众号订阅）
+        JMS 允许创建持久订阅
+            1.生产者将消息发布到 topic中，每一个消息可以有多个消费者，属于1：N关系
+            2.生产者消费者有时间上的相关性，订阅某一主题的消费者只能消费自他订阅之后发布的消息
+            3.生产者生产时，Topic不保存消息它是无状态不落地，假如无人订阅就去生产，那就是一条废消息，所以一般先启动消费者再启动生产者
+
+
+            生产者：
+                public class Producer {
+                    //连接位置 根据主机ip地址  查看IP  ipconfig
+                    public static final String ACTIVEMQ_URL = "tcp://127.0.0.1:61616";
+                    public static final String TOPIC_NAME = "topic01";
+
+                    @Test
+                    void test0() throws Exception{
+
+                        //创建连接工厂
+                        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ACTIVEMQ_URL);
+                        //通过连接工厂获得连接Connection
+                        Connection connection = factory.createConnection();
+                        //启动访问
+                        connection.start();
+                        //创建会话 session  参数 事务/接收
+                        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                        //创建目的地 具体是队列还是主题
+                        Topic topic = session.createTopic(TOPIC_NAME);
+                        System.out.println("我是一号消费者");
+                        //创建消息的生产者
+                        MessageProducer producer = session.createProducer(topic);
+                        //通过使用消息生产者生产三条消息到MQ队列里
+                        for (int i=0;i<3;i++)
+                        {
+                            //创建消息   留言卡
+                            TextMessage textMessage = session.createTextMessage("Topicname" + Integer.toString(i + 1));//一个字符串
+                            //发送到MQ
+                            producer.send(textMessage);
+                        }
+                        //释放资源
+                        producer.close();
+                        session.close();
+                        connection.close();
+                        System.out.println("队列消息发送到MQ完成");
+
+
+                    }
+                }
+
+            消费者：
+                public class Customer {
+
+                    //连接位置 根据主机ip地址  查看IP  ipconfig
+                    public static final String ACTIVEMQ_URL = "tcp://127.0.0.1:61616";
+                    public static final String TOPIC_NAME = "topic01";
+                    public static void main(String[] args) throws Exception{
+                        /**
+                        * 消费者 获取MQ的地址和名字要和生产者一样
+                        */
+                        //创建连接工厂
+                        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ACTIVEMQ_URL);
+                        //通过连接工厂获得连接Connection
+                        Connection connection = factory.createConnection();
+                        //启动访问
+                        connection.start();
+                        //创建会话 session  参数 事务/接收
+                        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                        //创建目的地 具体是队列还是主题
+                        Topic topic = session.createTopic(TOPIC_NAME);
+
+                        //创建消息消费者
+                        MessageConsumer consumer = session.createConsumer(topic);
+                        /**
+                        * 通过监听器监听 有消息消费
+                        */
+                        consumer.setMessageListener(new MessageListener() {
+                            //随时监听 只有有小细腰处理了才打开处理
+                            @SneakyThrows
+                            @Override
+                            public void onMessage(Message message) {
+                                if(null != message && message instanceof TextMessage){
+                                    //接收信息
+                                    TextMessage textMessage = (TextMessage) message;
+                                    //获取接收的消息
+                                    System.out.println("消费者1接收到消息" + textMessage.getText());
+                                }
+                            }
+                        });
+                        //保证不饿能错过信息
+                        System.in.read();
+
+                        //关闭资源
+                        consumer.close();
+                        session.close();
+                        connection.close();
+
+                        /**
+                        *消息队列生产者消费者相关问题：topic模式
+                        *
+                        *
+                        *             启动 01 02两个消费者 然后再让生产者01生产6条消息
+                        *                 ->   消费者01 得到6条消息
+                        *                      消费者02 得到6条消息   订阅主题所有消息都能得到
+                        */
+
+
+
+                    }
+                }
+
+    JMS:
+        JavaEE包括JMS
+        JMS包括四部分：
+                    JMS provider 实现消息得中间件
+                    JMS producer 消息生产者
+                    JMS customer 消息消费者 
+                    JMS message 消息：1.消息头  2.消息属性 3.消息体
+
+                        消息头：
+                                1.JMSDestination  发送消息得目的地 主要是指 Queue和Topic
+                                2.JMSDeliveryMode 发送消息是否持久化
+                                3.JMSExpiration   消息是否过期设置
+                                4.JMSPriority     消息优先级
+                                5.JMSMessageID    唯一识别每一个消息得标识 由MQ产生 
+
+                        消息体：
+                                具体给消息封装得数据，发送和接收得消息类体类型必须一样
+
+                                5种消息体格式  1.2常用
+                                1.TextMessage   普通字符串，包含一个String
+                                2.MapMessage    一个Map类型得消息，key为String类型，value 为java基本类型
+                                3.BytesMessage  二进制数组消息，包含一个byte[]
+                                4.StreamMessage java数据流消息，用标准流操作来顺序得填充和读取
+                                5.ObjectMessage  对象消息，包含一个可序列化得Java对象
+
+                                发送TextMessage:
+                                    //创建消息 普通类型   留言卡
+                                    TextMessage textMessage = session.createTextMessage("Topicname" + Integer.toString(i + 1));//一个字符串
+                                    //发送到MQ
+                                    producer.send(textMessage);
+                                
+                                接收TextMessage:
+                                    if(null != message && message instanceof TextMessage){
+                                        //接收信息 text类型
+                                        TextMessage textMessage = (TextMessage) message;
+                                        //获取接收的消息
+                                        System.out.println("消费者1接收到消息 text" + textMessage.getText());
+
+                                    }
+
+                                发送MapMessage:
+                                    //创建Map类型数据
+                                    MapMessage mapMessage = session.createMapMessage();
+                                    //设置String类型 kv
+                                    mapMessage.setString("key1","   map   value1");
+                                    //发送到MQ
+                                    producer.send(mapMessage);
+                                
+                                接收MapMassage:
+                                     if(null != message && message instanceof MapMessage){
+                                        //接收信息 text类型
+                                        MapMessage mapMessage = (MapMessage) message;
+                                        //获取接收的消息
+                                        System.out.println("消费者1接收到消息 map" + mapMessage.getString("key1"));
+                                        
+                                    }
+                        
+                        消息属性：
+                                如果需要除消息头字段以外的值，可以使用消息属性来去重，分开识别等功能
+
+                                设置消息属性：
+                                    //设置消息属性 去重功能
+                                     textMessage.setStringProperty("type","boss");
+                                
+                                接收消息属性：
+                                     //接收消息属性
+                                    System.out.println("消费者1接收 text 消息属性 "+textMessage.getStringProperty("type"));
+                            
+    消息可靠性：
+            持久化设置 queue：
+                    默认：不设置默认就是持久化的
+
+                    非持久：服务器停止再重启消息不存在
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+
+                    持久化：服务器停止再重启消息依然存在
+                    producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+
+            持久化设置 topic:
+
+                    生产者：
+                         //持久化
+                        producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+                        //启动访问
+                        connection.start();
+                    
+                    消费者： 
+                        
+                        /**
+                        * 持久化的Topic模式者
+                        *
+                        * 1.一定要先运行一次消费者，等于向MQ注册，类似我订阅了这个公众号
+                        * 2.然后再运行生产者发送消息。此时无论消费者是否在线，都会接受到，如果不在线，下次连接的时候，会把没接收的消息都能接收下来
+                        */
+                        public class CustomerDurable {
+
+                            //连接位置 根据主机ip地址  查看IP  ipconfig
+                            public static final String ACTIVEMQ_URL = "tcp://127.0.0.1:61616";
+                            public static final String TOPIC_NAME = "topic01";
+                            public static void main(String[] args) throws Exception{
+                                /**
+                                * 消费者 获取MQ的地址和名字要和生产者一样
+                                */
+                                //创建连接工厂
+                                ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ACTIVEMQ_URL);
+                                //通过连接工厂获得连接Connection
+                                Connection connection = factory.createConnection();
+                                //设置此订阅者的ID 随便起的
+                                connection.setClientID("zs");
+                                //创建会话 session  参数 事务/接收
+                                Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                                //创建目的地 具体是队列还是主题
+                                Topic topic = session.createTopic(TOPIC_NAME);
+                                //创建一个持久化的订阅者
+                                TopicSubscriber topicSubscriber = session.createDurableSubscriber(topic, "备注，，，");
+                                //启动服务
+                                connection.start();
+                                //开启接收信息
+                                Message message = topicSubscriber.receive();
+                                //一定要写类型属于 TextMessage 不然会有错
+                                while (null != message && message instanceof TextMessage){
+                                    TextMessage textMessage = (TextMessage) message;
+
+                                    System.out.println("收到持久化的Ttopic" + textMessage.getText());
+                                    //有消息就准备跳出
+                                    message  = topicSubscriber.receive(1000L);
+                                }
+                                //关闭资源
+                                session.close();
+                                connection.close();
+
+
+                        }
+
+    事务偏向生产者，签收偏向消费者
+    事务 transation ：
+    注意：事务提交必须写到生产者消费者 .close() 之后才行
+        ACID 原子性 一致性 隔离性 持久性
+
+        生产者：
+                 //创建会话 session  参数 事务/接收   true 为开启事务
+                  Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+
+                  //开启事务需要提交 写到关闭session前就行
+                  session.commit();
+        消费者：
+                 //创建会话 session  参数 事务/接收   true 为开启事务
+                  Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+
+                  //开启事务需要提交 写到关闭session前就行
+                  session.commit();
+    
+    签收 Acknowledge:
+
+            自动签收： 默认  Session.AUTO_ACKNOWLEDGE
+
+            手动签收： Session.CLIENT_ACKNOWLEDGE 
+                      客户端调用acknowledge 手动签收
+                 无事务：
+
+                        //创建会话 session  参数 事务/接收 开启手动签收
+                        Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+
+                        //这里需要手动进行签收  写到接收体里
+                        textMessage.acknowledge();
+                有事务：
+                        事务>接收
+
+                        可以说 如果开启了事务，执行了commit了，就算不执行textMessage.acknowledge(); 消息队列也会自动接收消息
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
