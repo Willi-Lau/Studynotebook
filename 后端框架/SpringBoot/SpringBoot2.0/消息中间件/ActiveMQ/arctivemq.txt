@@ -8,6 +8,8 @@ http://localhost:8161/ 前台端口号
 windows 启动：cd D:\ActiveMQ\apache-activemq-5.16.1\bin\win64
              选择 activemq.bat 点击 或者 输入 activemq.bat start
 
+             异常： throws JMSException
+
 本机ip+:61616 后端端口号
 
 MQ作用：解耦 削峰 异步
@@ -461,9 +463,39 @@ MQ作用：解耦 削峰 异步
                         可以说 如果开启了事务，执行了commit了，就算不执行textMessage.acknowledge(); 消息队列也会自动接收消息
 
 
+    如果不特别指定ActiveMQ的网络监听端口，那么这些端口都将使用BIO网络IO模型（OpenWire STOMP AMQP）
+    所以为了提高节点网络的吞吐性能，我们需要指定Active的网络IO模型，在这里要修改 conf文件夹下 activemq.xml文件夹内的信息
+    在
+        <transportConnectors>
+            <!-- DOS protection, limit concurrent connections to 1000 and frame size to 100MB -->
+            <transportConnector name="openwire" uri="tcp://127.0.0.1:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="amqp" uri="amqp://127.0.0.1:5673?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="stomp" uri="stomp://127.0.0.1:61613?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="mqtt" uri="mqtt://127.0.0.1:1883?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="ws" uri="ws://127.0.0.1:61614?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+        </transportConnectors>
+
+    添加一条，变成：
+
+        <transportConnectors>
+            <!-- DOS protection, limit concurrent connections to 1000 and frame size to 100MB -->
+            <transportConnector name="openwire" uri="tcp://127.0.0.1:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="amqp" uri="amqp://127.0.0.1:5673?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="stomp" uri="stomp://127.0.0.1:61613?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="mqtt" uri="mqtt://127.0.0.1:1883?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+            <transportConnector name="ws" uri="ws://127.0.0.1:61614?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+			<transportConnector name="nio" uri="nio://0.0.0.0:61618?trace=true"/>
+        </transportConnectors>
 
 
+        修改配置信息 将原来的 tcp://127.0.0.1:61616 修改成 nio://127.0.0.1:61618
 
+    或修改成自动适配模式 可以支持所有模式
+
+        添加：
+            <transportConnector name="auto+nio" uri="auto+nio://0.0.0.0:61608?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600&amp;org.apache.activemq.transport.nio.SelectorManager.corePoolSize=20&amp;org.apache.activemq.transport.nio.SelectorManager.maximumPoolSize=50" />
+
+            修改配置信息 将原来的 tcp://127.0.0.1:61616 修改成 nio://127.0.0.1:61608 或 stomp://127.0.0.1:61608
 
 
 

@@ -47,6 +47,10 @@
                                         }
             @ConditionalOnMissingBean 如果Spring容器中有了此对象，这个自动配置的不会被实例化
             @SuppressWarnings("all")  忽略所有的警告
+            @Value(${"name"})         注入application.yml 文件中的内容
+            @EnableCaching            开启缓存
+            @EnableScheduling         开启消息中定时发送功能
+            @EnableJms                开启消息队列
 
     返回json
 

@@ -1,6 +1,6 @@
 https://blog.csdn.net/eric520zenobia/article/details/103286011
 
-SpringBoot 整合Redis
+SpringBoot 整合Redis   一般写在Service层上
 自动配置类：RedisAutoConfiguration
 
         1.启动类配置@EnableCache

@@ -1,0 +1,122 @@
+
+
+
+依赖：
+    可以把之前的所有Activemq依赖都删除，只一你用下面的
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+            <version>2.1.5.RELEASE</version>
+        </dependency>
+
+
+
+application.yml:
+     spring:
+        activemq:
+            broker-url: tcp://127.0.0.1:61616
+            user: admin
+            password: admin
+        jms:
+            pub-sub-domain: false   #false = Queue    true = Topic 
+
+    #自定义队列名字
+    myqueue: boot-activemq-queue
+    mytopic: bppt-activemq-topic
+
+Config:
+
+    @Configuration
+    @EnableJms
+    public class ConfigBean {
+       
+        @Value("${myqueue}")
+        private String myQueue;   //注入Queue名字
+
+    
+        @Bean
+        public Queue queue(){
+                return new ActiveMQQueue(myQueue);   //创建返回Queue
+        }
+
+         
+        @Value("${mytopic}")
+        private String topicname;     //注入Topic名字
+    
+        @Bean
+        public Topic topic(){
+            return new ActiveMQTopic(topicname);    //创建返回Topic
+        }
+
+    }
+
+    queue： 
+        生产者
+
+        @Component
+        public class Queue_Produce {
+
+            @Autowired
+            private JmsMessagingTemplate jmsMessagingTemplate;   //注入工具类
+           
+            @Autowired
+            private Queue queue;  //调用Config里的queue
+       
+            public void produceMsg(){
+                //执行发送
+                jmsMessagingTemplate.convertAndSend(queue,"哈哈哈哈哈哈哈");      //普通发送
+            }
+           
+            @Scheduled(fixedDelay = 3000L)   //注解作用  括号里设置时间 每三秒自动发送   定时发送的测试需要通过主启动类来测试
+            public void produceMsgScheduled(){
+                jmsMessagingTemplate.convertAndSend(queue,"定时投放哈哈哈哈哈哈哈");
+            }
+
+        }
+
+        消费者
+
+        @Component
+        public class Queue_Consumer {
+
+            @JmsListener(destination = "${myqueue}")   //通过注解检监听 选择监听的对象 启动也是通过主启动类
+            public void receive(TextMessage textMessage) throws Exception{
+                System.out.println("****** 消费者收到消息"+textMessage.getText());
+            }
+        }
+
+    Topic:
+
+        生产者
+            
+        @Component
+        public class Topic_Produce {
+
+            @Autowired
+            private JmsMessagingTemplate jmsMessagingTemplate;
+
+            @Autowired
+            private Topic topic;
+            
+            public void produceTopic(){
+                jmsMessagingTemplate.convertAndSend(topic,"发送主题：哈哈哈哈哈哈哈哈哈哈哈哈哈");  //执行普通发送
+            }
+            
+            @Scheduled(fixedDelay = 3000L)
+            public void produceTopicScheduled(){
+                jmsMessagingTemplate.convertAndSend(topic,"定时发送主题：哈哈哈哈哈哈哈哈哈哈哈哈哈");  //执行定时调用
+            }
+
+        }
+
+        消费者
+
+        @Component
+        public class Topic_Consumer {
+
+            @JmsListener(destination = "${mytopic}")   //通过注解检监听 选择监听的对象 启动也是通过主启动类
+            public void receive(TextMessage textMessage) throws Exception{
+                System.out.println("****** 消费者收到消息"+textMessage.getText());
+            }
+        }
