@@ -20,6 +20,8 @@ application.yml:
             password: admin
         jms:
             pub-sub-domain: false   #false = Queue    true = Topic 
+            template:
+             delivery-mode: persistent   #acticemq 在SpringBoot中的持久化
 
     #自定义队列名字
     myqueue: boot-activemq-queue

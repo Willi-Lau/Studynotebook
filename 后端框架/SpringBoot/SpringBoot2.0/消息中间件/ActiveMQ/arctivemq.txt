@@ -504,6 +504,7 @@ MQ作用：解耦 削峰 异步
                 JDBC AMQ KaHAaDB(默认) LevelDB
 
                 JDBC:
+                 在 lib目录下添加： mysql-connector-java-8.0.23.jar包   //注意是.jar 不是.zip !!!!!
                  把
 
                  <!-- <persistenceAdapter>
@@ -530,6 +531,25 @@ MQ作用：解耦 削峰 异步
 
                 参数设置：
                         createTableOnStartup 是否在启动时创建数据库表，默认值是true,一般第一次启动之后就设置为false 
+
+
+
+                mysql8：
+                         <bean id="mysql-ds" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+                                <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+                                <property name="url" value="jdbc:mysql://127.0.0.1:3306/activemq?relaxAutoCommit=true"/>
+                                <property name="username" value="root"/>
+                                <property name="password" value="root"/>
+                                <property name="maxTotal" value="200"/>
+                                <property name="poolPreparedStatements" value="true"/>
+                        </bean>
+
+                数据库 activemq 会新建三张表 
+                      activemq_acks activemq_lock activemq_msgs
+                       如果是queue 在没有消费者情况下会将消息保存到activemq_msgs中，只要有任何一个消费者已经消费过，这些信息就会被删除
+                       如果是topic 保存到activemq_acks 
+
+
 
 
 
