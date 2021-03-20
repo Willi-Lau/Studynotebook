@@ -5,6 +5,8 @@ https://zhidao.baidu.com/question/1673749280030097347.html
 常用命令：https://blog.csdn.net/qq_23329167/article/details/83856430
 
 输入 su  变成root 权限  变成 #
+
+        额外软件放在/opt
 Linux 指令:
        查找帮助：
                 men 命令 
