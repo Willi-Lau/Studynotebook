@@ -40,7 +40,7 @@ Linux 指令:
         命令：touch 文件名
                 touch  aa.txt        示例：在当前目录创建一个名为aa.txt的文件     
 
-        命令： vi 文件名  打开文件
+        命令： vim 文件名  打开文件
 
                 编辑文件 使用vi编辑器打开文件后点击按键：i ，a或者o即可进入编辑模式。
 
@@ -55,8 +55,14 @@ Linux 指令:
                 第一步：ESC  进入命令行模式
                 第二步：:     进入底行模式
                 第三步：q!     撤销本次修改并退出编辑
+
+                : set  nu 显示行号
+                : set  nonu 不显示行号
+                Exc u           撤销
+
         
         ps -ef    查看所有正在运行的进程 
+        ps -ef | grep  程序   查看指定程序的进程情况
         
         ping：查看与某台机器的连接情况 命令：ping ip
 
@@ -66,4 +72,33 @@ Linux 指令:
 
                 mkdir    aaa            在当前目录下创建一个名为aaa的目录
                 mkdir    /usr/aaa    在指定目录下创建一个名为aaa的目录
+        
+        解压文件：
+                进到文件所在目录 
+                tar -xvf 文件名
+
+        windows 访问不到 Linux端口：https://blog.csdn.net/qq_43060870/article/details/110881573
+
+
+        启动tomcat 
+                进入tomcat所在目录 
+                        cd /opt
+                        cd apache-tomcat-8.5.64
+                        cd bin   
+                        ./startup.sh 
+        查看开放的端口：
+                firewall-cmd --list-all
+        增加允许访问的端口;
+                firewall-cmd --add-port=8080/tcp --permanent
+        重启防火墙
+                firewall-cmd --reload
+        启动sshd
+                service sshd restart
+        没网：
+                https://blog.csdn.net/weixin_44079199/article/details/88104822
+        删除：
+                rm -r -f 文件名
+        杀死进程：
+                kill -9 进程号
+
 

@@ -19,6 +19,44 @@ Nginx
             动静分离：
                     把动态网页，静态网页交给不同的服务器来解析
 
+        Linux 启动 ：
+                        cd /usr/local/nginx/sbin/
+        
+        Nginx常用命令：
+                        1.操作Nginx 前提条件，进入到Nginx目录中
+
+                           cd /usr/local/nginx/sbin/
+                        
+                        2.查看nginx 版本号
+                                ./nginx -v
+
+                        3.启动nginx
+                                 ./nginx 
+
+                        4.关闭nginx
+
+                                ./nginx -s stop
+                        
+                        5.重新加载nginx
+                                ./nginx -s reload
+        Nginx 配置文件：
+                        位置：/usr/local/nginx/conf/nginx.conf
+
+                        三部分：
+                                1.全局块：
+                                        worker_processes 1;
+                                        这里是设置Nginx并发处理的配置，数量越大可支持的并发处理越多
+                                2.event块：
+                                        网络连接部分 配置最大连接数
+                                3.http块：
+                                        包括http全局块 server块
+
+                                        http全局块：
+                                                全局引入，日志时间等
+        实现反向代理：  
+                        进入 /conf/nginx.conf
+
+
 
 
 
