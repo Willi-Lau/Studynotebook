@@ -55,7 +55,63 @@ Nginx
                                                 全局引入，日志时间等
         实现反向代理：  
                         进入 /conf/nginx.conf
+                        vim nginx.conf
+                        找到server部分进行配置
 
+
+                        server{
+                                listen 9001;               //监听的端口号
+                                server_name 192.168.40.129;   //监听的URl主地址
+
+                                location ~/lwy01/                  //这里 ~/lwy/ 为正则表达式 表示里面有/lwy01/ 的url 如果是location / 就是所有
+                                {
+                                        proxy_pass http://127.0.0.1:8081     //所要跳转到的地址
+                                }
+                        }
+
+                        然后重启nginx
+
+                        输入 http://192.168.40.129:9001/lwy01/8081.html
+                        跳转到 http://192.168.40.129:8081/lwy01/8081.html
+        
+        实现负载均衡：
+                https://www.runoob.com/w3cnote/nginx-proxy-balancing.html
+                
+                负载均衡的配置：
+                        1.进入 /conf/nginx.conf
+                              vim nginx.con
+                        
+                        在http里配置
+
+                                upstream myserver{
+                                        server 192.168.40.129:8081;        //需要进行负载均衡的端口号
+                                        server 192.168.40.129:8082;
+                                }
+
+                        在server里配置
+
+                                location / {
+                                        root   html;
+                                        proxy_pass http://myserver;    //前面自定义的服务名字
+                                        index  index.html index.htm;
+                                }
+
+
+
+                负载均衡的四种策略：
+                        1.轮询（默认）
+                                每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除
+                        2.weigth
+                                weigth 代表权重默认为1，权重越高被分配的用户越多
+                        3.ip_hash      
+                                每个请求按访问的ip的ahsh结果分配，这样每个访客固定访问一个后端服务器
+                        4.fair(三方)
+                                按后端服务器的响应时间来分配请求，响应时间短的优先分配
+        
+        Nginx高可用：
+                1.两台nginx服务器
+                2.需要keepalive
+                3.需要虚拟ip
 
 
 
