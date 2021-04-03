@@ -1,0 +1,23 @@
+ 热部署：
+        子类添加：
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <scope>runtime</scope>
+                <optional>true</optional>
+            </dependency>
+        父类添加：
+             <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                        <fork>true</fork>
+                        <addResources>true</addResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+             </build>
+
+        https://www.jianshu.com/p/f658fed35786

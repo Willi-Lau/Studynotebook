@@ -391,7 +391,8 @@ Spring Bean 依赖注入的概念
                  @Scope()                   <bean id="pig" class="com.pig" scope=""></bean>                               设置bean的scope属性
                  @PostConstruct             <bean id="pig" class="com.pig" init-method =""></bean>                        设置bean的init-method属性           
                  @PreDestroy                <bean id="pig" class="com.pig" destroy-method =""></bean>                     设置bean的destroy-method属性           
-            
+                 @Mapper                    等同@Repository ，只不过不需要配置MapperScan
+          
             新注解：(配置相关)
                  @Configuration              将这个类设置为Spring 配置类                                                    class上面        
                  @PropertySource("classpath:db.properties")    配置导入 .properties 文件                                   括号里写 classpath:具体文件名字
@@ -400,6 +401,7 @@ Spring Bean 依赖注入的概念
                  @Bean("idname")                会将当前方法返回值以指定名称存储到Spring容器中，括号里设置id值                自定义的方法上面，作用同<bean>      
                  @EnableAspectJAutoProxy                                              实现AOP注解支持  
                  @EnableTransactionManagement                                         实现事务注解支持
+                 @MapperSc按            使用@Repository 时需扫描
 
             测试注解：(使用注解代替普通spring 实现)
                  @RunWith(SpringJUnit4ClassRunner.class)                            引入juint 测试Spring 部分

@@ -91,4 +91,72 @@ SpringColud
                     </plugin>
                     </plugins>
                 </build>
+    
+    创建子model:
+    pom.xml
+         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>1.1.10</version>
+            </dependency>
+            <!--mysql-connector-java-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+            </dependency>
+            <!--jdbc-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <scope>runtime</scope>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+            </dependency>
+
+        </dependencies>
+    
+
+
+    工程重构，提取公共实例(eneity)
+    新建一个工程，然后把所有实例都放在这个工程下
+    其他的工程通过pom.xml引入这个工程来使用实例
+
+    服务注册与发现
         
+            什么是服务治理：
+                在传统的rpc远程调用框架中，管理每个服务与服务器之间的依赖关系比较复杂，管理比较复杂，所以需要服务治理，管理服务与服务
+                之间的依赖关系，可以实现服务调用，负载均衡，容错等，实现
+        1.Eureka:
+        2.Zookeeper:
+        3.Consul：
+
+    
+   
+
+
