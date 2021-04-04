@@ -1,0 +1,200 @@
+
+
+    Eureka包含两个组件：Eureka Server 和Eureka Client 
+
+        Eureka Server 提供服务注册服务   主机
+            各个微服务节点通过配置启动后，会在EurekaServer中进行注册，这样EurekaServer 中的服务注册表中将会存储所有的可用服务节点的信息
+            服务节点的信息可以在界面中直观看到
+          
+        Eureka Client 通过注册中心进行访问    手下副机  可以有多个
+            是一个Java客户端，用于简化Eureka Server的交互，客户端同时也具备一个内置的，使用轮询负载算法的负载均衡器。在应用启动后，将会向
+            Eureka Server发送心跳。如果Eureka Server在多个心跳周期内没有接受到某个节点的心跳，EurekaServer将会从服务注册表中把这个服务节点
+            移除
+        
+        访问Eureka Server 中心：
+            localhost:端口号
+            e.g. localhost:7001
+
+        
+        Eureka Server 
+
+          application.yml:
+              server:
+                port: 7001
+
+                eureka:
+                    instance:
+                        hostname: eureka7001.com #eureka服务端的实例名称
+                    client:
+                        register-with-eureka: false     #false表示不向注册中心注册自己。
+                        fetch-registry: false     #false表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
+                        service-url:
+                        #集群指向其它eureka
+                        #defaultZone: http://eureka7002.com:7002/eureka/
+                        #单机就是7001自己
+                        defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+                        #server:
+                        #关闭自我保护机制，保证不可用服务被及时踢除
+                        #enable-self-preservation: false
+                        #eviction-interval-timer-in-ms: 2000
+            pom.xml:
+               <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+                </dependency>
+
+        Eureka Client
+
+            application.yml:
+              eureka:
+                client:
+                    #表示是否将自己注册进EurekaServer默认为true。
+                    register-with-eureka: true
+                    #是否从EurekaServer抓取已有的注册信息，默认为true。单节点无所谓，集群必须设置为true才能配合ribbon使用负载均衡
+                    fetchRegistry: true
+                    service-url:
+                    #单机版
+                     defaultZone: http://localhost:7001/eureka   #入住地址
+                    # 集群版
+                    #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+                instance:
+                    instance-id: payment8001
+                    #访问路径可以显示IP地址
+                    prefer-ip-address: true
+                    #Eureka客户端向服务端发送心跳的时间间隔，单位为秒(默认是30秒)
+                    #lease-renewal-interval-in-seconds: 1
+                    #Eureka服务端在收到最后一次心跳后等待时间上限，单位为秒(默认是90秒)，超时将剔除服务
+                    #lease-expiration-duration-in-seconds: 2
+            pom.xml:
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+                </dependency>
+        
+    
+    Eureka 集群：
+        互相守望，相互守护
+
+        修改配置文件：
+            c:\Windows\System32\drivers\etc\hotes
+            尾部追加所有端口的Eureka集群信息
+            e.g.
+                127.0.0.1 eureka7001.com
+                127.0.0.1 eureka7002.com
+            
+            Eureka地址：
+                http://eureka7001.com:7001/
+                http://eureka7002.com:7002/
+
+            然后集群修改 .yml配置文件(具体看上面都写了)
+
+            service
+
+                #集群指向其它eureka
+                            #defaultZone: http://eureka7002.com:7002/eureka/
+            
+            client
+
+                # 集群版
+                        #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+
+        
+        设置负载均衡：
+            首先复制多个后台接收服务 8001 8002 ...  端口号不一样 服务器名一样（spring-aplication-name）
+
+            在80端口配置类注入的 RestTemplate 上加一个@LoadBalanced 注解
+
+                @Bean
+                @LoadBalanced   //默认负载均衡机制
+                public RestTemplate restTemplate(){
+                    return new RestTemplate();
+                };
+            
+            给目标URL设置为 http:// 服务名 这样就可以自动实现负载均衡
+
+            public static final String PAYMENT_URL = "http://CLOUD-PAYMENT-SERVICE";
+
+
+            修改服务名字不是localhost :
+                instance:
+                    instance-id: 名字
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
