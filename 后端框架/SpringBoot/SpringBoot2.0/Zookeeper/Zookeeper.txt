@@ -7,6 +7,18 @@ git config --global http.sslVerify false
         windows安装： https://www.jianshu.com/p/f7037105db46
         安装错误，出现 Zookeeper anduit is disable https://blog.csdn.net/qq_43472877/article/details/111177298 
         启动：点击 bin\ zkServer.cmd
+        linux 启动 cd /usr/local/zookeeper-3.4.2/bin   执行 ./zkServer.sh start
+                                                       停止 ./zkServer.sh stop
+
+        操作zookeeper  ./zkCli.sh
+        查看 zookeeper连接： ls / 
+        查看连接上的服务名称   ls /services
+
+        zookeeper默认端口号
+                代码访问client的端口号： 2181
+                leader和flower通信的端口号： 2888
+                选举leader时通信的端口号： 3888
+                其他服务与监控中心通信端口： 7070
 
         Zookeeper 特点：
                 1.一个领导者，多个跟随着组成的集群

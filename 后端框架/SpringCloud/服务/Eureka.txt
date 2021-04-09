@@ -118,6 +118,13 @@
             修改服务名字不是localhost :
                 instance:
                     instance-id: 名字
+        
+
+        Eureka 自我保护机制：
+            Eureka 网站出现两行红色文字就是触发保护机制
+
+            Eureka Server 将会尝试保护其服务i注册表的信息，不在删除服务注册表单的数据，也就是不会注销任何微服务
+            某时刻某一个微服务不可用了，Eureka不会立刻清理，依旧会对该微服务的信息进行保存  CAP里的AP
             
 
 
