@@ -9,6 +9,28 @@ Spring Cloud Ribbon
     Ribbon 是本地负载均衡 （进程内负载均衡）
     Nginx 是服务器负载均衡 （集中式负载均衡）
 
+   
+
+   pom.xml:
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        这里就带有Ribbon包
+
+
+   
+
+   自定义 负载均衡算法包 IRue
+
+      默认算法是RoundRobinRule 轮询
+
+      自定义的负载均衡算法不能被SpringBoot主启动类 @ComponentScan  扫描到
+      即 如果 SpringBoot 主启动类在com.lwy.demo下 你的算法部分不能放到 com.lwy.demo 下面，应该在单独的建立一个包 e.g. com.lwy.irue
+
+
+
 
 
 

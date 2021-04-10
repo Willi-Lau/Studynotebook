@@ -1,0 +1,134 @@
+e.g.
+
+package com.lwy.JUC;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * 自旋锁
+ */
+public class SpinLock {
+
+    AtomicReference<Thread> threadAtomicReference = new AtomicReference<>();
+    //加入线程
+    public void getLock(){
+        //当前线程
+        Thread nowthread = Thread.currentThread();
+
+        //如果是空就进行替换  如果是空返回true 死循环 所以要 加 ！
+         //一直尝试获取
+        while(!threadAtomicReference.compareAndSet(null,nowthread)){
+
+        }
+        System.out.println(Thread.currentThread().getName()+"获取锁");
+    }
+    //退出线程
+    public void outLock(){
+        //把当前线程变为NULL
+        threadAtomicReference.compareAndSet(Thread.currentThread(),null);
+        System.out.println(Thread.currentThread().getName()+"释放锁");
+    }
+
+
+    public static void main(String[] args) {
+        SpinLock spinLock = new SpinLock();
+        //先获取5秒后再释放
+        new Thread(()->{
+            spinLock.getLock();
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            spinLock.outLock();
+        },"AAA").start();
+
+        //延迟两秒执行B
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // 让B一直自旋尝试获取锁
+        new Thread(()->{
+            spinLock.getLock();
+            spinLock.outLock();
+        },"BBB").start();
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
