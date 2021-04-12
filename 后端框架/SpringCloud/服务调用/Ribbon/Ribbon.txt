@@ -30,6 +30,32 @@ Spring Cloud Ribbon
       即 如果 SpringBoot 主启动类在com.lwy.demo下 你的算法部分不能放到 com.lwy.demo 下面，应该在单独的建立一个包 e.g. com.lwy.irue
 
 
+    算法类：
+
+        @Configuration
+        public class MySelfRule {
+            /**
+            * 自定义负载均衡算法 不采用轮询采用随机
+            * @return
+            */
+            @Bean
+            public IRule myRule(){
+                return new RandomRule();
+            }
+        }
+
+
+    主启动类：
+
+        
+        @SpringBootApplication
+        @EnableEurekaClient
+        @RibbonClient(name = "CLOUD-PAYMENT-SERVICE",configuration = MySelfRule.class)    //为Ribbon设置自定义的负载均衡算法   注意这里大小写必须和Conguration里配置的完全相同
+        public class Order80 {
+            public static void main(String[] args) {
+                SpringApplication.run(Order80.class,args);
+            }
+        }
 
 
 

@@ -1,0 +1,222 @@
+OpenFeign  代替 restTemplate 完成模块通信
+
+    老版本： ResTemplate + Ribbon
+    新版本： Feign
+    
+    作用：
+        feign是声明式的web service客户端，它让微服务之间的调用变得更简单了，类似controller调用service。
+        Spring Cloud集成了Ribbon和Eureka，可在使用Feign时提供负载均衡的http客户端。
+        之前已经创建好了用户，订单，商品微服务，这三个微服务是互相隔离的，那么微服务和微服务之间如何互相调用呢，
+        显然三个微服务都可以采用http通信，也就是restTemplate进行互相访问，但是这种方式对参数传递和使用都不是很方便，
+        所以弃用此方式，采用feign进行服务之间的调用，可以简化调用流程，真正感觉到是在同一个项目中调用另一个类的方法
+        的欢快感
+    
+    负载均衡：
+        因为feign 自带 Ribbon 所以自带负载均衡
+
+    接口+注解 ： @FeignClient
+    类似 DAO @Mapper
+
+    主启动类添加：
+        @EnableFeignClients 
+
+    业务类：Service
+
+        @Component
+        @FeignClient(value = "CLOUD-PAYMENT-SERVICE")      //绑定微服务名称 选择调用哪一个微服务
+        public interface PaymentFeignService {
+            //针对CLOUD-PAYMENT-SERVICE 微服务 8081 8082 的业务进行书写
+            @GetMapping(value = "/payment/get/{id}")        //绑定要具体调用的方法
+            CommonResult<Payment> getPaymentById(@PathVariable("id")Long id);
+        }
+    
+    Controller
+
+        @RestController
+        @Slf4j
+        public class PaymentFeignController {
+            @Autowired
+            private PaymentFeignService service;
+
+            @GetMapping(value = "/consumer/payment/get/{id}")
+            public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id){
+                    return service.getPaymentById(id);
+            }
+        }
+    
+    超时控制：
+        yml:
+            #设置feign客户端超时时间(OpenFeign默认支持ribbon)
+            ribbon:
+            #指的是建立连接所用的时间，适用于网络状况正常的情况下,两端连接所用的时间
+            ReadTimeout: 5000
+            #指的是建立连接后从服务器读取到可用资源所用的时间
+            ConnectTimeout: 5000
+    
+    Feign 日志：
+        日志级别：
+            NONE:默认。不显示任何日志
+            BASIC:记录请求方法，URL,响应状态码及执行时间
+            HEADERS:BASIC + 请求响应头信息
+            FULL:HEADERS + 请求响应正文 + 元数据
+        config:
+            @Configuration
+            public class FeignLogConfig {
+               
+                @Bean
+                Logger.Level feignLoggerLevel()
+                {
+                    return Logger.Level.FULL;
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

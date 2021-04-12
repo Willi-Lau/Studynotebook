@@ -1,0 +1,126 @@
+
+
+Hystrix
+    服务雪崩：
+        多个微服务之间调用得时候，假设微服务A调用微服务B和微服务C，微服务B和微服务C又调用其他的微服务，这就是所谓的扇出，如果扇出得
+        链路上某个微服务得调用响应时间长或者不可用，对微服务A得调用就会占用越来越多的资源，进而引起系统崩溃，就是所谓的“雪崩效应”
+
+        对于高流量得应用来说，单一的后端依赖可能会导致所有的服务器上得所有资源都在几秒钟内饱和。比失败更糟糕的是，这些应用程序还可能导致
+        服务之间得延迟增加。备份队列，线程和其它系统资源的紧张，导致整个系统发生更多的级联故障。这些都表示需要对故障和延迟进行隔离和管理。
+        以便单个依赖关系得失败，不能取消整个应用程序或系统。
+        
+        所以，通常你发现一个模块下得某个实例失败后，这时候这个模块依然还会接受流量，然后有问题得模块还调用了其他的模块，这样会发生级联事故，
+        也叫雪崩。
+
+    Hystrix是一个用于处理分布式系统得延迟和容错得开源库，在分布式系统里，许多依赖会不可避免得调用失败，比如超时，异常等，Hystrix能够保证
+    一个依赖出问题的情况下，不会导致整体服务得失败，避免级联故障，以提高分布式系统的弹性。
+
+    “断路器”本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控（类似保险丝熔断），向调用方返回一个符合预期的，可处理的备选
+    响应，而不是长时间的等待或抛出调用方法无法处理的异常，这样就保证了服务调用方得线程不会被长时间，不必要的占用，从而避免了故障再故障在分布式
+    系统的蔓延甚至雪崩。
+
+    Hystrix重要知识：
+        服务降级：服务繁忙，请稍后再试，不让客户端等待并立刻返回，fallback
+                 导致服务降级得原因：
+                                1.程序运行异常
+                                2.超时
+                                3.程序熔断触发服务降级
+                                4.线程池/信号量打满也会导致服务降级
+        服务熔断：达到最大访问后直接拉闸，拒绝访问，然后调用服务降级得方法并返回友好得提示
+        服务限流：秒杀高并发等操作，严谨一块都进来，有序排队，一秒钟N个有序进行
+
+    pom:
+          <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+          </dependency>
+    
+    服务降级配置：
+
+        设置自身调用时间得峰值，峰值内可以正常运行，超过了需要有都低的方法处理，作为服务降级得fallback
+
+        后端 fallback -> 服务端 fallback 
+
+        启动类加注解：
+                @EnableHystrix 
+        局部：
+           
+            业务类：
+                       /**
+                        * @param id
+                        * @return
+                        * fallbackMethod    出事后产生异常后调用得兜底方法  指定得方法
+                        * commandProperties 具体的值
+                        */
+                        @Override
+                        @HystrixCommand(fallbackMethod = "paymentInfo_TimeOutHandle",commandProperties = {
+                                @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="5000")  //设置超时时间 超时调用错误得方法
+                        })
+                        public String paymentInfo_TimeOut(Integer id) {
+                            Integer timeNum = 3;
+                            try{
+                                TimeUnit.SECONDS.sleep(timeNum);
+                            }catch(Exception e ){e.printStackTrace();}
+                            return Thread.currentThread().getName()+"id是"+id+"success from Timeout"+"耗时"+timeNum+"秒";
+                        }
+                        @Override
+                        public String paymentInfo_TimeOutHandle(Integer id) {
+                            return "paymentInfo_TimeOutHandle false 异常方法";
+                        }
+        全局：（在没有配置局部时并且方法上有@HystrixCommand 注解时生效）
+            类上加注解：
+                @DefaultProperties(defaultFallback = "feignHystrixallHandle")   //全局服务降级 defaultFallback 指定方法
+
+            类里写指定方法：      
+                /**
+                * 全局 fallback 对应的方法
+                */
+                String feignHystrixallHandle(){
+                    return "这里是 FeignHystrixOrder80 All 现在超时了";
+                }
+            
+            需要检测降级得方法加注解：
+                @HystrixCommand  //全局
+
+                e.g.
+                    @GetMapping("/consumer/payment/hystrix/timeout/{id}")
+                    @HystrixCommand  //全局
+                    String paymentInfo_TimeOut(@PathVariable("id")Integer id){
+                        return service.paymentInfo_TimeOut(id);
+                    }
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
