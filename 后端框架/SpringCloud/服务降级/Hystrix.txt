@@ -88,8 +88,73 @@ Hystrix
                     String paymentInfo_TimeOut(@PathVariable("id")Integer id){
                         return service.paymentInfo_TimeOut(id);
                     }
-            
+        实现接口：
+            这个只需要操作Feign 得接口
 
+             @Component
+            @FeignClient(value = "CLOUD-PROVIDER-HYSTRIX-PAYMENT",fallback = FeignFallBackService.class)   //fallback 为异常处理得实现类
+            public interface FeignHystrixService {
+
+                @GetMapping("/payment/hystrix/ok/{id}")
+                String paymentInfo_OK(@PathVariable("id")Integer id);
+
+                @GetMapping("/payment/hystrix/timeout/{id}")
+                String paymentInfo_TimeOut(@PathVariable("id")Integer id);
+            }
+            
+          实现类 每一个方法都有专门的异常返回值
+
+            /**
+            * 这个类是实现客户端通过Feign往服务端发送信息时，服务端突然宕机，关机，通过Hystrix 进行
+            * 全局处理时，为Feign 接口得每一个方法都定义了一个 发生异常时得值
+            */
+            @Component
+            public class FeignFallBackService implements FeignHystrixService{
+                @Override
+                public String paymentInfo_OK(Integer id) {
+                    return " paymentInfo_OK 80 false";
+                }
+
+                @Override
+                public String paymentInfo_TimeOut(Integer id) {
+                    return " paymentInfo_TimeOut 80 false";
+                }
+            }
+
+
+    服务熔断：
+
+        熔断是应对雪崩效应得一种微服务链路保护机制。当扇出链路得某个微服务出错不可用或者响应时间太长，会进行服务降级，
+        进而熔断该节点得微服务调用，快速返回错的得相应信息。当检测到该节点微服务调用响应正常后，回复调用链路 
+
+        状态;
+            开 半开 关闭
+
+            失败次数多了 需要过一段时间 正确率上升了才会不进行熔断
+        
+        //=====服务熔断
+        @HystrixCommand(fallbackMethod = "paymentCircuitBreaker_fallback",commandProperties = {    //fallbackMethod 报错 返回的方法
+                @HystrixProperty(name = "circuitBreaker.enabled",value = "true"),// 是否开启断路器
+                @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold",value = "10"),// 请求次数
+                @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds",value = "10000"), // 时间窗口期
+                @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage",value = "60"),// 失败率达到多少后跳闸 现在是60% 就是执行下面的报错方法
+        })
+        public String paymentCircuitBreaker(@PathVariable("id") Integer id)
+        {
+            if(id < 0)
+            {
+                throw new RuntimeException("******id 不能负数");
+            }
+            String serialNumber = IdUtil.simpleUUID();
+
+            return Thread.currentThread().getName()+"\t"+"调用成功，流水号: " + serialNumber;
+        }
+
+
+        public String paymentCircuitBreaker_fallback(@PathVariable("id") Integer id)
+        {
+            return "id 不能负数，请稍后再试，/(ㄒoㄒ)/~~   id: " +id;
+        }
 
 
 
