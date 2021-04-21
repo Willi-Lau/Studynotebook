@@ -1,0 +1,21 @@
+Nacos
+
+    一个更易于构建云原生应用的动态服务发现，配置管理和服务管理平台
+
+    Nacos =  Eureka + config + bus
+
+    替代Eureka做服务配置中心
+
+    nacos运行：
+       cmd 执行 /bin/start.cmd
+
+    主页：
+        http://localhost:8848/nacos/
+
+        账号： nacos
+        密码： nacos
+
+    Nacos 支持 AP CP模式的切换
+
+        
+    
