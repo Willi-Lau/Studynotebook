@@ -1,0 +1,139 @@
+SpringCloud Config
+
+
+        微服务意味着要将单体应用拆分成一个个子服务，每个服务的粒度相对较小，因此系统中出现大量得服务。由于每个服务都要必须得
+        配置信息才能运行。所以一套集中式，动态的配置管理设施是必不可少得。
+
+
+        功能：
+                从 github上远程读取配置信息
+
+        application.yml 是用户级别
+        bootstrap.yml 是系统级别 默认不会被本地覆盖
+
+
+        application.yml:
+              spring:
+                application:
+                name:  cloud-config-center #注册进Eureka服务器的微服务名
+                cloud:
+                config:
+                server:
+                        git:
+                        uri: https://github.com/Willi-Lau/springcloud-study-config.git #GitHub上面的git仓库名字 http  ssh报错
+                        ####搜索目录
+                        search-paths:
+                        - springcloud-study-config
+                        force-pull: true   #          账户密码
+                        username: 2284069530@qq.com
+                        password: WG12315qwert..
+                ####读取分支
+                label: main
+        
+        注解：
+                @EnableConfigServer 
+
+
+                
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

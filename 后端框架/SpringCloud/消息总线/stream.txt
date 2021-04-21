@@ -1,0 +1,8 @@
+stream
+
+
+    由于有太多得消息中间件 ActiveQM KafKa RocketMQ RabbitMQ 现在使用 一种Stream就可以操作四种 MQ 
+
+    四种MQ 自适应绑定
+
+    现在只支持 RabbitMQ  kafka
