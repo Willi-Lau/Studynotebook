@@ -7,7 +7,8 @@ Nacos
     替代Eureka做服务配置中心
 
     nacos运行：
-       cmd 执行 /bin/start.cmd
+    D:\nacos-server-1.1.4\nacos\bin
+       cmd 执行 /bin/startup.cmd
 
     主页：
         http://localhost:8848/nacos/
@@ -16,6 +17,13 @@ Nacos
         密码： nacos
 
     Nacos 支持 AP CP模式的切换
+
+        CAP:  C Consistency 强一致性  
+              A Availability 可用性
+              P Paration tolerance 分区容错性   （重要）
+
+    linux 启动： /bin start.sh    
+          关闭   /bin shutup.sh
 
         
     

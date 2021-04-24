@@ -32,6 +32,8 @@ Nginx
 
                         3.启动nginx
                                  ./nginx 
+                                 启动指定配置文件的Nginx
+                                ./nginx -c /usr/local/nginx/conf/nginx.conf
 
                         4.关闭nginx
 

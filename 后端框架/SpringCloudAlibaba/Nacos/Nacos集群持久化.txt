@@ -1,0 +1,38 @@
+
+    Linux 
+        集群 Nacos 启动方式：
+            进入 /opt/nacos/bin
+               执行：./startup.sh -p 端口号   3333/4444/5555
+        
+
+
+        坑点：  
+            注意：
+                vim startup.sh时候 在第三步 
+                 nohup ${JAVA} -Dserver.port${PORT}  这里  ${JAVA} 和 -Dserver.port${PORT} 中间有空格
+        
+
+
+        访问地址：  
+            192.168.40.129:1111/nacos             1111是nginx 负载均衡处理 包含3333 4444 5555三个端口
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

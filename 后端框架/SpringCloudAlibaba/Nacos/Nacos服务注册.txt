@@ -6,21 +6,21 @@ Nacos 服务注册
 
     yml:
         server:
-        port: 9002
+            port: 9002
 
         spring:
-        application:
-            name: nacos-payment-provider
-        cloud:
-            nacos:
-            discovery:
-                server-addr: localhost:8848   #配置Nacos地址   服务注册的地址
+            application:
+                name: nacos-payment-provider
+            cloud:
+                nacos:
+                    discovery:
+                        server-addr: localhost:8848   #配置Nacos地址   服务注册的地址
 
         management:
-        endpoints:
-            web:
-            exposure:
-                include: '*'     #监控  *为全部暴露
+            endpoints:
+                web:
+                exposure:
+                    include: '*'     #监控  *为全部暴露
     
     启动类添加注解:
     

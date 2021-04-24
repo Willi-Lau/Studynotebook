@@ -91,7 +91,7 @@ Linux 指令:
         查看开放的端口：
                 firewall-cmd --list-all
         增加允许访问的端口;
-                firewall-cmd --add-port=8080/tcp --permanent
+                firewall-cmd --add-port=1111/tcp --permanent
         重启防火墙
                 firewall-cmd --reload
         启动sshd
@@ -105,5 +105,10 @@ Linux 指令:
                 rm -r -f 文件名
         杀死进程：
                 kill -9 进程号
-
+        查看文件是否存在
+                rpm -qa | grep name
+        复制
+                cp 原文件名 新文件名
+        
+        
 
