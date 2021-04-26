@@ -91,7 +91,7 @@ Linux 指令:
         查看开放的端口：
                 firewall-cmd --list-all
         增加允许访问的端口;
-                firewall-cmd --add-port=1111/tcp --permanent
+                firewall-cmd --add-port=3333/tcp --permanent
         重启防火墙
                 firewall-cmd --reload
         启动sshd
@@ -111,4 +111,4 @@ Linux 指令:
                 cp 原文件名 新文件名
         
         
-
+        mysql  https://blog.csdn.net/qq_37598011/article/details/93489404

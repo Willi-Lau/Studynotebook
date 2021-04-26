@@ -77,6 +77,172 @@ Sentinel 具有以下特征:
             异常数(分钟统计）超过阈值时，触发降级;时间窗口结束后，关闭降级
 
 
+    热点限流：
+
+        何为热点？热点即经常访问的数据。很多时候我们希望统计某个热点数据中访问频次最高的 Top K 数据，并对其访问进行限制。比如：
+
+            商品 ID 为参数，统计一段时间内最常购买的商品 ID 并进行限制
+            用户 ID 为参数，针对一段时间内频繁访问的用户 ID 进行限制
+
+        热点参数限流会统计传入参数中的热点参数，并根据配置的限流阈值与模式，对包含热点参数的资源调用进行限流。热点参数限流可以看
+        做是一种特殊的流量控制，仅对包含热点参数的资源调用生效。
+
+        即针对指定的参数 进行管理，除了指定的参数其他的参数不统计
+
+        @SentinelResource blockHandler 只能对sentinel里设置的异常进行处理 如果有 运行时异常 blockhandle 不会进行处理 
+
+            @GetMapping(value = "/sentinel/testHotPoint")
+            @SentinelResource(value = "testHotPoint",blockHandler = "deal_testHotPoint")   //blockHandler 配置兜底方法
+            public String testHotPoint(                                   // value 名字 sentinel配置热点监控 资源名就写的是value
+                    @RequestParam(value = "p1",required = false) String p1,     //参数列表中 p1 是下标为0的参数
+                    @RequestParam(value = "p2",required = false) String p2      //参数列表中 p2 是下标为1的参数
+            ){
+                return "this is success hotpoint";
+            }
+
+            public String deal_testHotPoint(String p1,String p2,BlockException e){  //兜底方法 后面比原来的参数列表多BlockException
+                return "this is wrong hotpoint";
+            }
+
+
+        sentinel控制台的设置：
+
+            热点规则 -》 新增热点限流规则 -》
+
+            资源名：  @SentinelResource 设置的value值    testHotPoint -》  public String testHotPoint 方法
+            参数索引： 0开始                                  0     -》  String p1
+            单机阈值： 指定时间内最大的点击次数                 1     -》 点击一次
+            统计窗口时常： 监控时间                            1    -》 一秒
+
+            高级选项：（参数例外项）
+                参数类型： 上面设置的索引 的指定参数的类型 必须是八种基本类型或java.lang.String     String -》 和 p1 参数类型相同
+                参数值：   设置例外的参数值                   lwy   -》 如果p1的参数设置的是lwy 即 p1=lwy 就不被上面设置的阈值监控，走下面单独设置的监控规则
+                限流阈值： 例外的参数值 的最大阈值             单独给 p1=lwy时设置的阈值
+
+    全局统一配置流控异常方法 blockHandler
+    
+        blockHandler blockHandlerClass 处理sentinel里限流等触发的异常 不管运行时程序自己的异常
+
+        普通方法：
+                /**
+                * 全局统一处理 异常
+                * @return
+                */
+                @GetMapping("/rateLimit/customerBlockHandler")
+                @SentinelResource(value = "customerBlockHandler",
+                        blockHandlerClass = CustomerBlockHandler.class,        //流控异常处理类
+                        blockHandler = "handlerException2")              //流控异常处理方法
+                public CommonResult customerBlockHandler()
+                {
+                    return new CommonResult(200,"按客戶自定义",new Payment(2020L,"serial003"));
+                }
+
+        全局异常处理类：
+                /**
+                * 自定义限流处理类 只会再sentinel 处理的异常 -时才会调用
+                */
+                public class CustomerBlockHandler
+                {
+                    public static CommonResult handlerException(BlockException exception)
+                    {
+                        return new CommonResult(4444,"按客戶自定义,global handlerException----1");
+                    }
+                    public static CommonResult handlerException2(BlockException exception)
+                    {
+                        return new CommonResult(4444,"按客戶自定义,global handlerException----2");
+                    }
+                }
+                
+    Sentinel 管理java运行时异常 fallback：
+
+                @RequestMapping("/consumer/fallback/{id}")
+                @SentinelResource(value = "fallback",
+                                fallback = "handlerFallback", //fallback 负责程序运行时的异常 也可以配置 fallbackClass 用法同blockHandlerClass
+                                blockHandler = "blockHandler")    
+                public CommonResult<Payment>fallback(@PathVariable("id") Integer id){
+
+                    CommonResult result = restTemplate.getForObject(SERVICE_URL + "/getPayment/" + id, CommonResult.class);
+
+                    if(result.getData() == null){
+                    throw new NullPointerException("无对应的值");
+                    }
+                    if(id == 4 ){
+                        throw new IllegalArgumentException ("IllegalArgumentException,非法参数异常....");
+                    }
+
+                    return result;
+
+                }
+
+                //本例是fallback  管理java 运行时的异常
+                public CommonResult handlerFallback(@PathVariable("id") Integer id,Throwable e) {
+                    Payment payment = new Payment(id,"null");
+                    return new CommonResult<>(444,"兜底异常handlerFallback,exception内容  "+e.getMessage(),payment);
+                }
+        
+        Feign + Sentinel
+
+            # 激活Sentinel对Feign的支持
+            feign:
+            sentinel:
+                enabled: true
+
+    Sentinel 持久化
+
+         <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+
+        spring:
+            application:
+                name: cloudalibaba-sentinel-service
+            cloud:
+                nacos:
+                discovery:
+                    server-addr: localhost:8848 #Nacos服务注册中心地址
+                sentinel:
+                transport:
+                    dashboard: localhost:8080 #配置Sentinel dashboard地址
+                    port: 8719
+                datasource: #<---------------------------关注点，添加Nacos数据源配置
+                    ds1:
+                    nacos:
+                        server-addr: localhost:8848
+                        dataId: cloudalibaba-sentinel-service
+                        groupId: DEFAULT_GROUP
+                        data-type: json
+                        rule-type: flow
+
+        然后去Nacos 进行 新建配置 选择JSON格式
+        /
+        配置内容解析
+           
+           e.g.
+            [{
+                "resource": "/rateLimit/byUrl",
+                "IimitApp": "default",
+                "grade": 1,
+                "count": 1, 
+                "strategy": 0,
+                "controlBehavior": 0,
+                "clusterMode": false
+            }]
+
+          配置规则：
+            resource：资源名称；
+            limitApp：来源应用；
+            grade：阈值类型，0表示线程数, 1表示QPS；
+            count：单机阈值；
+            strategy：流控模式，0表示直接，1表示关联，2表示链路；
+            controlBehavior：流控效果，0表示快速失败，1表示Warm Up，2表示排队等待；
+            clusterMode：是否集群。
+
+
+    
+
+
+
 
 
 

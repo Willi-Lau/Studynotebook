@@ -18,6 +18,20 @@
 
 
 
+            启动3个nacos注册中心
+
+            ./startup.sh - p 3333
+
+            ./startup.sh - p 4444
+
+            ./startup.sh - p 5555
+
+            查看nacos进程启动数ps -ef | grep nacos | grep -v grep | wc -l
+
+            启动nginx
+
+            ./nginx -c /usr/local/nginx/conf/nginx.conf
+            查看nginx进程ps - ef| grep nginx
 
 
 
