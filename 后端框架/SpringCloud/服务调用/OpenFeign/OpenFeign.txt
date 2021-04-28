@@ -69,6 +69,8 @@ OpenFeign  代替 restTemplate 完成模块通信
                     return Logger.Level.FULL;
                 }
             }
+    坑点： 
+        https://blog.csdn.net/weixin_30505485/article/details/101950691
 
 
 
