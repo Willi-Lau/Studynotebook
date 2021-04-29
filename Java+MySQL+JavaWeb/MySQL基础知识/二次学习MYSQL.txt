@@ -1,0 +1,204 @@
+MySQL :
+    连接：
+        left join  on 保留左表
+        right join on 保留右表
+        inner join on 保留交集
+
+        -- 查询左右表所有的数据包括没有的 union 功能： 连接 + 去重 
+
+            select *
+                from class c left join student s on c.id = s.classid     //查询左表所有的
+            UNION                  //连接查询结果 并去除重复
+            select *
+                from class c right join student s on c.id = s.classid    //查询右表所有的
+            ;
+
+        -- 左表独有
+
+            select *
+            from class c LEFT join student s on c.id = s.classid
+            where s.id is null;         //除掉 包含右表的部分
+    
+    索引：
+        索引就是一种数据结构，一种排好序的快速查询找的数据结构 
+        平时的索引一般是 B树索引
+
+        索引的优势：
+            提高数据检索的效率，降低数据的IO成本，
+            通过索引对数据进行排序，降低数据排序的成本，降低CPU消耗
+
+        索引的劣势：
+            虽然索引大大的提升了查询速度，同时会降低表的更新速度，如对表进行insert update delete 操作，因为更新表时，MYSQL不仅要保存数据
+            还要保存一下索引文件每次更新台添加的索引字段。
+        
+        索引的分类：
+            单值索引：一个索引只包含单个列，一个表可以有多个单列索引
+        
+        索引的命令：
+            创建：create index/primary key/unique/fulltext  indexName on tableNmae(columnName(length)); length 可以省略
+                  alter tableName add index/primary key/unique/fulltext indexName on columnName(length) length 可以省略
+                                        普通/主键/唯一/全文
+            删除：
+                drop index indexName on tableName
+            
+            查看：
+                show index from tableName
+        
+        索引结构：
+            Btree,Hash,full-text,R-tree
+
+            B-tree 检索原理-查看图片 mysql检索原理 
+
+        哪些时候应该创建索引：
+            1.主键 
+            2.频繁作为查询条件的字段
+            3.查询中与其他表关联的字段，外键关系建立索引
+            4.高并发的条件下应该创建组合索引
+            5.查询中排序的字段，通过索引访问将大大提高访问速度
+            6.查询中统计或分组的字段
+        
+        那些时候部不应该创建索引：
+            1.频繁更新的字段
+            2.where 里用不到的字段
+            3.表记录太少
+            4.数据重复并且分布平均的表字段（差异不大的数据 e.g. 性别 只有两种状态）
+    
+        MySQL性能分析：
+            explain
+
+            用法：
+                explain + sql 语句
+            e.g.
+                explain select * from student;
+
+            能干吗：
+                表的读取顺序
+                数据读索引的操作类型
+                那些索引可以使用
+                那些索引被实际使用
+                表之间的引用
+                每张表有多少行被优化器查询
+
+            包含属性：
+                 id  select_type  table  type  possible_keys  key   key_len  ref   rows  Extra 
+
+                 id:查询顺序
+                    select 查询的序列号，包含一组数字，表示查询中执行的select 子句或操作表的顺序
+                    值：id 相同 （查询多个表时）
+                            普通查询 ，查询顺序是一样的，由上到下执行
+                        Id不相同：（查询多个表时）
+                            如果是子查询，id 序列号会递增 ，id值越大越优先查询
+                        id相同+不同：
+                            一般是有一个虚表， from (select * ...) 这种情况下 虚表会认为是衍生表 table 属性是 derivcer id
+                            id 如果相同，可以认为是一组，从上往下顺序执行，
+                            id不同，id越大越先执行
+
+                select_type: 查询类型
+                    常用值：
+                        simple,primary,subquery,derived,union,union result
+
+                        simple: 简单的 select 查询 不包含子查询 或 union
+
+                        primary: 查询中包含任何复杂的子查询，最外层标记为primary （如两表做UNION或者存在子查询的外层的表操作为PRIMARY，内层的操作为UNION）
+
+                        subquery: select 或者 where 中包含子查询
+
+                        derived:再from中包含的子查询（虚表 from (select * ...) ) 这种被标记为deriver,mysql会递归执行这些子查询，把结果放在临时表里
+
+                        union：：若第二个select 出现在union中，则会被标记为union。若union包含再from子句的子查询中，外层select将标记为derived
+
+                        union result:从union表获取结果的select 
+                
+                table： 表
+                    来自那个表 有别名返回的就是别名
+                
+                type:     访问类型排序
+                    显示查询使用的是那种类型
+                    常用值：
+                        all index range ref eq_ref const,system null
+
+                    从最好到最差依次是的
+                    
+
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
