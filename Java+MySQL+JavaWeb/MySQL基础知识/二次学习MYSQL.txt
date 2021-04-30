@@ -35,7 +35,7 @@ MySQL :
             单值索引：一个索引只包含单个列，一个表可以有多个单列索引
         
         索引的命令：
-            创建：create index/primary key/unique/fulltext  indexName on tableNmae(columnName(length)); length 可以省略
+            创建：create index/primary key/unique/fulltext  indexName on tableNmae(columnName(length),columnName(length) ...); length 可以省略
                   alter tableName add index/primary key/unique/fulltext indexName on columnName(length) length 可以省略
                                         普通/主键/唯一/全文
             删除：
@@ -62,6 +62,14 @@ MySQL :
             2.where 里用不到的字段
             3.表记录太少
             4.数据重复并且分布平均的表字段（差异不大的数据 e.g. 性别 只有两种状态）
+        
+        什么是覆盖索引：
+
+            就是select的数据列只用从索引中就能够取得，不必从数据表中读取，换句话说查询列要被所使用的索引覆盖。
+
+            使用覆盖索引不要使用 * ，效率低下
+
+            https://www.cnblogs.com/happyflyingpig/p/7662881.html
     
         MySQL性能分析：
             explain
@@ -117,7 +125,92 @@ MySQL :
                     常用值：
                         all index range ref eq_ref const,system null
 
-                    从最好到最差依次是的
+                    从最好到最差依次是  
+                        
+                        system > const > eq_ref > ref > range > index >all
+
+                        system 表只有一行记录，也是const类型的特例
+
+                        const 表示通过索引一次就查到了，const 用于比较primary key 或unique索引。因为只匹配一行数据，所以很快
+
+                        eq_ref 唯一性索引扫描，对于每个索引，表中只有一条记录与之匹配。常用于主键或唯一索引 e.g. 员工表搜索ceo  id= 1这种只匹配一个
+
+                    *   ref    非唯一索引扫描，返回匹配某个单独值得所有行。一般是复合索引  e.g. 员工表搜索保洁   job = "保洁" 匹配一堆
+
+                    *   range 范围搜索，使用索引选择行，一般是where中使用between and,in 等
+
+                        index 遍历全部得索引和树
+
+                         all 全表扫描
+
+                possible_keys：
+                    此次查序可能用到得全部索引，不一定真的被用到
+                
+                key:
+                    实际用到得索引
+
+                    若查询中使用了覆盖索引，则该索引仅能出现在key 中
+                    e.g.
+                        create index c1_c2 on student(c1,c2);
+
+                        select c1,c2 from student;
+
+                        这里理论上 possible_keys什么都用不上，但是select 得 c1,c2 和索引 c1_c2 里得顺序一模一样，所以还是用了 索引
+            
+                key_len
+                    索引中使用的字节数 长度越短越好
+                
+                ref:
+                    显示索引得哪一列被使用了，如果可能的话，是一个常数。哪些列或常量被用于查找索引列上得值
+                    值：
+                        const 常量
+                        school.student.name    引用了school库 studnet 表 name 字段
+                rows：
+                    大致估算找到所需记录得行数
+                
+                Extra:
+                    包含不适合再其他字段显示得信息
+                    值：
+                        using filesort ： 坏
+                                mysql 会使用一个外部的索引排序，而不是按照表内索引进行读取
+
+                        using temporary :  坏
+                                使用了临时表保存数据 常见于 order by 和 group by    (group by ,order by 尽量按照所建索引个数顺序进行书写)        
+                                e.g.
+                                     create index index_c1_c2 on student(c1,c2);
+
+                                     explain select c1 from student where c1 in ('ac','ab') group by c1 
+
+                                        -> extra:  using filesort , using temporary , using index , using where 
+                                    总结 ： 效率低下 索引和条件不一致
+    
+                                     explain select c1 from student where c1 in ('ac','ab') group by c1 , c2
+
+                                        -> extra:  using index for group-by , using where 
+                                    总结 ： 效率高效 索引和条件一致
+                        
+                        Using index : 好
+                                表示select 中使用了覆盖索引，避免访问了表得数据行，效率不错!!!!如果同时出现using where ,表明索引被用来执行
+                                索引键值得查找
+
+                                覆盖索引：Covering index  查询列被索引覆盖，顺序内容完全一致，不需要读取数据得行
+                        
+                        using where :
+                                使用了where 过滤
+                        using join buffer :
+                                使用了连接缓存
+                        impossible where:
+                                where 子句总是false ，不能用来获取任何元组
+                                e.g.  select * from s where age  =11 and age = 100
+
+        MySQL 索引优化:
+                              
+
+
+
+
+
+
                     
 
                         
