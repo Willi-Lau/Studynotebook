@@ -204,6 +204,13 @@ MySQL :
                                 e.g.  select * from s where age  =11 and age = 100
 
         MySQL 索引优化:
+
+            1.对于查询条件有范围得字段 不要加索引 ，索引会失效
+                e.g. select name from student where age > 10 order by address;
+                这里如果对 age 建立索引 expalin extra 里还是会显示 using filesort 没有用上索引
+            
+            2.双表查询时
+                如果是  a left join b on a.id = b. id 这时索引要建立在 b.id 上，因为左连接 a表所有的都查询，所以进行筛选主要看b，右连接同理
                               
 
 
