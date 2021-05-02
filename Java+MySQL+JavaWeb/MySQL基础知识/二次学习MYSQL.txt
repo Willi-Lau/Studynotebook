@@ -231,11 +231,12 @@ MySQL :
 
                 e.g.   sum() left() avg() ....
 
-            3.索引中范围查询右边得索引会失效 （大于 小于）看的是 参数在创建索引时的位置而不是 where里的位置
+            3.索引中范围查询右边得索引会失效 （大于 小于 in ）看的是 参数在创建索引时的位置而不是 where里的位置
 
                 e.g.      create index index_nameagephone on student(name,age,phone)
                         select id from student where name = "ad" and age > 15 and phone = "11111"  name ,age 索引生效 phone 失效 因为age使用了大于号 
                         select id from student where name = "ad" and phone > 15 and age = "11111"  name ,age 索引生效 phone 生效 因为 phone创建时在最右边，他的右面没有值了
+                        select id from student where name in( ....) 索引失效
 
             4.尽量使用覆盖索引，少用 * 
             5.使用 <>  !=无法使用索引会导致全表扫描
@@ -278,6 +279,52 @@ MySQL :
                              for  select * from B  where B.id = A.id 
 
                     理解： 将主查询 A 查到的数据放到子查询 B 中验证，根据验证结果判断此值是否保留
+    Order by:
+                order by 里面也要遵循索引的顺序 最佳左前缀法则 
+                
+                如果遵守规则就会 using index
+                如果不遵守规则就会 using index + using filesort 效率低下
+                mysql可以为排序和查询使用相同的索引
+                不能一会desc 一会 asc排序  order by name desc,age acs 这种索引失效
+
+                在using filesort里一共有两种算法：
+                    双路排序，单路排序
+                    
+                    双路排序： mysql 4.1之前使用的是双路排序。意思就是进行两次扫描，最终得到数据。
+                              第一次扫描读取行指针和Order by 的列，进行排序
+                              第二次扫描扫描已经排好序的表，按照列表的值重新从列表中读取对应的数据输出
+                    单路排序： 从磁盘读取查询所需要的所有的列，按照Orderby在Buffer进行排序，然后扫描排序后的列进行输出
+                              就是把每一行都保存在内存中了。
+                    单路缺点：如果一次取不完（buffer空间不够，数据太多），拿多次，效率就差
+                
+                提高orderby 速度：
+                    1.不要用 select *,减少buffer的压力
+                    2.提高sort_buffer_size
+                    3.提高max_length_for_sort_data
+
+                e.g.
+                    index(a,b,c)
+
+                    order by 能使用索引最左前缀
+
+                        order by a / a,b / a,b,c / a desc,b desc ,c desc 
+                    
+                    如果 where 最左前缀为常量 则 order by 可以使用索引
+
+                        where a =const order by b,c
+                        where a = const and b = const order by c
+                        where a = const and b > const order by b,c 
+                    
+                    不能使用索引排序
+                        order by a asc , b desc ,c desc    排序不一致
+                        where g = const order by b,c       没有a
+                        where a = const order by c         没有b
+                        where a= const order by c,d        d不是Index
+                        where a in(...) order by b,c      in 会停止所有索引
+
+
+
+                
                     
 
                         
