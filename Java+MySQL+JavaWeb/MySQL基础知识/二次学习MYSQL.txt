@@ -211,13 +211,73 @@ MySQL :
             
             2.双表查询时
                 如果是  a left join b on a.id = b. id 这时索引要建立在 b.id 上，因为左连接 a表所有的都查询，所以进行筛选主要看b，右连接同理
-                              
+
+            3.用小表驱动大表
+
+        索引失效：
+            索引没有用上
+
+            1.最佳左前缀法则：如果索引了多列，要遵守最佳左前缀法则。指的是查询从索引的最左列开始并且不跳过索引中间得列（指的是是否存在不是顺序）
+
+                e.g.    create index index_nameagephone on student(name,age,phone)
+                        select id from student where name = "zs"           用上了索引
+                        select id from student where age = 1 and  phone = 11111 and name = "张三" 用上了索引，和where and 顺序无关，mysql会优化顺序
+                        select id from student where age = 11 and phone = "121212152"  没用上索引
+                        select id from student where name = 11 and phone = "121212152"  用上索引 不过是部分索引 因为中间得 age 断了没用上，所以 
+                                                                                        age phone 都没用上
+                        select id from student where phone = "121212152"  没用上索引
+
+            2.不要再索引列上做任何操作（计算，函数，（自动手动）类型转换），会导致索引失效转向全表扫描
+
+                e.g.   sum() left() avg() ....
+
+            3.索引中范围查询右边得索引会失效 （大于 小于）看的是 参数在创建索引时的位置而不是 where里的位置
+
+                e.g.      create index index_nameagephone on student(name,age,phone)
+                        select id from student where name = "ad" and age > 15 and phone = "11111"  name ,age 索引生效 phone 失效 因为age使用了大于号 
+                        select id from student where name = "ad" and phone > 15 and age = "11111"  name ,age 索引生效 phone 生效 因为 phone创建时在最右边，他的右面没有值了
+
+            4.尽量使用覆盖索引，少用 * 
+            5.使用 <>  !=无法使用索引会导致全表扫描
+            6. is null / is not null 也无法使用索引
+            7.使用like '%***' 会使索引失效变成全表扫描 
+
+                解决办法：1. 如果使用 like '%***%' 使用覆盖索引索引不会失效
+                         2.like '***%' 不会失效
+            
+            8.字符串不加单引号或双引号会索引失效
+            9.少用 or 可能会导致索引失效
+            
+    
+    小技巧：
+        1.你的primary key 可能胡影响你的复合索引 即本来复合索引失效了 因为有主键也生效了
+        2.在where中 and 的顺序 Mysql会自动优化
+            e.g. index（a,b,c,d）
+                 select * from q where a = 1 and b = 1 and d  = 1 and c =1      四个索引全都用上了 只要带头大哥存在就可以了
+
+                 select * from q where a = 1 and b = 1 and c  >1 and d = 1      用上前三个  范围之后全部失效 顺序看的是  index（a,b,c,d）不是where里
 
 
 
+    查询优化：  
+        1.小表驱动大表，小的数据集驱动大的数据集
+        2.exists 替换 in 
+            e.g.
+                select * from A where id in (select id from B)  ->首先加载 B表 由 B驱动A
+                 等价于-> for select id from B
+                          for  select * from A where id in  
 
+                A表数据集小于 B表数据集时 exists 优于in
+                B表数据集小于 A表数据集时 in 优于exists
 
+                in()括号里小  exists() 括号里大
 
+                exists用法：
+                    select * from A where exists(select * from B where B.id = A.id)
+                    等价于-> for select * from A 
+                             for  select * from B  where B.id = A.id 
+
+                    理解： 将主查询 A 查到的数据放到子查询 B 中验证，根据验证结果判断此值是否保留
                     
 
                         
