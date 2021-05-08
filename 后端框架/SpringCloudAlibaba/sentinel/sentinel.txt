@@ -184,8 +184,8 @@ Sentinel 具有以下特征:
 
             # 激活Sentinel对Feign的支持
             feign:
-            sentinel:
-                enabled: true
+                sentinel:
+                    enabled: true
 
     Sentinel 持久化
 

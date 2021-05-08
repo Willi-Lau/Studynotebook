@@ -24,6 +24,8 @@
 
             启动3个nacos注册中心
             
+            cd /opt/nacos/conf  vim cluster.conf 进去再出来一下
+            
              cd /opt/nacos/bin
 
                 ./startup.sh - p 3333
