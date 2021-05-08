@@ -23,6 +23,8 @@
                 service mysql start
 
             启动3个nacos注册中心
+            
+             cd /opt/nacos/bin
 
                 ./startup.sh - p 3333
 
@@ -35,18 +37,25 @@
             启动nginx
 
                  
-                ./nginx -c /usr/local/nginx/conf/nginx.conf
+                cd /usr/local/nginx/sbin/ ./nginx -c /usr/local/nginx/conf/nginx.conf   
+                                          ./nginx  -c /opt/nginx-1.18.0/conf/nginx.conf
 
             查看nginx进程ps - ef| grep nginx
 
 
             关闭：
                 nginx :
-                    cd /usr/local/nginx/sbin/     ./nginx -s stop
+                    cd /usr/local/nginx/sbin/     ./nginx -s stop  或 ./nginx -s quit
                 nacos:
                     cd /opt/nacos/bin       ./shutdown.sh
                 mysql:
-                    mysql root shutdown
+                    service mysql stop
+            
+
+
+            nacos 启动日志  logs/nacos.log
+
+            JAVA_OPT="${JAVA_OPT} -Dnacos.server.ip=192.168.40.129"
 
 
 

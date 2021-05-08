@@ -281,6 +281,7 @@ MySQL :
                     理解： 将主查询 A 查到的数据放到子查询 B 中验证，根据验证结果判断此值是否保留
     Order by:
                 order by 里面也要遵循索引的顺序 最佳左前缀法则 
+                group by 用法等于 order by 
                 
                 如果遵守规则就会 using index
                 如果不遵守规则就会 using index + using filesort 效率低下

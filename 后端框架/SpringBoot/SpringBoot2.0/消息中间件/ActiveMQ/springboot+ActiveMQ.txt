@@ -1,5 +1,5 @@
 
-
+http://127.0.0.1:8161/admin/topics.jsp
 
 依赖：
     可以把之前的所有Activemq依赖都删除，只一你用下面的
@@ -19,7 +19,7 @@ application.yml:
             user: admin
             password: admin
         jms:
-            pub-sub-domain: false   #false = Queue    true = Topic 
+            pub-sub-domain: false   #false = Queue    true = Topic  *********************************************************88
             template:
              delivery-mode: persistent   #acticemq 在SpringBoot中的持久化
 
