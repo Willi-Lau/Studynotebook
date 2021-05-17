@@ -298,6 +298,7 @@ Redis:
 
 
                  RDB：  
+                        ########SNAPSHOTTING
                         rdb是整个内存的压缩过程的Snapshot ,RDB的数据结构，可以配置复合快照触发条件 (就是隔一段时间自动备份一次数据)，
                         rdb是一个非常紧凑的文件
                         rdb工作过程：
@@ -369,8 +370,8 @@ Redis:
         Reids主从复制：
                 用法：配从库不配主库
                 从库配置：
-                        slaveof 主库ip 主库端口  从机断开了要重新执行slaveof 连接，除非写进了配置文件
-                        slaveof no one   从 从机变主机
+                        SLAVEOF 主库ip 主库端口  SLAVEOF 连接，除非写进了配置文件
+                        SLAVEOF no one   从 从机变主机
 
                         info replication 查看当前redis信息，连接状态  主库master 从库 slave
 
@@ -389,6 +390,72 @@ Redis:
                 哨兵模式：
                         主库死亡不用再手动选定新主库，由Redis从库通过投票选出来
                         https://www.jianshu.com/p/06ab9daf921d
+
+        
+
+                Linux：  192.168.40.129:6379
+                        密码： 12345
+                        默认位置 /usr/local/bin 
+                        文件位置 /opt
+                        redis.conf 位置   /etc
+                                         /opt/redisconf/
+
+                        /usr/local/bin
+
+                                redis-benchmark 性能测试工具
+                                redis-check-aof 修复有问题的aof
+                                redis-check-dump 修复有问题的dump.rdb
+                                redis-sentinel   redis集群使用
+                                redis-server     redis服务器启动命令
+                                redis-cli -p 6379       客户端入口
+                        
+                        启动:
+                               cd /usr/local/bin
+                                redis-server /opt/redisconf/redis.conf
+                        
+                        设置后台启动：
+                                #########GENERAL  模块
+
+                                daemonize yes    //默认 no 不启用后台启动
+                        
+                        查看本机redis信息命令：   info replication
+                        哨兵： 6379 6380 6381 
+                           1.首先 启动    redis-server /opt/redisconf/redis.conf6379
+                                        redis-server /opt/redisconf/redis.conf6380
+                                        redis-server /opt/redisconf/redis.conf6381
+
+                                        从机需要配置密码 masterauth 12345  （写在配置文件中）
+
+                                再进入cli    redis-cli -p 6379
+                                输入密码     auto 12345
+                                给6380 6381设置主机  SLAVEOF 127.0.0.1 6379
+
+                           2.在/opt/redisconf 下新建 sentinel.conf 文件   touch sentinel.conf
+
+                                写入信息：
+                                        sentinel monitor 自己起的名字 ip 端口号 票数
+
+                                        sentinel monitor host6379 127.0.0.1 6379 1    //端口
+                                        sentinel deny-scripts-reconfig yes
+                                        sentinel auth-pass host6379 12345        //密码
+
+                           3.启动哨兵
+                                 cd /usr/local/bin      redis-sentinel /opt/redisconf/sentinel.conf
+
+                                 成功提示：   @后面得是主机名 端口号   这里就是host6379 127.0.0.1 6379
+                                        14838:X 17 May 2021 21:59:22.573 # Sentinel ID is 535b9876982d1cdc0e4a9594b313e05275d76875
+                                        14838:X 17 May 2021 21:59:22.573 # +monitor master host6379 127.0.0.1 6379 quorum 1
+                                        14838:X 17 May 2021 21:59:22.575 * +slave slave 127.0.0.1:6380 127.0.0.1 6380 @ host6379 127.0.0.1 6379
+                                        14838:X 17 May 2021 21:59:22.576 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ host6379 127.0.0.1 6379
+                          4.搞破坏：
+                                让6379 master 关机，在等待一会，不一会就选出新领导人了
+
+
+
+
+
+
+                       
 
 
 

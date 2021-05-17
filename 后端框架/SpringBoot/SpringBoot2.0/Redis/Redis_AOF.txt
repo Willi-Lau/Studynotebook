@@ -1,0 +1,45 @@
+ AOF:
+                        工作过程：以日志的形式来记录每一个写操作，将Redis执行过的所有指令写下来（读 get 操作不进行记录），只追加文件但不改写文件，
+                                 redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据恢复
+                                 最小误差 1s
+                        默认文件名：appendonly.aof
+                        坑： 如果执行Flushall aof也会默认记录下来，所以恢复时候也会执行flushall的操作，必须干掉flushall才可以   
+                        修复： rdb aof同时存在并且aof文件有错误有乱码时：执行redis-check-aof 进行修复   
+                
+                        配置位置： appendonly no 默认 
+                                   appendonly yes 打开aof持久化    
+                        配置策略：Appendfsync :Always 同步持久化 每次数据发生变化会被立刻执行记录到磁盘，性能差但是数据完整性好
+                                              Everysec 默认设置，每秒记录一次
+                                              nO 不同步
+                        Rewrite:
+                                是什么：aof采用文件追加方式记录数据，这样文件会越来越大，为了避免这种情况，新增了重写机制，
+                                        当aof文件大小超过所设定的阀值时，Redis就会启动ROF文件压缩，只保留可以恢复数据的
+                                        最小指令集，可以使用命令bgrewriteaof
+                                工作过程：aof问价持续增长时，会foke一条新的进程来将文件重写，先临时写再rename，遍历新的进程的内存数据，
+                                        每条记录会有一条set语句。重写aof的操作不是直接读取旧的aof而是将整个所有的数据用命令的方式重写了一个
+                                        新的aof文件，这个快照有点相似
+                                触发机制：默认配置是当aof文件大小是上次rewrite大小的一倍且文件大于64m时触发
+
+                                no-appendfsync-on-rewrite 重写时是否可以运用appendfsync 默认no 
+                                auto-aof-rewrite-min-size:aof日志大小
+                                auto-aof-rewrite-percentage:设置重写基准值
+                        优势：同步数据更好，数据完整性更好      
+                        劣势：要存储的数据量远远大于rdb,运行效率比rdb慢
+
+
+
+                配置文件位置：
+                    append only mode
+
+                    修改appendonly no -> yes
+
+                    重启，再执行语句就会出现 appendonly.aof 文件
+                     如果执行flushall aof 也会记录 ，所以要去 appendonly.aof 把flushall给删除掉再重启。redis内容就恢复了
+
+                修复appendonly.aof文件 
+
+                    执行 redis-check-aof --fix appendonly.aof   
+
+                配置策略：Appendfsync :Always 同步持久化 每次数据发生变化会被立刻执行记录到磁盘，性能差但是数据完整性好
+                                              Everysec 默认设置，每秒记录一次
+                                              nO 不同步  

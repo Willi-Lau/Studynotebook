@@ -1,0 +1,6 @@
+
+
+
+idea中service启动类是灰色，而且启动类经常自动消失解决方法
+
+https://blog.csdn.net/weixin_42661168/article/details/115365200

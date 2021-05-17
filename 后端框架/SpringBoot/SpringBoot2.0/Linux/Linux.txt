@@ -91,7 +91,7 @@ Linux 指令:
         查看开放的端口：
                 firewall-cmd --list-all
         增加允许访问的端口;
-                firewall-cmd --add-port=3333/tcp --permanent
+                firewall-cmd --add-port=6380/tcp --permanent
         重启防火墙
                 firewall-cmd --reload
         启动sshd
@@ -112,3 +112,5 @@ Linux 指令:
         
         
         mysql  https://blog.csdn.net/qq_37598011/article/details/93489404
+
+        查看指定端口是否使用 lsof -i : 端口号

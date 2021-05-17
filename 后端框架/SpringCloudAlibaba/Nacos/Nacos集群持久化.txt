@@ -27,6 +27,8 @@
             cd /opt/nacos/conf  vim cluster.conf 进去再出来一下
             
              cd /opt/nacos/bin
+                
+                这块需要手打
 
                 ./startup.sh - p 3333
 
