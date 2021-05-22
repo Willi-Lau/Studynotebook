@@ -114,3 +114,15 @@ Linux 指令:
         mysql  https://blog.csdn.net/qq_37598011/article/details/93489404
 
         查看指定端口是否使用 lsof -i : 端口号
+
+        从文件里替换：  %s/原内容/新内容
+                        e.g.   替换文件里全部得 6379 -> 6380    %s/6379/6380
+        
+        面试题：
+        常用基本命令：
+                进程类：
+                      systemctl
+
+
+                      
+                   
