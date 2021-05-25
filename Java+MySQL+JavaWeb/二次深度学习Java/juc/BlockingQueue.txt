@@ -23,7 +23,7 @@ BlockingQueue  FIFO   interface
 
 
     用法：
-
+ 
         方法类型        返回异常     返回特殊值         阻塞       阻塞超时***
         插入             add(e)       offer(e)        put(e)        offer(e,time,util)
         移除            remove()      poll()          take()       poll(time,util)
