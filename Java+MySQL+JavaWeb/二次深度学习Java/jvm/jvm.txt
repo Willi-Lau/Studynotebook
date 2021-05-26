@@ -21,3 +21,30 @@
       
 
        System.out.println(totalMemory/(double)1024/1024+"MB");
+    
+常用jvm 参数（可以在idea里设置）：  -- 可以用这个设置heap大小等提提高微服务工作能力
+        查看运行中java程序的指定jvm参数值
+        jps -l 查看进程号
+        jinfo -flag 类型 进程号   e.g.  jinfo -flag PrintGCDetails 17840
+        jinfo -flags 进程号 查看所有的运行模块
+
+        k v 型：
+            -XX:MetaspaceSize = ***  元空间大小
+            -XX:MaxTenuringThreshold = *** 新生代 ->养老区需要经过多少次淘汰 默认值 15
+        
+        boolean型：
+            -XX:-PrintGCDetails  没开启GC日志 -XX:后面是 + 则开启 -则关闭
+        
+        坑：
+            -Xms 等价于 -XX:InitialHeapSize 最小堆大小
+            -xmx 等价于 -XX:MaxHeapSize 最大堆大小
+            -Xmn   年轻代大小
+            -Xss   每个线程的堆栈大小
+        
+        IDEA里设置jvm参数：
+            Run -> Edit Configurations -> 选择类 -> 在 VM options里面设置jvm 参数
+        
+        查看所有的jvm家底 包括自己设置的和默认值的：
+            java -XX:+PrintFlagsInitial  因尼受
+                = 默认的
+                := 修改的更新值
