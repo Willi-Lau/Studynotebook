@@ -1,0 +1,101 @@
+StackOverFlowError  OutOfMemoeyError
+
+
+java.lang.StackOverFlowError:
+
+    //死循环 
+
+    public class StackOverFlowErrorDemo {
+    public static void main(String[] args) {
+        StackOverflowError();   //模拟出 StackOverFlowError
+    
+
+    }
+
+    public static void StackOverflowError() {
+        StackOverflowError();
+    }
+    }
+
+   
+java.lang.OutOfMemoryError: Java heap space
+
+        //对象太多，太大
+        byte[] bytes = new byte[100 * 1024 * 1024];
+         //or
+        String s = "str";
+        while (true){
+            s += UUID.randomUUID().toString().substring(1);
+            s.intern();
+            System.out.println(s);
+        }
+
+
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+        int i = 0;
+        List list = new ArrayList();
+        try {
+            while(true){
+                list.add(String.valueOf(i++).intern());   //.intern() 加入字符串厂常量池
+            }
+        } catch (Exception e) {
+            System.out.println("**********************8 i:"+i);
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

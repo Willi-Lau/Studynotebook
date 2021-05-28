@@ -1,0 +1,105 @@
+引用分为：
+    强引用，弱引用，软引用，虚引用
+
+位置：java.lang.ref.Reference
+
+
+    强引用：Reference
+        当内存不足时，JVM开始垃圾回收，对于强引用对象，就算是出现OOM也不会堆该对象进行回收，死都不收
+
+        强引用是我们最常见的普通对象引用，只要还有强引用指向一个对象，就能表明对象还活着，垃圾回收器不会碰这种对象。在Java中最常见的就是强引用
+        ，把一个对象赋给一个引用变量，这个引用变量就是一个强引用。当一个对象被强引用变量引用时，它处于可达状态，他是不可能被垃圾回收机制回收的。
+        即使该对象以后永远都不会被用到JVM也不会回收。因此强引用是造成Java内存泄露的主要原因
+
+        对于一个普通的对象，如果没有其他的引用关系，只要超过引用的作用或显式的将强引用赋值为null，一般就认为可以被垃圾收集的了
+
+
+    软引用 SoftReference：
+        软引用是一种相对弱化的引用，需要使用java.lang.ref.SoftReference来实现，可以让对象豁免一些垃圾收集。
+        对于只有软引用的对象来说
+            当系统内存足够的时候 不会被回收
+            当系统内部不足的时候 会被回收
+        实际应用：
+            用一个HashMap来保存图片的路径和相应图片对象关联的软引用之间的映射关系，在内存不足时，JVM会自动回收这些缓存图片对象所占用的空间，从而
+            有效的避免了OOM问题
+
+    弱引用 WeakReference
+          不管内存是否足够都执行GC 使用java.lang.ref.WeakReference执行
+
+          WeakHashMap
+
+            里面的值 除基本类型 只要经历一次GC就会被删除
+            e.g.
+                    WeakHashMap<Integer,Integer> weakHashMap = new WeakHashMap();
+
+                    weakHashMap.put(new Integer(5),new Integer(8));
+                    System.out.println(weakHashMap);
+                    System.gc();   //执行GC后 weakhashmap里引用类型的所有东西都会被清理
+                    System.out.println( "***********"+weakHashMap);
+
+
+    虚引用 PhantomReference
+        顾名思义，就是形同虚设，与其他几种引用都不同，虚引用并不会决定对象的生命周期。
+        如果一个对象仅持有虚引用的话，那么就和没有任何引用一样，在任何时候都可能被垃圾回收，他不能单独使用也不能通过访问对象，虚引用必须和引用队列
+        ReferenceQueue 联合使用。
+
+        虚引用的主要作用是跟踪对象被垃圾回收的状态。仅仅是提供了一种确保对象被finalize以后，做某些事情的机制。
+        PhantomReference的get方法总是返回null,因此无法访问对应的引用对象。其意义在于说明一个对象已经进入finalization阶段。可以被gc回收，用来
+        实现比finalization机制更灵活的回收操作
+
+        换句话说，设置虚引用关联的唯一目的，就是在这和对象被收集器回收的时候收到一个系统通知或者后续添加进一步处理。
+        Java技术允许使用finalize() 方法在垃圾收集器将对象从内存中清之前做必要的清理工作
+
+        说白了要死还没死 虚引用在引用队列呆一会再死
+    
+    引用队列 ReferenceQueue 
+
+        实现:
+            Object o7 = new Object();
+                ReferenceQueue<Object> queue = new ReferenceQueue<>();
+                WeakReference <Object> weakReference = new WeakReference<Object>(o7,queue);  //传入对象和 queue
+            //gc前查看
+            System.out.println("***************************");
+            System.out.println(o7);
+            System.out.println(weakReference.get());
+            System.out.println(queue.poll());
+
+            //gc后查看
+            o7 = null;
+            System.gc();
+            System.out.println(o7);
+            System.out.println(weakReference.get());
+            System.out.println(queue.poll());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
