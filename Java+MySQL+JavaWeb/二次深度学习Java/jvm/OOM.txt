@@ -31,7 +31,7 @@ java.lang.OutOfMemoryError: Java heap space
         }
 
 
-java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded （GC失败）
 
         int i = 0;
         List list = new ArrayList();
@@ -45,11 +45,38 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
         }
 
 
+java.lang.OutOfMemoryError: Direct buffer memory （本地内存不够了）
+
+        System.out.println("配置的maxDirectMemory "+(sun.misc.VM.maxDirectMemory()/(double)1024/1024)+"mb");
+        ByteBuffer allocate = ByteBuffer.allocateDirect(1024 * 1024 * 1024);
 
 
+java.lang.OutOfMemoryError: Metaspace
 
+            static class OOMTest { }
 
+            int i = 0;
+            try {
+                while (true){
+                    //一直创建类 通过cligb
+                    i++;
+                    Enhancer enhancer = new Enhancer();
+                    enhancer.setSuperclass(OOMTest.class);
+                    enhancer.setUseCache(false);
+                    enhancer.setCallback(new MethodInterceptor() {
 
+                        @Override
+                        public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+                            return methodProxy.invokeSuper(o,args);
+                        }
+                    });
+                    enhancer.create();
+                }
+            }
+            catch (Throwable e){
+                System.out.println(i);
+                e.printStackTrace();
+            }
 
 
 
