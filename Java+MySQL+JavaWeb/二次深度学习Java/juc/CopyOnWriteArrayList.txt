@@ -1,0 +1,119 @@
+
+方法分析：
+remove:
+    private boolean remove(Object o, Object[] snapshot, int index) {
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                Object[] current = getArray();
+                int len = current.length;
+                if (snapshot != current) findIndex: {    传进来的数组 ！=  原始 数组    这里的功能就是找到 期望删除的对象o在  原始数组中的下标
+                    int prefix = Math.min(index, len);     找到 下标 和原始数组 里短的
+                    for (int i = 0; i < prefix; i++) {    遍历
+                        if (current[i] != snapshot[i] && eq(o, current[i])) {   原始 和传递 数组 值不同  并且 删除的值和原始数组对应的值相同
+                            index = i;                找打index
+                            break findIndex;   跳出if  执行删除部分
+                        }
+                    }
+                    if (index >= len)
+                        return false;                下标异常
+                    if (current[index] == o)
+                        break findIndex;                 跳出if  执行删除部分
+                    index = indexOf(o, current, index, len);
+                    if (index < 0)
+                        return false;             下标异常
+                }
+                Object[] newElements = new Object[len - 1];
+                System.arraycopy(current, 0, newElements, 0, index);
+                System.arraycopy(current, index + 1,
+                                newElements, index,
+                                len - index - 1);
+                setArray(newElements);
+                return true;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

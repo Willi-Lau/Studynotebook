@@ -1,0 +1,61 @@
+
+
+    watch 关注
+    fork 克隆到自己的账户
+    star 点赞
+    git clone 下载
+
+    github 搜索：
+        in:
+                 xxx关键词 in:name / description /readme
+                 name 项目名包含 xxx
+                 description 项目描述包含 xxx
+                 readme  项目的readme文件包含 xxx
+                 组合使用 : xxx in：name,readme
+        
+        stars:
+            springboot stars:>5000   查找springboot项目点赞数 > 5000的项目
+            springcloud start:100..999   查找点赞 100-999的项目
+        forks:
+             springboot forks:>5000   查找springboot项目forks数 > 5000的项目
+             springboot forks:>500 stars:100..800 forks>500并且点赞100-800之间的项目
+        awesome：
+            awesome xxx   查找最优秀的xxx项目
+        #L
+            #L8 高亮显示第八行
+            e.g.
+            https://github.com/Willi-Lau/LGDJavaStudy/blob/master/src/main/java/com/lwy/JUC/ArrayListThreadStudy.java#L8
+
+            #L8-L20 高亮显示 8-20行
+        
+        快捷键t
+             在一个项目里按一下小写的t 类会以列表的形式展示
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

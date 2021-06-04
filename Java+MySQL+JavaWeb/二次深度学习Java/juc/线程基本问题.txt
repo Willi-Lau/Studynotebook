@@ -1,4 +1,4 @@
-Java中线程的状态分为6种。
+Java中线程的状态分为6种。（生命周期）
 
 1. 初始(NEW)：新创建了一个线程对象，但还没有调用start()方法。
 2. 运行(RUNNABLE)：Java线程中将就绪（ready）和运行中（running）两种状态笼统的称为“运行”。
@@ -7,3 +7,24 @@ Java中线程的状态分为6种。
 4. 等待(WAITING)：进入该状态的线程需要等待其他线程做出一些特定动作（通知或中断）。
 5. 超时等待(TIMED_WAITING)：该状态不同于WAITING，它可以在指定的时间后自行返回。
 6. 终止(TERMINATED)：表示该线程已经执行完毕
+
+
+
+  线程池生命周期：
+
+     https://developer.aliyun.com/article/511237
+
+    线程池的生命周期，即线程池从创建、使用到最终销毁所经历的过程。ThreadPoolExecutor将线程池的生命周期划分为5个状态
+    ，分别是：running、shutdown、stop、tidying、terminated。
+
+
+    running：线程池创建后的状态，能够接收新任务，同时处理任务队列中的任务；
+    shutdown：执行shutdown()后，不接收新任务，但是会处理任务队列中的任务；
+    stop：执行shutdownNow()后，不接收新任务，也不处理任务队列中的任务，同时会中断正在执行的任务；
+    tidying：当所有任务都已被终止，工作线程数为0后，状态变为tidying状态，然后运行terminated()钩子方法；
+    terminated：当terminated()钩子方法执行完毕后，变为此状态。此时ThreadPoolExecutor已被完全终止；
+    
+线程池生命周期
+    创建之初，状态为RUNNNG
+    调用了ExecutorService#shutdown：将之前已经提交上来的任务进行处理（包括队列中的），但是不再接收新任务（使用回绝策略回绝新任务），状态SHUNTDOWN
+    调用了ExecutorService#shutdownNow：取消所有运行中的任务（包括队列中的），并且不再接收新任务（使用回绝策略回绝新任务），状态STOP/TERMINATED

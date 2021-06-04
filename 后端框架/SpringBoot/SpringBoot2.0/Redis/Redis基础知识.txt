@@ -389,7 +389,7 @@ Redis:
                 
                 哨兵模式：
                         主库死亡不用再手动选定新主库，由Redis从库通过投票选出来
-                        https://www.jianshu.com/p/06ab9daf921d
+                        https://w ww.jianshu.com/p/06ab9daf921d
 
         
 

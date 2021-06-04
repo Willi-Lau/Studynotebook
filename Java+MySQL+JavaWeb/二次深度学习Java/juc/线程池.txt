@@ -50,16 +50,26 @@ ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(4, 5, 1L, TimeUnit.MILL
 
     四种拒绝策略：
 
-        AbortPolicy(默认)：直接抛出RejectedExecutionException异常阻止系统正常运行。
+        AbortPolicy(默认)：丢弃任务,直接抛出RejectedExecutionException异常阻止系统正常运行。
         CallerRunsPolicy: “调用者运行”一种调节机制，该策略既不会抛弃任务，也不会抛出异常，而是将某些任务回退到调用者，从而降低任务量 (回退)
-        DiscardOldestPolicy:抛弃队列中等待最久的任务，然后把当前任务加入队列中尝试再次提交当前任务
-        DiscardPolicy:该策略默默的丢弃无法处理的任务，没有任何处理也不抛出异常。如果允许任务丢失，这是最好的策略 
+        DiscardOldestPolicy:丢弃队列最前面的任务,抛弃队列中等待最久的任务，然后把当前任务加入队列中尝试再次提交当前任务
+        DiscardPolicy:丢弃任务,该策略默默的丢弃无法处理的任务，没有任何处理也不抛出异常。如果允许任务丢失，这是最好的策略 
+
+    线程池生命周期：
+
+     https://developer.aliyun.com/article/511237
+
+    线程池的生命周期，即线程池从创建、使用到最终销毁所经历的过程。ThreadPoolExecutor将线程池的生命周期划分为5个状态
+    ，分别是：running、shutdown、stop、tidying、terminated。
 
 
-
-
-
-
-
-
-
+    running：线程池创建后的状态，能够接收新任务，同时处理任务队列中的任务；
+    shutdown：执行shutdown()后，不接收新任务，但是会处理任务队列中的任务；
+    stop：执行shutdownNow()后，不接收新任务，也不处理任务队列中的任务，同时会中断正在执行的任务；
+    tidying：当所有任务都已被终止，工作线程数为0后，状态变为tidying状态，然后运行terminated()钩子方法；
+    terminated：当terminated()钩子方法执行完毕后，变为此状态。此时ThreadPoolExecutor已被完全终止；
+    
+线程池生命周期
+    创建之初，状态为RUNNNG
+    调用了ExecutorService#shutdown：将之前已经提交上来的任务进行处理（包括队列中的），但是不再接收新任务（使用回绝策略回绝新任务），状态SHUNTDOWN
+    调用了ExecutorService#shutdownNow：取消所有运行中的任务（包括队列中的），并且不再接收新任务（使用回绝策略回绝新任务），状态STOP/TERMINATED

@@ -42,7 +42,7 @@
             -XX:MaxTenuringThreshold = *** 新生代 ->养老区需要经过多少次淘汰 默认值 15
         
         boolean型：-XX:后面是 + 则开启 -则关闭
-            -XX:-PrintGCDetails  没开启GC日志 
+            -XX:+PrintGCDetails  没开启GC日志 
             -XX:+UseSerialGC 串行垃圾回收器
             -XX:+UseParalleGC 并行垃圾回收器
         
@@ -51,5 +51,62 @@
             -Xmx 等价于 -XX:MaxHeapSize 最大堆大小   Young + Old  默认为物理内存的1/4
             -Xmn   年轻代大小 Eden + s0 + s1  = Young 
             -Xss   每个线程的堆栈大小 根据不同的OS 默认值不同
+    
+
+    性能分析工具：在jdk包下bin文件夹里
+        jinfo
+        jps
+        jmap
+        jstat
+        jstack
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         
         

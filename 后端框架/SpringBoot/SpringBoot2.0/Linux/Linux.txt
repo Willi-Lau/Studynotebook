@@ -123,6 +123,7 @@ Linux 指令:
                 进程类：
                       systemctl
 
+        ls -a 查看隐藏文件 交换文件
 
                       
                    

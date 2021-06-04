@@ -58,7 +58,7 @@ java.lang.OutOfMemoryError: Metaspace
             int i = 0;
             try {
                 while (true){
-                    //一直创建类 通过cligb
+                    
                     i++;
                     Enhancer enhancer = new Enhancer();
                     enhancer.setSuperclass(OOMTest.class);

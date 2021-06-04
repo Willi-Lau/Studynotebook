@@ -1,5 +1,7 @@
 https://blog.csdn.net/mulinsen77/article/details/84583716
 
+JUC底层就是AQS
+
 
 AQS原理:
     AQS：AbstractQuenedSynchronizer抽象的队列式同步器。是除了java自带的synchronized关键字之外的锁机制。
@@ -10,6 +12,8 @@ AQS原理:
         被请求的共享资源被占用，那么就需要一套线程阻塞等待以及被唤醒时锁分配的机制，这个机制AQS是用CLH队列锁实现的，即将暂时获取
         不到锁的线程加入到队列中。CLH（Craig，Landin，and Hagersten）队列是一个虚拟的双向队列，虚拟的双向队列即不存在队列实例，
         仅存在节点之间的关联关系。
+
+        CLH链表每一个值就是这个线程 Thread
 
         AQS是将每一条请求共享资源的线程封装成一个CLH锁队列的一个结点（Node），来实现锁的分配。用大白话来说，AQS就是基于CLH队列，
         用volatile修饰共享变量state，线程通过CAS去改变状态符，成功则获取锁成功，失败则进入等待队列，等待被唤醒。
@@ -30,6 +34,49 @@ AQS原理:
 
     不同的自定义的同步器争用共享资源的方式也不同。
 
+
+
+    AQS源码：
+        https://www.bilibili.com/video/BV1Hy4y1B78T?p=19   <- 视频 周阳
+
+        https://blog.csdn.net/TZ845195485/article/details/109210095
+
+        https://blog.csdn.net/luofenghan/article/details/75065001   <- 最全
+
+LockSupport
+
+    用于创建锁和其他同步类的基本阻塞原语（阻塞线程）
+    LockSupport中的park() 和 unpark()作用分别是阻塞线程和解除阻塞线程 
+
+    LockSupport使用了一种名为Permit(许可) 的概念来做到阻塞和唤醒线程的功能，每一个线程都有一个许可(permit)
+    permit只有两个值 0和1 默认是0
+    可以把permit看成是一种Semaphore 只有(0,1) 与信号量不同的是许可证上限就是1
+
+     无论是正常的先阻塞后唤醒，还是错误的先唤醒后等待 LockSupport照样支持 synchronized lock 先唤醒后等待就会报错
+
+    阻塞：park() 
+         底层是由UnSafe类实现（CAS）
+
+        LockSupport.park();  //被阻塞
+
+    唤醒： unpark()
+         底层是由UnSafe类实现（CAS）
+
+        LockSupport.unpark(a);
+    
+    e.g.
+         Thread a = new Thread(()->{
+            System.out.println("come in");
+            LockSupport.park();              //被阻塞
+            System.out.println("唤醒");
+        },"A");
+
+        a.start();
+
+        new Thread(()->{
+            LockSupport.unpark(a);          //唤醒线程 这里需要传递一个线程进去
+            System.out.println("b 唤醒 a");
+        },"B").start();
 
 
 

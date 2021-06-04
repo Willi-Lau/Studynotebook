@@ -309,6 +309,10 @@ having子句和where子句的功能是相同的都是做数据的筛选
 
 
 
+把表按a,b两个字段分组进行查询后，再按每组重复记录个数由大到小排序输出。
+如果显示字段加上count(*)，按以下的语句查询就看的更清楚了。
+select a,b,count(*) from 表名 group by a,b order by count(*) desc;
+
 
 表连接
    内连接
