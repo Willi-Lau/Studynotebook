@@ -1,3 +1,6 @@
+HashSet LinkedHashSet
+
+
 
 线程不安全
 线程安全替换：new CopyOnWriteArraySet<>();
@@ -9,7 +12,29 @@ HashSet 底层就是 HashMap
 
    set集合不可存储重复值，重复值村不会存进去，可以用于除重复 
 
+   可以存null
 
+   子类有LinkedHashSet
+
+   比较 LinkedHashSet 和HashSet
+   LinkedHashSet可以按照输入顺序输出值，HashSet就是随机输出
+    e.g.
+
+        HashSet set = new LinkedHashSet();
+        set.add(11111);
+        set.add(22222);
+        set.add(33333);
+        set.add(44444);
+        set.forEach(System.out::println);  ->    1 2 3 4
+
+        HashSet set = new HashSet();
+        set.add(11111);
+        set.add(22222);
+        set.add(33333);
+        set.add(44444);
+        set.forEach(System.out::println);  ->    2 3 1 4 / 2 1 3 4 ....随机输出
+   
+  
 
 
 
@@ -27,3 +52,8 @@ HashSet 底层就是 HashMap
 
       //改正措施
         CopyOnWriteArraySet<Object> arraySet = new CopyOnWriteArraySet<>();
+
+
+
+
+
