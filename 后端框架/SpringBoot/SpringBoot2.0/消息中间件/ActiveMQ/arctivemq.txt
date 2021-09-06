@@ -5,6 +5,8 @@
 
 http://localhost:8161/ 前台端口号
 
+ *********************     https://blog.csdn.net/weixin_41270824/article/details/105549281 MQ面试题   ***************
+
 windows 启动：cd D:\ActiveMQ\apache-activemq-5.16.1\bin\win64
              选择 activemq.bat 点击 或者 输入 activemq.bat start
 
@@ -551,9 +553,12 @@ MQ作用：解耦 削峰 异步
 
 
 
+            事务相关：
+                https://www.cnblogs.com/heliusKing/p/12244047.html
 
+              死信队列什么时候用：https://www.cnblogs.com/east7/p/13728510.html
 
-
+              死信队列和事务搭配 事务回滚就记录
 
 
 

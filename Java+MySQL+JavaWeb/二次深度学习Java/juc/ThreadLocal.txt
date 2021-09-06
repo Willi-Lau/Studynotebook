@@ -15,6 +15,10 @@ ThreadLocal
             将ThreadLocal变量定义成private static，这样就一直存在ThreadLocal的强引用，也就能保证任何时候都能通过ThreadLocal的弱引用访
             问到Entry的value值，进而清除掉 。
 
+            ThreadLoacl 底层的map key 存的是 这个ThreadLoacl对象 value 存的是 值
+
+            每一个线程都维护了一个自己的ThreadLocalMap 底层是一个数组 存的Entry(key,value)
+
 
 
 

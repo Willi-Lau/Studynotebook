@@ -41,7 +41,7 @@ BlockingQueue  FIFO   interface
     阻塞超时：
             阻塞一段时间后退出
 
-
+        阻塞队列底层使用 ReentrantLock 实现同步 以及LockSupport
 
 
 

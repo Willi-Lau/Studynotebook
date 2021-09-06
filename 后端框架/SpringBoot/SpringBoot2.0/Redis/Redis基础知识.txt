@@ -122,7 +122,7 @@ Redis:
 
                         CA : 单点集群，满足一致性，可用性得系统，通常在可扩展性不太强大   RDBMS  Oracle
                         CP:  满足一致性，分区容错性，通常性能都不好           MongoDB HBase Redis
-                        AP: 满足可用性，分区容错性得系统，一致性都不好   大多数选择  数据量太大不能保证一致性  memcached
+                        AP: 满足可用性，分区容错性得系统，一致性都不好   大多数选择  数据量太大不能保证一致性  memcached 集群Redis
 
 
 
@@ -171,6 +171,23 @@ Redis:
                 msetnx k1 v1 k2 v2...   同时设置多个k v 如果多个key 都不存在则成功，有一个存在所有的都失败
                                         e.g. set k1 v1  msetnx k1 v2 k2 v2  -> (integer) 0     失败  因为k1 存在 则此次存的所有值都存不进去
                                              set k1 v1  msetnx k2 v2 k3 v3  -> （Integer）1 成功 
+        
+        ***  Hash:集合  *** 可以映射对象
+                hset mapname k v    新建（存在则更新） mapname 值得键位 k  值得值为 v
+                                        e.g. hset user age 11
+                hget mapname k      获取 mapname 中 键为k 得值
+                                        e.g. hget user age - > 11
+                hmset mapname k1 v1 k2 v2 k3 v3    新建（存在则更新） mapname 多个 键值信息
+                hmget mapname k1 k2 k3..           获取多个k值对应的v值
+                hgetall mapname                    获取所有的k值对应得v值
+                hdel mapname k                     删除指定map下得指定key  
+                hlen mapname                       返回这个hash得长度
+                hexists mapname k                   查找mapname里是否包括 指定key
+                hkeys mapname                      查找mapname下所有的key
+                hvals mapname                      查找mapname下所有的value
+                hincrby mapname k num              给mapname得k属性得 v + num (num 为 int)
+                hincrbyfloat mapname k num         给mapname得k属性得 v + num (num 为 float)
+                hsetnx mapname k v                 给mapname设置k属性如果存在就不设置不存在再设置
 
             List：  链表
                 lpush  listname1 n1 n2 n3 n4 n5      创建(存在则添加)一个Stack filo 式链表 名字为 listname 值为n1 n2 n3 n4 n5   
@@ -217,31 +234,14 @@ Redis:
                                              sadd set2 1 2 3 a b 
                                              sdiff set set2 -> 4 5
                 sinter set1 set2      查找set1 set2得交集
-                sinion set1 set2      查找set1 set2得并集
-             
-         ***  Hash:集合  *** 可以映射对象
-                hset mapname k v    新建（存在则更新） mapname 值得键位 k  值得值为 v
-                                        e.g. hset user age 11
-                hget mapname k      获取 mapname 中 键为k 得值
-                                        e.g. hget user age - > 11
-                hmset mapname k1 v1 k2 v2 k3 v3    新建（存在则更新） mapname 多个 键值信息
-                hmget mapname k1 k2 k3..           获取多个k值对应的v值
-                hgetall mapname                    获取所有的k值对应得v值
-                hdel mapname k                     删除指定map下得指定key  
-                hlen mapname                       返回这个hash得长度
-                hexist mapname k                   查找mapname里是否包括 指定key
-                hkeys mapname                      查找mapname下所有的key
-                hvals mapname                      查找mapname下所有的value
-                hincrby mapname k num              给mapname得k属性得 v + num (num 为 int)
-                hincrbyfloat mapname k num         给mapname得k属性得 v + num (num 为 float)
-                hsetnx mapname k v                 给mapname设置k属性如果存在就不设置不存在再设置
-        
-        Zset:有序集合
+                sunion set1 set2      查找set1 set2得并集
+              
+        Zset:有序集合（内容不允许重复,score可以重复）
                 zset就是在之前得set基础上加一个score值
-                set setname k1 k2 k3
-                zset zsetname score1 k1 score2 k2 score3 k3  
+                //set setname k1 k2 k3
+                zadd zsetname score1 k1 score2 k2 score3 k3  
 
-                zset zsetname score1 k1 score2 k2 score3 k3     设置zsetname score1 k1 ..属性  
+                zadd zsetname score1 k1 score2 k2 score3 k3     设置zsetname score1 k1 ..属性  
                                         e.g. zadd zset1 60 k1 70 k2
                 zrange zsetname start stop      遍历zsetname 
                                         e.g.    zrange zset1 0 -1 -> k1 k2
@@ -251,15 +251,20 @@ Redis:
                                        （ 为不包含  （startscore 为不包含startscore
                                        limit  对结果集进行截取
                 zrem zsetname k       根据k值删除对应的k和score值
-                zcard zsetname        获取下一个坐标值 (一个k 加一个score算一组)
+                zcard zsetname        获取集合元素数量
                 zcount zsetname startscore stopscore   统计指定score区间内个数
-                zranke zsetname k                      获取指定k得下标值
+                zranke zsetname k                      获取指定元素排名 小到大
                 zscore zsetname k                      获取指定k得score值
-                zrevrange zsetname start stop      倒叙遍历zsetname
+                zrevrange zsetname start stop           获取指定元素排名 大道小
+                zincrby   增加
 
 
-
-
+        bitmap:   string                
+                setbit getbit bitcount bittop (两个bitmap位置映射)
+        hyperloglog   string
+                pfadd pfcount 
+        geo:  zset
+                geoadd geopos（返回坐标） geohash(返回hash) georadius（给定坐标附近）  可以用zset zrange 便利
                                       
 
 
@@ -410,7 +415,7 @@ Redis:
                                 redis-cli -p 6379       客户端入口
                         
                         启动:
-                               cd /usr/local/bin
+                                cd /usr/local/bin
                                 redis-server /opt/redisconf/redis.conf
                         
                         设置后台启动：

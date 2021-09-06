@@ -1,0 +1,117 @@
+使用：
+       <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.13.4</version>
+        </dependency>
+
+ redis bloom ,分布式锁 都在这里
+    
+    @Configuration
+public class RedisConfig {
+
+    @Bean
+    public RedisTemplate<String, Serializable> redisTemplate(LettuceConnectionFactory connectionFactory)
+    {
+        RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
+
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setConnectionFactory(connectionFactory);
+
+        return redisTemplate;
+    }
+
+    @Bean
+    public Redisson redisson()
+    {
+        Config config = new Config();
+
+        config.useSingleServer().setAddress("redis://192.168.111.140:6379").setDatabase(0);
+
+        return (Redisson) Redisson.create(config);
+    }
+}
+
+
+分布式锁使用：
+     @Autowired
+    private Redisson redisson;
+
+    上锁：
+        String key = "zzyyRedisLock";
+
+        RLock redissonLock = redisson.getLock(key);
+        redissonLock.lock();
+    放锁：
+        finally {
+            if(redissonLock.isLocked() && redissonLock.isHeldByCurrentThread())   //判断是不是当前线程的锁防止高并发
+            {
+              redissonLock.unlock();
+            }
+        }
+
+
+bloom使用：
+
+    public static final int _1W = 10000;
+
+    //布隆过滤器里预计要插入多少数据
+    public static int size = 100 * _1W;
+    //误判率,它越小误判的个数也就越少
+    public static double fpp = 0.03;
+
+    static RedissonClient redissonClient = null;  //jedis
+    static RBloomFilter rBloomFilter = null;  //redis版内置的布隆过滤器
+
+    @Resource
+    RedisTemplate redisTemplate;
+
+
+    static
+    {
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://192.168.111.147:6379").setDatabase(0);
+    
+        redissonClient = Redisson.create(config);   ------》 构造redisson
+     
+        rBloomFilter = redissonClient.getBloomFilter("phoneListBloomFilter",new StringCodec());  ---》 通过redisson构造rBloomFilter
+        rBloomFilter.tryInit(size,fpp);
+      
+        rBloomFilter.add("10086");  ---》 增加
+       rBloomFilter.contains(IDNumber)   ---》 查看是否包含
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

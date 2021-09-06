@@ -1,0 +1,190 @@
+
+
+
+        @Lookup注解 Spring 注解 写在方法上
+            单例组件依赖非单例组件，非单例组件获取需要使用方法
+            并且 @Bean 注册的@Lookup 不生效
+            想·
+            e.g.
+                Person 为 singleton 
+                Cat    为 prototype
+
+                然后再 Person 里 @Autowire Cat
+
+                然后获取 Person 再通过get获取 Cat 
+
+                这时产生的Cat也是单例的，因为Person都是一样的，这时要获取不同的Cat，可以在Cat 的getter方法上@Lookup 就获取的是原型的了
+
+
+        Spring启动：
+            初始化传入一个容器，加载容器全部信息
+        
+
+        源码：
+            接口 BeanDefitionRegister  档案室 底层是 map (name,beandifition) -> 实现类 DefaultListableBeanFactory
+
+            实际存储IOC容器的地方：接口 ApplicationContext  的实现类 比如  类 GenericApplicationContext ，也有别的实现类
+
+            
+
+            初始化过程：看图
+                BeanFactory 里的部分都采用的是 组合模式，没有采用继承的模式
+                DefaultListableBeanFactory 档案馆 收集了所有的图纸
+                读取器采用策略模式 根据不同的 .xml 或者 class 信息来进行存储 加载
+                EncodeResource 采用适配器模式 对接 Resource 资源 和InputStreamSource    ---》  调用方法
+                使用第三方Document 工具，把整个.xml变成大的Document文档
+                再把Document解析成BeanDefition 然后存储到 BeanDefitionHolder中 还存储了beanName
+                然后把BeanDefitionHolder 信息 注册到 BeanDefitionRegister 然后丢弃 BeanDefitionHolder
+                先创建完BeanDefition ，再去解析Bean 里面的信息 比如注入的属性 值等等最终填充完BeanDefition
+
+           
+
+            bean 创建：看图
+                bean 再创建的时候采用了策略模式，不同的种类有不同的策略
+                策略：（环境类是工厂）
+                    1.底层反射，无参构造器创建
+                    2.cglib 增强器Enchancer 代理创建
+
+
+                所有单例模式对象都会先从单例池获取没有才会创建 single 
+
+                当scope 取值为singleton 时，在加载Spring核心文件时对象就被创建
+                prototype时，在每一次getBean方法执行时创建对象
+
+            aware:
+                帮助装配Spirng底层组件，让bean可以完成骚操作
+                Spring Aware的目的是为了让Bean获得Spring容器的服务。因为ApplicationContext接口集成了MessageSource接口、
+                ApplicationEventPublisher接口和ResourceLoader接口，因此当Bean继承自ApplicationContextAware的时候就可
+                以得到Spring容器的所有服务。
+
+                常见Aware的作用
+                    BeanNameAware 获得到容器中Bean的名称
+                    BeanFactoryAware 获得当前bean Factory,从而调用容器的服务
+                    ApplicationContextAware 获得当前的application context从而调用容器的服务
+                    MessageSourceAware 得到message source从而得到文本信息
+                    ApplicationEventPublisherAware 应用时间发布器,用于发布事件
+                    ResourceLoaderAware 获取资源加载器,可以获得外部资源文件
+
+
+            单例对象池：和BeanDefitionRegister 不同 
+                    享元模式
+                    DefaultSingltonBeanRegister 是 BeanDefition 池 DefaultListableBeanFactory 父类
+
+                    IOC就是享元模式的单例
+            
+            普通bean 工厂bean区别
+                普通bean: Person = 普通bean,注册组件对象就是Person，类型就是Person
+                工厂bean: 工厂 MyFactory 注册的不是 MyFactory 而是 MyFactory 调用getObject() 返回的对象
+                          自定义工厂对象要实现 FactoryBean接口
+                          Mybatis整合Spring 用的这个 
+
+            Spring整个BeanFactory 都是模板模式
+
+    *******   后置处理器：重点
+                bean增强 都是由后置处理器实现
+                BeanPostProcessor  增强普通组件
+                BeanFactoryProcessor 增强工厂
+
+
+
+    Spring aop顺序
+
+    Spring4
+
+        前置通知===目标方法===后置通知===返回通知/异常通知
+
+    Spring5
+
+        前置通知===目标方法===返回通知/异常通知===后置通知
+    
+        try{
+
+        前置通知
+        目标方法的执行
+        返回通知
+
+        }catch(){
+
+            异常通知
+
+        }finally{
+
+            后置通知
+            
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

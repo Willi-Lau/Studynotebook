@@ -1,0 +1,19 @@
+/**
+ * create by: liuweiyi
+ * description: TODO
+ * create time: 2021/6/30 19:19
+ *    实现原理：
+ *      lru里维护四个 
+ *                  一个是一个hashmap<Object,Node<object,object>>
+ *                  一个是一个双向链表 list<Node>
+ *                  一个坑位阈值 
+ *                  一个Node
+ *                  
+ *                  hashmap 用来 存储数据 查询数据
+ *                  list 保证顺序  每次执行添加，或者查询 都把对应的node 移动到最前面 这样可以保证最后一个是最不被使用的
+ *    
+ *    
+ *    
+  * @Param: null
+ * @return
+ */

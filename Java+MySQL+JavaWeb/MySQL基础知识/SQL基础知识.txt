@@ -363,6 +363,7 @@ select a,b,count(*) from 表名 group by a,b order by count(*) desc;
           select 成绩 from xs_kc where 课程号='101');
 
 
+
 INSERT语句
     INSERT INTO t_dept（deptno,dname,loc） VALUE（0,“后勤部”，“北京”）
     #若需插入多条，在后面加就可以
@@ -713,7 +714,7 @@ delete语句：
 
 
 
-
+企鹅窝群翁·1
 
 
 

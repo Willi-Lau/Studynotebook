@@ -42,4 +42,7 @@
 
                 配置策略：Appendfsync :Always 同步持久化 每次数据发生变化会被立刻执行记录到磁盘，性能差但是数据完整性好
                                               Everysec 默认设置，每秒记录一次
-                                              nO 不同步  
+                                              nO 不同步         
+                
+                aof:
+                        https://blog.csdn.net/luolaifa000/article/details/84178289

@@ -2,7 +2,7 @@ Linux 变慢优化：
     命令        功能
     top         查看所有进程
     uptime      查看系统负载
-    vmstat -n 2 3 查看CPU每2秒采样一次，采样3个
+    vmstat -n 2 3 查看CPU每2秒采样一次，采样3个 查看进程数阻塞占用空间等信息
     mpstat -P ALL 2 查看所有cpu进程数
     pidstat -u 1 -p 进程编号 查看每一个进程使用cpu用量分析
     free -m        查看内存大小 单位m
@@ -10,8 +10,18 @@ Linux 变慢优化：
     iostat -xdk 2 3 磁盘IO性能评估
     ifstat           查看网络io
 
+    常用命令：
+
+        1，lsof -i:端口号
+
+        2，netstat -tunlp|grep 端口号
+
+        这两个命令都可以查看端口被什么进程占用
 
 
+        2、查看服务器所有端口
+
+        netstat -ntlp
 
 
 

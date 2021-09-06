@@ -73,3 +73,13 @@ ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(4, 5, 1L, TimeUnit.MILL
     创建之初，状态为RUNNNG
     调用了ExecutorService#shutdown：将之前已经提交上来的任务进行处理（包括队列中的），但是不再接收新任务（使用回绝策略回绝新任务），状态SHUNTDOWN
     调用了ExecutorService#shutdownNow：取消所有运行中的任务（包括队列中的），并且不再接收新任务（使用回绝策略回绝新任务），状态STOP/TERMINATED
+
+
+    IO密集型
+        最佳线程数目 = （（线程等待时间+线程CPU时间）/线程CPU时间 ）* CPU数目
+    CPU密集型
+        最佳线程数目 = CPU数量 + 1；
+
+
+
+

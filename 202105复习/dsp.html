@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Untitled Document</title>
+  <link rel="stylesheet" type="text/css" href="style/css.css" />
+  <script type="text/javascript">
+  
+   /*
+    * 定义一个函数，专门用来为指定元素绑定单击响应函数
+    *  参数：
+    *   idStr 要绑定单击响应函数的对象的id属性值
+    *   fun 事件的回调函数，当单击元素时，该函数将会被触发
+    */
+   function myClick(idStr , fun){
+    var btn = document.getElementById(idStr);
+    btn.onclick = fun;
+   }
+  
+   window.onload = function(){
+    
+    //为id为btn01的按钮绑定一个单击响应函数
+    var btn01 = document.getElementById("btn01");
+    btn01.onclick = function(){
+     //查找#bj节点
+     var bj = document.getElementById("bj");
+     //打印bj
+     //innerHTML 通过这个属性可以获取到元素内部的html代码
+     alert(bj.innerHTML);
+    };
+    
+    
+    //为id为btn02的按钮绑定一个单击响应函数
+    var btn02 = document.getElementById("btn02");
+    btn02.onclick = function(){
+     //查找所有li节点
+     //getElementsByTagName()可以根据标签名来获取一组元素节点对象
+     //这个方法会给我们返回一个类数组对象，所有查询到的元素都会封装到对象中
+     //即使查询到的元素只有一个，也会封装到数组中返回
+     var lis = document.getElementsByTagName("li");
+     
+     //打印lis
+     //alert(lis.length);
+     
+     //变量lis
+     for(var i=0 ; i<lis.length ; i++){
+      alert(lis[i].innerHTML);
+     }
+    };
+    
+    
+    //为id为btn03的按钮绑定一个单击响应函数
+    var btn03 = document.getElementById("btn03");
+    btn03.onclick = function(){
+     //查找name=gender的所有节点
+     var inputs = document.getElementsByName("gender");
+     
+     //alert(inputs.length);
+     
+     for(var i=0 ; i<inputs.length ; i++){
+      /*
+       * innerHTML用于获取元素内部的HTML代码的
+       *  对于自结束标签，这个属性没有意义
+       */
+      //alert(inputs[i].innerHTML);
+      /*
+       * 如果需要读取元素节点属性，
+       *  直接使用 元素.属性名
+       *   例子：元素.id 元素.name 元素.value
+       *   注意：class属性不能采用这种方式，
+       *    读取class属性时需要使用 元素.className
+       */
+      alert(inputs[i].className);
+     }
+    };
+    
+    //为id为btn04的按钮绑定一个单击响应函数
+    var btn04 = document.getElementById("btn04");
+    btn04.onclick = function(){
+     
+   

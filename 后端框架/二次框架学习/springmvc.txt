@@ -1,0 +1,12 @@
+九大组件：
+    https://blog.csdn.net/Apeopl/article/details/84372771
+
+Springmvc controller 非线程安全 
+    https://blog.csdn.net/qq_32575047/article/details/78997488
+
+@EnableWebMvc +  实现WebMvcConfigurer  自定义 MVC 组件
+    通过@EnableWebMvc 添加自定义的解析器 例如视图解析器 会吧自定义的和原来带的都注册到DispacherServlet,自定义的优先级别一定要比
+    原来有的级别高，要不执行不到自定义的，自带的一定有兜底处理方法。
+
+    实现WebMvcConfigurer：
+        https://blog.csdn.net/zhangpower1993/article/details/89016503

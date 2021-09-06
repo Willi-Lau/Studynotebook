@@ -1,0 +1,50 @@
+SpringBoot
+
+    运行原理：
+        @SpringBootConfiguration
+        @EnableAutoConfiguration
+        @ComponentScan
+
+
+        有很多条件判断过滤类：
+            原理就是只有导入了相关jar包这个配置类才会生效 例如jdbc
+        
+
+        执行流程：
+            https://www.cnblogs.com/shamo89/p/8184960.html   完整分析
+
+            https://www.yuque.com/atguigu/springboot/tmvr0e   雷神笔记
+
+            https://www.processon.com/view/link/59812124e4b0de2518b32b6e   图
+
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -101,7 +101,7 @@ MySQL :
                             id 如果相同，可以认为是一组，从上往下顺序执行，
                             id不同，id越大越先执行
 
-                select_type: 查询类型
+                select_type: 查询语句类型
                     常用值：
                         simple,primary,subquery,derived,union,union result
 
@@ -189,7 +189,7 @@ MySQL :
                                         -> extra:  using index for group-by , using where 
                                     总结 ： 效率高效 索引和条件一致
                         
-                        Using index : 好
+                        Using  index: 好
                                 表示select 中使用了覆盖索引，避免访问了表得数据行，效率不错!!!!如果同时出现using where ,表明索引被用来执行
                                 索引键值得查找
 
@@ -246,7 +246,7 @@ MySQL :
                 解决办法：1. 如果使用 like '%***%' 使用覆盖索引索引不会失效
                          2.like '***%' 不会失效
             
-            8.字符串不加单引号或双引号会索引失效
+            8. 字符串不加单引号或双引号会索引失效
             9.少用 or 可能会导致索引失效
             
     
@@ -312,7 +312,8 @@ MySQL :
                     
                     如果 where 最左前缀为常量 则 order by 可以使用索引
 
-                        where a =const order by b,c
+                        where a =const order by b,c    ---》 索引成效，不过有using filesort
+                        wherei a= 1  order by a,b,c  生效    where  order by 需要分别遵守最左前缀，不然会filesort
                         where a = const and b = const order by c
                         where a = const and b > const order by b,c 
                     
@@ -325,13 +326,21 @@ MySQL :
 
 
         
-                
+            for update 加锁：
+                https://blog.csdn.net/xiao__jia__jia/article/details/100901858
+
+            间隙锁
+                https://blog.csdn.net/hanpeiyu1995/article/details/90201894    
+
+            间隙锁用在修改删除
+                https://blog.csdn.net/lz710117239/article/details/78776446?utm_term=%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86&utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-1-78776446&spm=3001.4430       
                     
 
-                        
+                这足以说明间隙锁的作用是防止，在update或者delete的时候修改了后面插入的数据。   
 
 
-
+            分析 Innodb行锁
+                show status like 'innodb_row_lock%'
 
 
 

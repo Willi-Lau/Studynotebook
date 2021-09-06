@@ -114,6 +114,10 @@ Nginx
                 1.两台nginx服务器
                 2.需要keepalive
                 3.需要虚拟ip
+        
+        四层负载均衡七层负载均衡：
+                
+                        https://www.cnblogs.com/kevingrace/p/6137881.html
 
 
 
