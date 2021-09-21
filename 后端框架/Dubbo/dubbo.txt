@@ -1,0 +1,72 @@
+
+使用：https://blog.csdn.net/shijiujiu33/article/details/89433566
+
+
+provider:   生产
+
+     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
+    <dubbo:service 
+        group="mooc"           //服务分组
+		interface="com.netease.edu.share.service.MultiTablePaginationBizQueryService"         //来自哪个包哪个类 我被使用
+		owner="lxf"              //  服务负责人，用于服务治理，请填写负责人公司邮箱前缀
+        ref="mocMyCourseQueryService"             // 服务对象实现引用   
+        register="${dubbo_provider_enable}"        // 向指定注册中心注册，在多个注册中心时使用
+		version="${dubbo_provider_version}"        //服务版本
+     />
+
+    或
+
+
+    Dubbo @Reference
+
+
+        id 《 - 》ref
+
+
+
+consumer：  消费
+
+
+     <!-- 声明需要暴露的服务接口，还可以用注解形式 -->
+    <dubbo:reference  
+          id="message2AdapterService"           // 服务引用BeanId  对应 provider 里的 ref
+		  interface="com.netease.edu.biz.message.share.service.Message2AdapterService"     //来自哪个包哪个类  我要用谁
+		  check="false"                      //启动时检查提供者是否存在，true报错，false忽略
+          version="1.0.0${service_message_server_version_suffix}"    //服务版本，与服务提供者的版本一致
+    />
+
+    或
+
+    Dubbo的 @Service
+
+
+
+
+
+
+
+
+
+
+         <dubbo:service 
+                interface="com.heibaiying.api.IProductService"
+                ref="productService"
+        />
+
+
+         <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
+         <dubbo:reference 
+                 id="sellService" 
+                interface="com.heibaiying.api.IProductService"
+         />
+
+
+
+
+
+
+
+
+
+
+

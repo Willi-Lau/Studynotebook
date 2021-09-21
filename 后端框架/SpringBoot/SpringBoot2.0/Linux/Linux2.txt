@@ -22,6 +22,16 @@ Linux 变慢优化：
         2、查看服务器所有端口
 
         netstat -ntlp
+    
+
+
+    java cpu使用过高：
+        1.jps -l      获取进程id（pid）
+        2.top -Hp pid
+          或
+          ps -mp pid -0 THREAD,tid,time|sort -k 2 -r
+        3.jstack pid >日志名字
+        4.把刚才第二步排查出来的 使用率最高的线程 转为16进制 前面加上 0x然后去日志里搜索
 
 
 

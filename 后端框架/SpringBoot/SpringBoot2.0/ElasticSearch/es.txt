@@ -1,0 +1,24 @@
+
+
+位置：
+    D:\elasticsearch-7.14.1-windows-x86_64\elasticsearch-7.14.1\bin
+
+begin:
+    cd  D:\elasticsearch-7.14.1-windows-x86_64\elasticsearch-7.14.1\bin
+    点击：elasticSearch.bat
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
