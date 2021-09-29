@@ -7,6 +7,58 @@ begin:
     cd  D:\elasticsearch-7.14.1-windows-x86_64\elasticsearch-7.14.1\bin
     点击：elasticSearch.bat
 
+端口：
+    9200 浏览器测试端口 输入 localhost:9200
+
+
+ @RequestMapping(value = "/api/v1/paper/draft/list", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "试卷-试卷草稿列表", httpMethod = "GET", tags = {"试卷详细信息相关接口"}, produces="application/json")
+    public ResponseView getPaperListByScope(Scope scope,
+            @ApiParam(value = "页码", defaultValue = "1", required = true) @RequestParam(defaultValue = "1") Integer pageIndex,
+            @ApiParam(value = "获取记录条数", defaultValue = "20", required = true)@RequestParam(defaultValue = "20") Integer pageSize,
+            @ApiParam(value = "试卷名称搜索关键字") @RequestParam(required = false) String keywords,
+            @ApiParam(value = "业务类型") @RequestParam(required = false) Long bizType) {
+        com.netease.edu.web.viewer.ResponseView view = new com.netease.edu.web.viewer.ResponseView();
+
+        List<MocExamDto> list  = remoteMocExamDraftService.getDraftByTargetId(scope.getSceneId(),keywords,pageSize,pageIndex);
+        PaginationResult<MocExamDto> resultVo = new PaginationResult<>();
+        resultVo.setList(list);
+        resultVo.setQuery(resultVo.getQuery());
+        view.setResult(resultVo);
+
+
+     @RequestMapping(value = "/api/v1/paper/copy/batch", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseView copyPapers(Scope scope, @RequestBody CopyPaperVo copyPaperVo,
+                                   @RequestParam(value = "isDraft", defaultValue = "true", required = false) boolean isDraft,
+                                   @RequestParam(name = "tagId", required = false) Long tagId) {
+
+        ResponseView responseView = new ResponseView();
+        //1. 复制内容为空，返回成功
+        if (copyPaperVo == null || CollectionUtils.isEmpty(copyPaperVo.getPaperIds())) {
+            return responseView;
+        }
+        //获取 toScope 的 scened id   -> 对应 moc_exam_draft  的 target_id
+        long target_id = scope.getSceneId();
+        List<MocExamDto> draftByTargetIdList = null;
+        //去 moc_exam_draft 寻找
+         draftByTargetIdList = remoteMocExamDraftService.getDraftByTargetId(taregt_id);
+        responseView.setResult(draftByTargetIdList);
+
+
+    @RequestMapping(value = "/api/v1/paper/copy/list", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseView paperCopyResult(Scope scope, @RequestBody List<Long> targetIds) {
+        ResponseView responseView = new ResponseView();
+//        responseView.setResult(paperAPI.paperCopyResult(scope, paperIds));
+        List<MocExamDto> list = new ArrayList<>();
+        for(Long targetId : targetIds){
+            list.addAll(remoteMocExamDraftService.getDraftByTargetId(taregt_id));
+        }
+        responseView.setResult(list);
+        return responseView;
+    }
 
 
 
@@ -15,10 +67,98 @@ begin:
 
 
 
+RemoteMocExamDraftServiceImpl
+
+ @Override
+    public List<MocExamDto> getDraftByTargetId(Long targetId) {
+        if(targetId == null || targetId <= 0 ){
+            return new ArrayList<>();
+        }
+        List<MocExamDto> draftByTargetIdList = mocExamDraftService.getDraftByTargetId(targetId);
+        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
+            return new ArrayList<>();
+        }
+        draftByTargetIdList.forEach(this::fillQuestions);
+        return draftByTargetIdList;
+    }
+
+    @Override
+    public List<MocExamDto> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex) {
+        if(targetId == null || targetId <= 0 ){
+            return new ArrayList<>();
+        }
+        List<MocExamDto> draftByTargetIdList = mocExamDraftService.getDraftByTargetIdAndKeyWord(targetId,keyword,pageSize,pageIndex);
+        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
+            return new ArrayList<>();
+        }
+        draftByTargetIdList.forEach(this::fillQuestions);
+        return draftByTargetIdList;
+    }
+
+
+RemoteMocExamDraftService
+    /**
+     * 根据target_id 批量返回
+     */
+    List<MocExamDto>  getDraftByTargetId(Long targetId);
+    /**
+     * 根据 targetid  和 keyword 分页查询
+     */
+    List<MocExamDto>  getDraftByTargetIdAndKeyWord(Long targetId,String keyword,Integer pageSize,Integer pageIndex);
 
 
 
 
+MocExamDraftService
+
+      /**
+     * 根据 targetid 查询
+     */
+    List<MocExamDto>  getDraftByTargetId(Long targetId);
+    /**
+     * 根据 targetid  和 keyword 分页查询
+     */
+    List<MocExamDto>  getDraftByTargetIdAndKeyWord(Long targetId,String keyword,Integer pageSize,Integer pageIndex);
+
+MocExamDraftServiceImpl
 
 
 
+
+	@Override
+	public List<MocExamDto>  getDraftByTargetId(Long targetId){
+		List<MocExamDraft> byCondition = dao.getByCondition("target_id = "+targetId);
+		List<MocExamDto> result = new ArrayList<>();
+		for (MocExamDraft draft : byCondition) {
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			result.add(dto);
+		}
+		return result;
+	}
+
+    @Override
+	public List<MocExamDto> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex) {
+		String sql = new String();
+		sql += "target_id = ";
+		sql += targetId;
+		int start = pageSize * (pageIndex - 1) -1;
+        //sql += "limit" + start + "," + pageSize;  先分页在筛选会有漏的 直接筛选 正则 太耗时
+		List<MocExamDraft> byCondition = dao.getByCondition(sql);
+		List<MocExamDto> result = new ArrayList<>();
+		List<MocExamDto> result2 = new ArrayList<>();
+		for (MocExamDraft draft : byCondition) {
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			if(keyword!= null && keyword.length() !=0){
+				if(dto.getName().equals(keyword)){
+					result.add(dto);
+				}
+			}
+			else
+			result.add(dto);
+		}
+
+		for(int i=start;i<start+pageSize;i++){
+			result2.add(result.get(i));
+		}
+		return result2;
+	}
