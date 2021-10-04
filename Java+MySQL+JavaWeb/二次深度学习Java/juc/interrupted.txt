@@ -1,0 +1,76 @@
+interrupted
+线程中断机制
+
+https://www.cnblogs.com/moongeek/p/7610784.html
+
+
+    isInterrupted()   打印指定线程的interrupted状态 调用不改变 interrupted状态
+    interrupt()        改变指定线程的interrupted状态
+    静态 Thread.interrupted()   打印指定线程的interrupted状态 调用清空 interrupted状态
+
+    如果调用 interrupt() 时，线程处于wait() sleep()就会抛出异常 InterruptedException，跑完异常，此线程的interrupt就会被重置
+
+    代码：
+        LGDJavaStudy -> lwy -> juc -> Interruptedstudy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
