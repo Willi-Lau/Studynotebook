@@ -337,6 +337,8 @@ Redis 大厂学院
                       2、poll并没有通知用户态哪一个socket有数据，仍然需要O(n)的遍历
 
             epoll:  unix 复杂度 O(1) 非阻塞
+               epoll 数据结构 ：https://www.cnblogs.com/developing/articles/10849288.html
+                              链表（存要返回给用户态，要发生的socket） + 红黑树 （所有socket）
                 分为三步调用，
                 epoll_create -----> new 一个 epoll容器 根据 socket连接数
                 epoll_ctl   -------> 添加/修改/删除 要监控的文件描述符 修改红黑树
