@@ -1,0 +1,98 @@
+package com.netease.mooc.tiku.remote.service;
+
+import com.netease.edu.commons.utils.collection.PaginationBaseQuery;
+import com.netease.edu.commons.utils.collection.PaginationResult;
+import com.netease.mooc.commons.constants.SortTypeEnum;
+import com.netease.mooc.quiz.domain.MocExam;
+import com.netease.mooc.quiz.dto.MocExamDto;
+import com.netease.mooc.tiku.remote.constants.MocExamConstants;
+
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * description: 新测评草稿
+ * create: 2021-05-24 5:30 PM
+ *
+ * @author wuxianji (wuxianji@corp.netease.com)
+ **/
+public interface RemoteMocExamDraftService {
+
+    /**
+     * 新增测评草稿
+     *
+     * @param exam
+     * @return
+     */
+    Long addDraft(MocExamDto exam);
+
+    /**
+     * 更新测评草稿
+     *
+     * @param exam
+     * @return
+     */
+    Boolean updateDraft(MocExamDto exam);
+
+    /**
+     * 获取新测评草稿
+     *
+     * @param id
+     * @return
+     */
+    MocExamDto getExam(Long id);
+
+    /**
+     * 获取预览新测评草稿
+     *
+     * @param id
+     * @return
+     */
+    MocExamDto getPreviewExam(Long id);
+
+    /**
+     * 批量获取考试草稿，考虑大量大对象的性能问题
+     *
+     * @param ids ids
+     * @return List
+     */
+    List<MocExamDto> list(List<Long> ids);
+
+    /**
+     * 删除草稿
+     *
+     * @param id
+     * @return
+     */
+    Boolean deleteDraft(Long id);
+
+    /**
+     * 根据创建时间顺序批量获取考试草稿，考虑大量大对象的性能问题
+     *
+     * @param ids ids
+     * @return List
+     */
+    List<MocExamDto> list(List<Long> ids,SortTypeEnum sortTypes);
+
+    /**
+     * 分页查询草稿列表
+     * @param targetId
+     * @param targetType
+     * @param keyword
+     * @param baseQuery
+     * @return
+     */
+    PaginationResult<MocExamDto> pageExam(Long targetId, MocExamConstants.TargetType targetType, String keyword, PaginationBaseQuery baseQuery);
+    /**
+     * 根据target_id 批量返回
+     */
+    List<MocExamDto>  getDraftByTargetId(Long targetId);
+    /**
+     * 根据 targetid  和 keyword 分页查询  返回结果和总页数
+     */
+    ConcurrentHashMap<String, Object> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex);
+    /**
+     *   根据一组 targetid 去查找  根据 keyword ，targrtType 筛选 分页返回 返回结果和总页数
+     */
+    ConcurrentHashMap<String, Object> getDraftByTargetIdsAndKeyWord(List<Long> targetIds,String keyword,Integer pageSize,Integer pageIndex);
+}

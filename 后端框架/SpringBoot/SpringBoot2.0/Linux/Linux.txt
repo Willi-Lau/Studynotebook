@@ -91,7 +91,7 @@ Linux 指令:
         查看开放的端口：
                 firewall-cmd --list-all
         增加允许访问的端口;
-                firewall-cmd --add-port=6380/tcp --permanent
+                firewall-cmd --add-port=3306/tcp --permanent
         重启防火墙
                 firewall-cmd --reload
         启动sshd
@@ -131,6 +131,7 @@ Linux 指令:
 
                         1、进入vi中，先按下"ESC"跳转成命令输入模式
 
+
                         2、输入斜杠“/”，这时屏幕会跳转到底部，输入栏出现"/"
 
                         3、输入你需要查找的关键字，回车
@@ -141,3 +142,50 @@ Linux 指令:
                 
                 到顶部 shift + g
                 到底部  gg
+
+
+                targettype = 3 
+                targetid = termid
+
+        linux 磁盘空间查看
+                df -h
+        linux 把指定目录下文件从大到小排序
+                du -sh /*     排序 /目录下所以有文件夹 
+
+
+
+
+                mysql  https://www.runoob.com/mysql/mysql-install.html
+
+
+
+
+
+
+
+
+ scp -i /Users/wuxianji/.ssh/id_rsa -P 1046  wuxianji@10.171.160.11:/home/appops/edu-image/edu-image_pre/pre/work/logs/dump.file
+  /Users/wuxianji/dumps/dump.hprof
+
+
+
+ scp  -P 1046 liuweiyi@10.122.190.105:/Users/Administrator/Desktop/moc-jupyter-master.tar.gz /usr/local/etc
+
+
+        别的电脑访问你自己的电脑的虚拟机：
+        https://blog.csdn.net/boywcx/article/details/100774164
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

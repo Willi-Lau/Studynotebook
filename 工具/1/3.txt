@@ -1,0 +1,286 @@
+package com.netease.mooc.tiku.service.impl;
+
+import com.beust.jcommander.internal.Lists;
+import com.google.gson.Gson;
+import com.netease.edu.commons.service.impl.BaseServiceImpl;
+import com.netease.edu.commons.utils.collection.PaginationBaseQuery;
+import com.netease.edu.commons.utils.collection.PaginationResult;
+import com.netease.edu.commons.utils.sql.SqlBuilder;
+import com.netease.mooc.commons.constants.SortTypeEnum;
+import com.netease.mooc.commons.utils.EduCommonUtils;
+import com.netease.mooc.quiz.dto.MocExamDto;
+import com.netease.mooc.tiku.dao.MocExamDraftDao;
+import com.netease.mooc.tiku.domain.MocExamDraft;
+import com.netease.mooc.tiku.remote.constants.MocExamConstants;
+import com.netease.mooc.tiku.service.MocExamDraftService;
+import com.netease.mooc.tiku.service.MocExamService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Service("mocExamDraftService")
+public class MocExamDraftServiceImpl extends BaseServiceImpl<MocExamDraftDao, MocExamDraft> implements MocExamDraftService {
+
+	private MocExamDraftDao dao;
+
+	@Autowired
+	private MocExamService mocExamService;
+
+    private Gson gson = new Gson();
+
+    @Autowired
+    public void setMocExamDraftDao(MocExamDraftDao dao) {
+        super.setBaseDao(dao);
+        this.dao = dao;
+    }
+
+	@Override
+	public Long addDraft(MocExamDto examDto) {
+
+		MocExamDraft draft = new MocExamDraft();
+		if (examDto.getId() == null) {
+			draft.setId(mocExamService.getId());
+			examDto.setId(draft.getId());
+		}else {
+			draft.setId(examDto.getId());
+		}
+		draft.setDraftContent(EduCommonUtils.toJsonWithoutEscapeHtml(examDto));
+		draft.fillAllTime();
+		add(draft);
+		return draft.getId();
+	}
+
+	@Override
+	public Boolean updateDraft(MocExamDto examDto) {
+		MocExamDraft draft = getById(examDto.getId());
+		if(draft == null){
+			throw new RuntimeException("找不到草稿");
+		}
+		MocExamDto oldDto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+		if (examDto.getName() != null) {
+			oldDto.setName(examDto.getName());
+		}
+		if (examDto.getQuestions() != null) {
+			oldDto.setQuestions(examDto.getQuestions());
+		}
+		if (examDto.getReleaseTime() != null) {
+			oldDto.setReleaseTime(examDto.getReleaseTime());
+		}
+		if (examDto.getDeadline() != null) {
+			oldDto.setDeadline(examDto.getDeadline());
+		}
+		if (examDto.getDescription() != null) {
+			oldDto.setDescription(examDto.getDescription());
+		}
+		if (examDto.getScoreReleaseTime() != null) {
+			oldDto.setScoreReleaseTime(examDto.getScoreReleaseTime());
+		}
+		if (examDto.getScoreReleaseType() != null) {
+			oldDto.setScoreReleaseType(examDto.getScoreReleaseType());
+		}
+		if (examDto.getAnalyseEnable() != null) {
+			oldDto.setAnalyseEnable(examDto.getAnalyseEnable());
+		}
+		if (examDto.getExamTime() != null) {
+			oldDto.setExamTime(examDto.getExamTime());
+		}
+		if (examDto.getTryTime() != null) {
+			oldDto.setTryTime(examDto.getTryTime());
+		}
+		if (examDto.getRandom() != null) {
+			oldDto.setRandom(examDto.getRandom());
+		}
+		if (examDto.getRandomSetting() != null) {
+			oldDto.setRandomSetting(examDto.getRandomSetting());
+		}
+		if (examDto.getEvaluateJudgeType() != null) {
+			oldDto.setEvaluateJudgeType(examDto.getEvaluateJudgeType());
+		}
+		if (examDto.getEvaluateNeedTrain() != null) {
+			oldDto.setEvaluateNeedTrain(examDto.getEvaluateNeedTrain());
+		}
+		if (examDto.getEvaluateStart() != null) {
+			oldDto.setEvaluateStart(examDto.getEvaluateStart());
+		}
+		if (examDto.getEvaluateEnd() != null) {
+			oldDto.setEvaluateEnd(examDto.getEvaluateEnd());
+		}
+		if (examDto.getQuestions() != null) {
+			oldDto.setQuestions(examDto.getQuestions());
+		}
+		if (examDto.getDraftStatus() != null) {
+			oldDto.setDraftStatus(examDto.getDraftStatus());
+		}
+		if (examDto.getTotalScore() != null) {
+			oldDto.setTotalScore(examDto.getTotalScore());
+		}
+		if (examDto.getScorePubStatus() != null) {
+			oldDto.setScorePubStatus(examDto.getScorePubStatus());
+		}
+		// 这个不需要判空，可以设置空不启用防作弊
+		oldDto.setAllowSwitchPageCount(examDto.getAllowSwitchPageCount());
+		draft.setDraftContent(EduCommonUtils.toJsonWithoutEscapeHtml(oldDto));
+		draft.fillModifedTime();
+		updateSelectiveById(draft);
+		return Boolean.TRUE;
+	}
+
+	@Override
+	public MocExamDto getDraft(Long id) {
+		MocExamDraft draft = dao.getById(id);
+		if (draft == null) {
+			return null;
+		}
+		MocExamDto result = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+		//慕课堂题库升级迭代（数据订正后）该逻辑可以去掉
+		if (result.getScoreReleaseTime() != null && result.getScoreReleaseType() == null) {
+			if (result.getScoreReleaseTime().equals(-1L)) {
+				result.setScoreReleaseType(1);
+			} else if (result.getScoreReleaseTime() > 0) {
+				result.setScoreReleaseType(2);
+			}
+		}
+		result.setId(id);
+		result.setExamType(result.getType());
+		result.setFromExamId(draft.getTargetId());
+		result.setTargetType(draft.getTargetType());
+		result.setTargetId(draft.getTargetId());
+		return result;
+	}
+
+	@Override
+	public List<MocExamDto> listDraft(List<Long> ids) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return Lists.newArrayList();
+		}
+
+		List<MocExamDraft> drafts = dao.getByIdList(ids);
+		if (CollectionUtils.isEmpty(drafts)) {
+			return Lists.newArrayList();
+		}
+
+		List<MocExamDto> result = new ArrayList<>();
+		for (MocExamDraft draft : drafts) {
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	public List<MocExamDto> listDraft(List<Long> ids, SortTypeEnum sortType) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return Lists.newArrayList();
+		}
+		StringBuilder inSql = new StringBuilder();
+		inSql.append(SqlBuilder.inSql("id", ids));
+		if (sortType != null) {
+			inSql.append(" order by ").append(sortType.getOrderSql());
+		}
+		List<MocExamDraft> drafts = dao.getByCondition(inSql.toString());
+		if (CollectionUtils.isEmpty(drafts)) {
+			return Lists.newArrayList();
+		}
+
+		List<MocExamDto> result = new ArrayList<>();
+		for (MocExamDraft draft : drafts) {
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	public PaginationResult<MocExamDto> pageExam(Long targetId, MocExamConstants.TargetType targetType, String keyword, PaginationBaseQuery baseQuery) {
+		String condition = "target_id=? and target_type=?";
+		if (StringUtils.isNotBlank(keyword)) {
+			condition += " and draft_content like '%" + keyword + "%'";
+		}
+		PaginationResult<MocExamDraft> pagination = getPaginationByCondition(baseQuery, condition, targetId, targetType.getType());
+
+		PaginationResult<MocExamDto> result = new PaginationResult<>();
+		if (pagination == null || CollectionUtils.isEmpty(pagination.getList())) {
+			return result;
+		}
+		result.setQuery(pagination.getQuery());
+		List<MocExamDto> examDtos = new ArrayList<>();
+		for (MocExamDraft draft : pagination.getList()) {
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			examDtos.add(dto);
+		}
+		result.setList(examDtos);
+		return result;
+	}
+	@Override
+	public List<MocExamDto>  getDraftByTargetId(Long targetId){
+		List<MocExamDraft> byCondition = dao.getByCondition("target_id = "+targetId);
+		List<MocExamDto> result = new ArrayList<>();
+		for (MocExamDraft draft : byCondition) {
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	public ConcurrentHashMap<String,Object> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex) {
+		String sql = new String();
+		sql += "target_id = ";
+		sql += targetId;
+		int start = pageSize * (pageIndex - 1) -1;
+		List<MocExamDraft> byCondition = dao.getByCondition(sql);
+		List<MocExamDto> result = new ArrayList<>();
+		List<MocExamDto> result2 = new ArrayList<>();
+		for (MocExamDraft draft : byCondition) {   //筛选
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			if(keyword!= null && keyword.length() !=0){    //筛选满足条件的 keyword
+				if(dto.getName().equals(keyword)){
+					result.add(dto);
+				}
+			}
+			else{
+				result.add(dto);
+			}
+		}
+		for(int i=start;i<start+pageSize;i++){   //分页
+			result2.add(result.get(i));
+		}
+		int totalSize = Math.round(result.size()/ pageSize);   //总页数
+		ConcurrentHashMap<String,Object> map = new ConcurrentHashMap<>();
+		map.put("totalSize",totalSize);
+		map.put("list",result2);
+		return map;
+	}
+
+	@Override
+	public ConcurrentHashMap<String,Object>  getDraftByTargetIdsAndKeyWord(List<Long> targetIds, String keyword, Integer pageSize, Integer pageIndex) {
+		String targetIdType = " target_id in (";   //target_id in (a,b)
+		for(Long targetId: targetIds){
+				targetIdType += targetId.toString();
+				targetIdType += ",";
+		}
+		//删除最后一个 拼接的 逗号
+		String sql = targetIdType.substring(0, targetIdType.length() - 1);
+		sql += ")";
+		List<MocExamDraft> byCondition = dao.getByCondition(sql);
+		List<MocExamDto> result1 = new ArrayList<>();
+		for (MocExamDraft draft : byCondition) {         //筛选
+			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
+			if(dto.getTargetType().equals(3) &&    //targettype = 3
+					( (keyword == null && keyword.length() == 0 )
+							|| (keyword != null &&  keyword.length() != 0 && dto.getName().equals(keyword)))){   //过滤 keyword
+				result1.add(dto);
+			}
+		}
+		int totalSize = result1.size() / pageSize; //总页数
+		ConcurrentHashMap<String,Object> map = new ConcurrentHashMap<>();
+		map.put("totalSize",totalSize);
+		map.put("list",result1);
+		return map;
+	}
+}

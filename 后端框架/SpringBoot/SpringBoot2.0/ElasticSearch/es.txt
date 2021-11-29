@@ -10,155 +10,117 @@ begin:
 端口：
     9200 浏览器测试端口 输入 localhost:9200
 
-
- @RequestMapping(value = "/api/v1/paper/draft/list", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation(value = "试卷-试卷草稿列表", httpMethod = "GET", tags = {"试卷详细信息相关接口"}, produces="application/json")
-    public ResponseView getPaperListByScope(Scope scope,
-            @ApiParam(value = "页码", defaultValue = "1", required = true) @RequestParam(defaultValue = "1") Integer pageIndex,
-            @ApiParam(value = "获取记录条数", defaultValue = "20", required = true)@RequestParam(defaultValue = "20") Integer pageSize,
-            @ApiParam(value = "试卷名称搜索关键字") @RequestParam(required = false) String keywords,
-            @ApiParam(value = "业务类型") @RequestParam(required = false) Long bizType) {
-        com.netease.edu.web.viewer.ResponseView view = new com.netease.edu.web.viewer.ResponseView();
-
-        List<MocExamDto> list  = remoteMocExamDraftService.getDraftByTargetId(scope.getSceneId(),keywords,pageSize,pageIndex);
-        PaginationResult<MocExamDto> resultVo = new PaginationResult<>();
-        resultVo.setList(list);
-        resultVo.setQuery(resultVo.getQuery());
-        view.setResult(resultVo);
+    put post 区别
+        put是幂等性的。Post是非幂等性的
+        幂等性：两次请求结果一直，产生的效果一样，就是幂等性
 
 
-     @RequestMapping(value = "/api/v1/paper/copy/batch", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseView copyPapers(Scope scope, @RequestBody CopyPaperVo copyPaperVo,
-                                   @RequestParam(value = "isDraft", defaultValue = "true", required = false) boolean isDraft,
-                                   @RequestParam(name = "tagId", required = false) Long tagId) {
+    获取所有的 kv  --- GET
 
-        ResponseView responseView = new ResponseView();
-        //1. 复制内容为空，返回成功
-        if (copyPaperVo == null || CollectionUtils.isEmpty(copyPaperVo.getPaperIds())) {
-            return responseView;
-        }
-        //获取 toScope 的 scened id   -> 对应 moc_exam_draft  的 target_id
-        long target_id = scope.getSceneId();
-        List<MocExamDto> draftByTargetIdList = null;
-        //去 moc_exam_draft 寻找
-         draftByTargetIdList = remoteMocExamDraftService.getDraftByTargetId(taregt_id);
-        responseView.setResult(draftByTargetIdList);
+        http://127.0.0.1:9200/_cat/indices?v
 
 
-    @RequestMapping(value = "/api/v1/paper/copy/list", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseView paperCopyResult(Scope scope, @RequestBody List<Long> targetIds) {
-        ResponseView responseView = new ResponseView();
-//        responseView.setResult(paperAPI.paperCopyResult(scope, paperIds));
-        List<MocExamDto> list = new ArrayList<>();
-        for(Long targetId : targetIds){
-            list.addAll(remoteMocExamDraftService.getDraftByTargetId(taregt_id));
-        }
-        responseView.setResult(list);
-        return responseView;
-    }
+    添加 
+        属性/文档 ---  POST请求  / _doc / _create
+        1.
+            http://127.0.0.1:9200/索引名字/_doc/自定义索引号     --> _doc 后面这个自定义索引号是es唯一标志，如果没写就自动生成一个
+            此时还需要添加一个json 属性串，不然会报错
+
+            {
+                "name" : "liuweiyi",
+                "age" : "22" 
+            }
+        2.
+            http://127.0.0.1:9200/索引名字/_create/自定义索引号     --> _doc 后面这个自定义索引号是es唯一标志，如果没写就自动生成一个
+            此时还需要添加一个json 属性串，不然会报错
+
+            {
+                "name" : "liuweiyi",
+                "age" : "22" 
+            }
+
+    查询
+        1.  _doc  ---- GET请求   主键查询
+             http://127.0.0.1:9200/索引名字/_doc/自定义索引号   --> _doc 后面这个自定义索引号是es唯一标志
+
+        2.  _seaech --- GET   全部查询
+            http://127.0.0.1:9200/shopping/_search  获取此索引全部结果（可能有多个）
 
 
+    更新/覆盖
+        1. _doc  ----PUT 主键覆盖 (全量修改，旧的所有都删除 使用新的)
+             http://127.0.0.1:9200/索引名字/_doc/自定义索引号  
 
+             {
+                "name" : "liuweiyi",
+                "age" : "23"    ---》 22改23
+            }
 
+            注意：这种更改也可以更改key ， k,v都可以更改
+            e.g.
+            {
+                "name1" : "liuweiyi",
+                "age1" : "23"    ---》 22改23
+            }
 
+        2. _update  -----POST 局部修改
+             http://127.0.0.1:9200/索引名字/_update/自定义索引号  
+            {
+                "doc": {
+                    "name": "张三"   --》 要修改的信息，剩下的信息不变
+                }
+            }
 
-
-
-RemoteMocExamDraftServiceImpl
-
- @Override
-    public List<MocExamDto> getDraftByTargetId(Long targetId) {
-        if(targetId == null || targetId <= 0 ){
-            return new ArrayList<>();
-        }
-        List<MocExamDto> draftByTargetIdList = mocExamDraftService.getDraftByTargetId(targetId);
-        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
-            return new ArrayList<>();
-        }
-        draftByTargetIdList.forEach(this::fillQuestions);
-        return draftByTargetIdList;
-    }
-
-    @Override
-    public List<MocExamDto> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex) {
-        if(targetId == null || targetId <= 0 ){
-            return new ArrayList<>();
-        }
-        List<MocExamDto> draftByTargetIdList = mocExamDraftService.getDraftByTargetIdAndKeyWord(targetId,keyword,pageSize,pageIndex);
-        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
-            return new ArrayList<>();
-        }
-        draftByTargetIdList.forEach(this::fillQuestions);
-        return draftByTargetIdList;
-    }
-
-
-RemoteMocExamDraftService
-    /**
-     * 根据target_id 批量返回
-     */
-    List<MocExamDto>  getDraftByTargetId(Long targetId);
-    /**
-     * 根据 targetid  和 keyword 分页查询
-     */
-    List<MocExamDto>  getDraftByTargetIdAndKeyWord(Long targetId,String keyword,Integer pageSize,Integer pageIndex);
+    删除
+        1. _doc   -----DELETE
+             http://127.0.0.1:9200/索引名字/_update/自定义索引号  
 
 
 
 
-MocExamDraftService
 
-      /**
-     * 根据 targetid 查询
-     */
-    List<MocExamDto>  getDraftByTargetId(Long targetId);
-    /**
-     * 根据 targetid  和 keyword 分页查询
-     */
-    List<MocExamDto>  getDraftByTargetIdAndKeyWord(Long targetId,String keyword,Integer pageSize,Integer pageIndex);
+进阶查询：
+    条件查询： 
+         ---GET
+         1. uri传参
+            http://127.0.0.1:9200/索引名字/_search?q=key:"value"
 
-MocExamDraftServiceImpl
+         2.JSON 传参
+             http://127.0.0.1:9200/索引名字/_search
+             {
+                 "query"；{    -->代表查询
+                     "match":{    --> 代表精确查找
+                         "key":"value"    --> 具体的值
+                     }
+                 },
+                 "from" : 0 ,   --> 类似分页 从哪个位置始查   计算公式： （页数 - 1） * pageSize
+                 "size" : 2 ,     --> 类似分页 每一页有多少数据
+                 "_source" : [ "key1" ]  ， --> 筛选字段，摘选想要的，只显示key1
+                 "sort" : {   ---> 排序
+                     "key" :{    -----> 排序的字段
+                         "order" ："asc / desc"    -----> 升序还是降序
+                     }
+                 }
+             }
+        
 
 
 
 
-	@Override
-	public List<MocExamDto>  getDraftByTargetId(Long targetId){
-		List<MocExamDraft> byCondition = dao.getByCondition("target_id = "+targetId);
-		List<MocExamDto> result = new ArrayList<>();
-		for (MocExamDraft draft : byCondition) {
-			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
-			result.add(dto);
-		}
-		return result;
-	}
 
-    @Override
-	public List<MocExamDto> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex) {
-		String sql = new String();
-		sql += "target_id = ";
-		sql += targetId;
-		int start = pageSize * (pageIndex - 1) -1;
-        //sql += "limit" + start + "," + pageSize;  先分页在筛选会有漏的 直接筛选 正则 太耗时
-		List<MocExamDraft> byCondition = dao.getByCondition(sql);
-		List<MocExamDto> result = new ArrayList<>();
-		List<MocExamDto> result2 = new ArrayList<>();
-		for (MocExamDraft draft : byCondition) {
-			MocExamDto dto = gson.fromJson(draft.getDraftContent(), MocExamDto.class);
-			if(keyword!= null && keyword.length() !=0){
-				if(dto.getName().equals(keyword)){
-					result.add(dto);
-				}
-			}
-			else
-			result.add(dto);
-		}
 
-		for(int i=start;i<start+pageSize;i++){
-			result2.add(result.get(i));
-		}
-		return result2;
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

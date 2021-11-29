@@ -1,0 +1,222 @@
+package com.netease.mooc.tiku.remote.service.impl;
+
+import com.google.common.collect.Lists;
+import com.netease.edu.commons.utils.collection.PaginationBaseQuery;
+import com.netease.edu.commons.utils.collection.PaginationResult;
+import com.netease.edu.eds.support.common.page.PageQuery;
+import com.netease.edu.eds.support.framework.service.moc.MocBaseService;
+import com.netease.mooc.commons.constants.SortTypeEnum;
+import com.netease.mooc.commons.utils.EdsBeanUtils;
+import com.netease.mooc.commons.utils.ValidateUtils;
+import com.netease.mooc.quiz.constants.MocQuestionTypeEnum;
+import com.netease.mooc.quiz.domain.MocTest;
+import com.netease.mooc.quiz.dto.MocExamDto;
+import com.netease.mooc.quiz.dto.MocQuestionDto;
+import com.netease.mooc.quiz.dto.MocTestDto;
+import com.netease.mooc.tiku.domain.MocExamDraft;
+import com.netease.mooc.tiku.logic.MocQuizLogic;
+import com.netease.mooc.tiku.remote.constants.MocExamConstants;
+import com.netease.mooc.tiku.remote.service.RemoteMocExamDraftService;
+import com.netease.mooc.tiku.service.MocExamDraftService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * description:
+ * create: 2021-05-25 11:11 AM
+ *
+ * @author wuxianji (wuxianji@corp.netease.com)
+ **/
+@Service("remoteMocExamDraftService")
+public class RemoteMocExamDraftServiceImpl implements RemoteMocExamDraftService {
+
+    @Autowired
+    private MocExamDraftService mocExamDraftService;
+
+    @Autowired
+    private MocQuizLogic mocQuizLogic;
+
+    @Autowired
+    private MocBaseService mocBaseService;
+
+    @Override
+    public Long addDraft(MocExamDto exam) {
+        return mocExamDraftService.addDraft(exam);
+    }
+
+    @Override
+    public Boolean updateDraft(MocExamDto exam) {
+        return mocExamDraftService.updateDraft(exam);
+    }
+
+    @Override
+    public MocExamDto getExam(Long id) {
+        MocExamDto examDto = mocExamDraftService.getDraft(id);
+        return fillQuestions(examDto);
+    }
+
+    @Override
+    public MocExamDto getPreviewExam(Long id) {
+        MocExamDto exam = getExam(id);
+        if (CollectionUtils.isEmpty(exam.getQuestions())) {
+            return exam;
+        }
+        if (Boolean.TRUE.equals(exam.getRandom())) {
+            List<MocQuestionDto> radomQuestions = mocQuizLogic.getRadomQuestions(exam.getRandomSetting(), exam.getQuestions());
+            exam.setQuestions(radomQuestions);
+            if (exam.getSubjectTest() != null && CollectionUtils.isNotEmpty(exam.getSubjectTest().getSubjectiveQList())) {
+                exam.getQuestions().addAll(exam.getSubjectTest().getSubjectiveQList());
+            }
+        }else {
+            exam.getQuestions().sort(Comparator.comparing(MocQuestionDto::getType));
+        }
+        return exam;
+    }
+
+    @Override
+    public List<MocExamDto> list(List<Long> ids) {
+        List<MocExamDto> mocExamDtoList = mocExamDraftService.listDraft(ids);
+        if (CollectionUtils.isEmpty(mocExamDtoList)) {
+            return Lists.newArrayList();
+        }
+
+        mocExamDtoList.forEach(this::fillQuestions);
+        return mocExamDtoList;
+    }
+
+    @Override
+    public List<MocExamDto> list(List<Long> ids, SortTypeEnum sortTypes) {
+        List<MocExamDto> mocExamDtoList = mocExamDraftService.listDraft(ids,sortTypes);
+        if (CollectionUtils.isEmpty(mocExamDtoList)) {
+            return Lists.newArrayList();
+        }
+
+        mocExamDtoList.forEach(this::fillQuestions);
+        return mocExamDtoList;
+    }
+
+    @Override
+    public PaginationResult<MocExamDto> pageExam(Long targetId, MocExamConstants.TargetType targetType, String keyword, PaginationBaseQuery baseQuery) {
+        ValidateUtils.notNull(targetId);
+        ValidateUtils.notNull(targetType);
+        return mocExamDraftService.pageExam(targetId, targetType, keyword, baseQuery);
+    }
+
+    @Override
+    public Boolean deleteDraft(Long id) {
+        boolean result = mocExamDraftService.deleteById(id);
+        return result;
+    }
+
+    /**
+     * 填充题目信息
+     *
+     * @param examDto examDto
+     * @return MocExamDto
+     */
+    private MocExamDto fillQuestions(MocExamDto examDto) {
+        if (examDto == null) {
+            return null;
+        }
+        List<MocQuestionDto> objectiveQuestions = Lists.newArrayList();
+        List<MocQuestionDto> subjectiveQuestions = Lists.newArrayList();
+
+        List<MocQuestionDto> questions = examDto.getQuestions();
+        if (CollectionUtils.isEmpty(questions)) {
+            return examDto;
+        }
+
+        for (MocQuestionDto questionDto : questions) {
+            if (questionDto.getType() == null) {
+                continue;
+            }
+            if (MocQuestionTypeEnum.isObjective(questionDto.getType())) {
+                objectiveQuestions.add(questionDto);
+            } else if (MocQuestionTypeEnum.subject.getValue().equals(questionDto.getType()) ||
+                    MocQuestionTypeEnum.oj.getValue().equals(questionDto.getType())) {
+                subjectiveQuestions.add(questionDto);
+            }
+        }
+        if (CollectionUtils.isNotEmpty(objectiveQuestions)) {
+            MocTestDto objectiveTest = createTest(examDto);
+            objectiveTest.setType(MocTest.CHAPTER_QUIZ);
+            objectiveTest.setId(examDto.getObjectTestId());
+            objectiveTest.setObjectiveQList(objectiveQuestions);
+            examDto.setObjectTest(objectiveTest);
+        }
+        if (CollectionUtils.isNotEmpty(subjectiveQuestions)) {
+            MocTestDto subjectiveTest = createTest(examDto);
+            subjectiveTest.setType(MocTest.CHAPTER_HOMEWORK);
+            subjectiveTest.setId(examDto.getSubjectTestId());
+            subjectiveTest.setSubjectiveQList(subjectiveQuestions);
+            examDto.setSubjectTest(subjectiveTest);
+        }
+        return examDto;
+    }
+
+    private MocTestDto createTest(MocExamDto examDto) {
+        MocTestDto result = EdsBeanUtils.convert(examDto, MocTestDto.class);
+        result.setChapterId(-1L);
+        result.setExamId(examDto.getId());
+        result.setTrytime(examDto.getTryTime());
+        result.setExamType(examDto.getType());
+        result.setIsRandom(examDto.getRandom());
+        if (examDto.getExamTime() != null) {
+            result.setTestTime(examDto.getExamTime().intValue());
+        }
+        result.setEvaluateScoreReleaseTime(examDto.getScoreReleaseTime());
+        if (MocExamConstants.AnalyseEnable.DISABLE.getType().equals(examDto.getAnalyseEnable())) {
+            result.setAnalyseSetting(MocTestDto.ANALYSE_DISABLE);
+        }else {
+            result.setAnalyseSetting(MocTestDto.ANALYSE_AFTER_SCORE_RELEASE);
+        }
+        return result;
+    }
+    @Override
+    public List<MocExamDto> getDraftByTargetId(Long targetId) {
+        if(targetId == null || targetId <= 0 ){
+            return new ArrayList<>();
+        }
+        List<MocExamDto> draftByTargetIdList = mocExamDraftService.getDraftByTargetId(targetId);
+        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
+            return new ArrayList<>();
+        }
+        draftByTargetIdList.forEach(this::fillQuestions);
+        return draftByTargetIdList;
+    }
+
+    @Override
+    public ConcurrentHashMap<String, Object> getDraftByTargetIdAndKeyWord(Long targetId, String keyword, Integer pageSize, Integer pageIndex) {
+        if(targetId == null || targetId <= 0 ){
+            return new ConcurrentHashMap<String, Object>();
+        }
+        ConcurrentHashMap<String, Object> map = mocExamDraftService.getDraftByTargetIdAndKeyWord(targetId, keyword, pageSize, pageIndex);
+        List<MocExamDto> draftByTargetIdList = (List<MocExamDto>) map.get("list");
+        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
+            return new ConcurrentHashMap<String, Object>();
+        }
+        draftByTargetIdList.forEach(this::fillQuestions);
+        return map;
+    }
+
+    @Override
+    public ConcurrentHashMap<String, Object> getDraftByTargetIdsAndKeyWord(List<Long> targetIds, String keyword, Integer pageSize, Integer pageIndex) {
+       if(targetIds.size() == 0){
+           return new ConcurrentHashMap<String, Object>();
+       }
+        ConcurrentHashMap<String, Object> map = mocExamDraftService.getDraftByTargetIdsAndKeyWord(targetIds, keyword, pageSize, pageIndex);
+        List<MocExamDto> draftByTargetIdList = (List<MocExamDto>) map.get("list");
+        if(draftByTargetIdList.size() == 0 || draftByTargetIdList == null){
+            return new ConcurrentHashMap<String, Object>();
+        }
+        draftByTargetIdList.forEach(this::fillQuestions);
+        return map;
+    }
+}

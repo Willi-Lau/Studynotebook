@@ -73,7 +73,7 @@ Docker镜像就是一个只读的模板，镜像可以用来创建Docker容器�
 
         1.登录 docker login   / 登出 docker logout
         2. 在docker hub上新建仓库 名字要和提交的一致 
-           点击 repositories -> create repository ->只填写name
+           点击 repositories -> create repository ->只填写name : newname (这里不用加版本)
         3.
            #  docker iamges 查看镜像 选择旧镜像
 
@@ -82,7 +82,7 @@ Docker镜像就是一个只读的模板，镜像可以用来创建Docker容器�
 
 
             # 推送
-            docker push  liuweiyi/newname:v1.0
+            docker push  liuweiyi/newname:v1.0   ---》 必须加:版本
 
 
             # 别的机器下载
