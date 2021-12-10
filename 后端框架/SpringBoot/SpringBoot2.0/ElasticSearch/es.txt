@@ -10,9 +10,7 @@ begin:
 端口：
     9200 浏览器测试端口 输入 localhost:9200
 
-    put post 区别
-        put是幂等性的。Post是非幂等性的
-        幂等性：两次请求结果一直，产生的效果一样，就是幂等性
+    put p                                                                
 
 
     获取所有的 kv  --- GET
@@ -81,16 +79,18 @@ begin:
 
 进阶查询：
     条件查询： 
+        match_phrase   --> 精确匹配
+        match  ---》 模糊匹配
          ---GET
          1. uri传参
-            http://127.0.0.1:9200/索引名字/_search?q=key:"value"
+            http://127.0.0.1:9200/索引名字/_search?q=key:"value"   查询包含指定 key value 的索引 
 
          2.JSON 传参
              http://127.0.0.1:9200/索引名字/_search
              {
                  "query"；{    -->代表查询
                      "match":{    --> 代表精确查找
-                         "key":"value"    --> 具体的值
+                         "key":"value"    --> 具体的值 这里查询会模糊匹配 
                      }
                  },
                  "from" : 0 ,   --> 类似分页 从哪个位置始查   计算公式： （页数 - 1） * pageSize
@@ -98,10 +98,87 @@ begin:
                  "_source" : [ "key1" ]  ， --> 筛选字段，摘选想要的，只显示key1
                  "sort" : {   ---> 排序
                      "key" :{    -----> 排序的字段
-                         "order" ："asc / desc"    -----> 升序还是降序
+                         "order" ："asc / desc"    -----> 升序还是降序 
                      }
                  }
              }
+               
+                e.g.
+                    增加index --- student
+                        {
+                            "name" : " 张三",
+                            "school" : "北京大学"
+                        }
+                        {
+                            "name" : " 李四",
+                            "school" : "清华大学"
+                        }
+
+                    查询
+                        http://127.0.0.1:9200:student/_search
+                        {
+                            query:{
+                                match:{
+                                    school : 北京大学
+                                }
+                            }
+                            ,
+                            _seaech : ["school"]
+                        }
+                    返回结果：
+                        北京大学 清华大学 
+
+                    为什么这里我只想查询北京大学，却返回北京大学和清华大学，因为这里查询类似模糊查询，会分别匹配 “北京大学” 里的所有信息
+                    即匹配 “北京” 和 “大学” ，然后清华大学里也包含大学这两个文字，所以也罢清华查了出来，如果只想查出来北大，就可以
+                     http://127.0.0.1:9200:student/_search
+                        {
+                            query:{
+                                match_phrase:{
+                                    school : 北京大学
+                                }
+                            }
+                            ,
+                            _search : ["school"]
+                        }
+             3.多条件查询
+                {
+                    "query"；{
+                        "bool" :{   -->条件查询
+                            "must/should" :[    --> 必要条件 必须成立 and / 有一个成立就可以 or
+                                {
+                                    "match":{
+                                        "school" : "清华大学"    --》 条件1
+                                    }
+                                },
+                                {
+                                    "match":{
+                                        "name" : "张三"          --》 条件2
+                                    }
+                                }
+
+                            ],
+                            "filter" :{
+                                "range" :{
+                                    "字段名":{
+                                        "gt" : 5000  ---> 过滤 某字段值大于5000的  gt  大于
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            
+             4.聚合操作：
+                {
+                    "aggs":{  //聚合操作
+                        "myGroupByPrice":{  //分组的结果的名字
+                            "terms":{  //分组
+                                "field" : "price"  //对那个字段分组 这里是对price
+                            }
+                        }
+                    }
+                }
+               
         
 
 
