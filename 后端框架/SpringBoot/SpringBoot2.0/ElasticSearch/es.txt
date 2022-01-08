@@ -170,9 +170,9 @@ begin:
             
              4.聚合操作：
                 {
-                    "aggs":{  //聚合操作
+                     "aggs":{  //聚合操作
                         "myGroupByPrice":{  //分组的结果的名字
-                            "terms":{  //分组
+                            "terms/avg":{  //分组/平均值
                                 "field" : "price"  //对那个字段分组 这里是对price
                             }
                         }
