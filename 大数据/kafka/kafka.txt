@@ -21,7 +21,9 @@ kafka
     kafka 持久化默认存磁盘 存7天 168小时
 
     位置 k8s-3-100g    /opt/kafka
-    启动命令  bin/kafka-server-start.sh -daemon config/server.properties
+    启动命令  先启动zk再启动kafka
+            /opt/kafka/kafka/bin/zookeeper-server-start.sh /opt/kafka/kafka/config/zookeeper.properties
+            /opt/kafka/kafka/bin/kafka-server-start.sh /opt/kafka/kafkaconfig/server.properties
 
 
 

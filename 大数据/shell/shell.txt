@@ -84,15 +84,35 @@ shell
                 [ 23 -gt 22 ]   // 注意前后必须有空格
 
 
+        read 读取控制台输入的内容
+
+        系统函数
+            basename  [string/pathname] [suffix]
+            作用： 删除所有前缀 获取文件名字字符串
+            e.g. 
+                basename /bin/jar/hello.txt   ---> hello.txt
 
 
+            dirname  [string/pathname] [suffix]
+            作用： 删除文件名字返回文件绝对路径
+            e.g. 
+                dirname /bin/jar/hello.txt   ---> /bin/jar
 
 
+        自定义函数：
+            shell没有预先编译 是从头到尾执行 所以调用函数前必须声明函数
+            函数返回值只能通过 $? 获得 可以显示追加return返回 如果不加加返回的是最后一条运行的结果
 
 
-
-
-
+        工具
+            cut [选项参数] filename
+            参数列表 -f 列号 切割完提取第几列
+                     -d 分隔符 按照指定分隔符切割
+            
+            cut -d : -f 1     用空格切要第二列
+            
+            grep name
+                同linux用法 直接获取name开头元素行
 
 
 
