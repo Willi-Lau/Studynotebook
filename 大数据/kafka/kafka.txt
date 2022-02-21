@@ -55,6 +55,14 @@ kafka
                 2.分区副本 >= 2
                 3.ISR应答副本 >= 2
         
+    数据重复问题：
+        数据重复判断的标准：具有PID,Partition,SeqNumber相同主键提交时，Broker只会持久化一条。
+        PID kafka每次重启都会分配一个新的  producer id
+        Partiton 分区号
+        Seq Number 单调递增ID
+
+        所以kafka幂等性只能保证在单分区内的不重复
+        
 
 
 
