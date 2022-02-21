@@ -23,12 +23,38 @@ kafka
     位置 k8s-3-100g    /opt/kafka
     启动命令  先启动zk再启动kafka
             /opt/kafka/kafka/bin/zookeeper-server-start.sh /opt/kafka/kafka/config/zookeeper.properties
-            /opt/kafka/kafka/bin/kafka-server-start.sh /opt/kafka/kafkaconfig/server.properties
+            /opt/kafka/kafka/bin/kafka-server-start.sh /opt/kafka/kafka/config/server.properties
 
+    kafka 生产者工作流程
+        看图
+        RecordAccumulator 缓冲区
 
+    kafka Partitioner 分区器工作策略
+        1.如果指明具体哪个分区 就存入到具体的分区
+        2.如果没有指明分区 指明课key 就根据key 的hashCode % 分区数 去计算所在分区
+        3.如果什么都没有指定 就随机一个分区进行粘性处理（分到哪个分区就一直在哪）
 
+    kafka 提高生产者吞吐量
+        1.缓冲区大小
+        2.批次大小（每次运送数据量大小） batch.size 累计达到后才会发送数据 默认16k
+        3.等待时间长短 linger.ms 如果数据迟迟没有达到batch.size就会发送 默认0ms
+        4.压缩
 
+    生产者ack应答级别
+        ack = 0 生产者发送的数据不需要等待落盘  不安全
+        ack = 1 生产者发送的数据leader收到后应答 （没有等follower确认） 不安全 leader 主 follower 丛
+        ack = -1 发送的数据 leader和所有ISR都确认了再应答
+            ISR in-sync replica set 
+            为了解决某一个follower宕机导致集群迟迟无法响应的问题，如果Follower迟迟没发送通信请求或同步数据给Leader,
+            这个Follers会被踢出ISR 时间阈值默认为30s laeder 0 isr 012
 
+            如果仅仅是-1也是不可靠的,如果分区数设置为1 或者ISR最小应答数设置为1也会丢失数据 和ack =1 一样 laeder 0 isr 0
+            
+            **可靠性保证
+                1.ack = -1 
+                2.分区副本 >= 2
+                3.ISR应答副本 >= 2
+        
 
 
 
