@@ -67,6 +67,10 @@ kafka
     
     数据有序性
 
+    zookeeper中存储的kafka信息：
+        /kafka/brokers/ids   [0,1,2] 记录哪些服务器
+        /kafka/brokers/topic/first/partitions/0/state {"leader":1,"isr":[0,1,2]} 记录谁是leader 有哪些服务器可用
+        /kafka/controller 辅助选举
 
 
 

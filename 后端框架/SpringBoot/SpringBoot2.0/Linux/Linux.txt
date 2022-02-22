@@ -152,8 +152,10 @@ Linux 指令:
         linux 把指定目录下文件从大到小排序
                 du -sh /*     排序 /目录下所以有文件夹 
 
-
-
+        linux 修改本机ip地址
+                vim /etc/sysconfig/network-scripts/ifcfg-ens33
+        linux 修改主机名称
+                vim /etc/hostname
 
                 mysql  https://www.runoob.com/mysql/mysql-install.html
 
