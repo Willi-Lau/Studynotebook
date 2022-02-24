@@ -72,10 +72,17 @@ kafka
         /kafka/brokers/topic/first/partitions/0/state {"leader":1,"isr":[0,1,2]} 记录谁是leader 有哪些服务器可用
         /kafka/controller 辅助选举
 
+    kafka副本信息：
+        kafka副本作用 提高数据可靠性
+        kafka默认副本数是，生产环境一般配置为两个，保证数据可靠性，太多副本会增加磁盘存储空间，增加网络数据传输，将抵效率
+        副本分为leader 和 follower kafka生产者只会把数据发往leader follower自己去同步leader数据
+        kafka所有分区副本成为AR 
+        AR = ISR + OSR
+        ISR 表示和leader保持同步的follower集合
+        OSP 表示leader和follower同步时，延迟过多的副本
 
-
-
-
+    kafka follower故障处理
+        看图
 
 
 
