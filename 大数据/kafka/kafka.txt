@@ -84,7 +84,9 @@ kafka
     kafka follower故障处理
         看图
 
-
+    kafka 创建主题分区副本的命令
+        创建16个分区4个副本名字为myTopic的命令
+        bin/kafka-topics.sh --bootstrap-server 192.168.137.137:9092 --create --topic myTopic --partitions 16 --replication-factor 4
 
 
 
