@@ -88,10 +88,20 @@ kafka
         创建16个分区4个副本名字为myTopic的命令
         bin/kafka-topics.sh --bootstrap-server 192.168.137.137:9092 --create --topic myTopic --partitions 16 --replication-factor 4
 
+    kafka leader partition 平衡操作
+        看图
+        不要多次触发 浪费资源
 
-
-
-
+    kafka 高效读写数据
+        1.kafka本身是分布式集群，可以采用分区技术，并行度高
+        2.度数据采用稀疏索引，可以快速定位数据
+        3.顺序读写磁盘
+        4.页缓存+零拷贝
+            零拷贝：
+                kafka的数据加工处理操作由kafka生产者和kafka消费者处理 kafka broker应用层不关心存储的数据，所以就不用走应用层，传输效率高
+            pageCache
+                kafka重度依赖底层OS提供的PageCache功能。当上面有写操作时，操作系统只是将数据线写入PageCache。读操作时先去PageCache中查找，如果找不到
+                再去磁盘中去读取，实际上PageCache是把尽可能多的空闲空间当做了磁盘缓存来使用
 
 
 
