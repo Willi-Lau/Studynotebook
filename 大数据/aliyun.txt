@@ -1,0 +1,31 @@
+连接 
+     ssh root@47.94.229.158
+
+
+启动redis 
+    /usr/local/redis/bin/redis-server  /usr/local/redis/redis.conf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

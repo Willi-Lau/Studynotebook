@@ -154,6 +154,7 @@ Redis:
 
             String:
             
+            
                 append keyname str      对keyname 后面追加字符串 str
                 strlen  keyname         查看指定String 类型 key 得长度
                 incr keyname            指定keyname +1  必须是数字 否则会报错
