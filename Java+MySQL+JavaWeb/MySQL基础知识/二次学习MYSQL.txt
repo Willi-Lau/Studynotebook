@@ -224,7 +224,7 @@ MySQL :
                         select id from student where age = 1 and  phone = 11111 and name = "张三" 用上了索引，和where and 顺序无关，mysql会优化顺序
                         select id from student where age = 11 and phone = "121212152"  没用上索引
                         select id from student where name = 11 and phone = "121212152"  用上索引 不过是部分索引 因为中间得 age 断了没用上，所以 
-                                                                                        age phone 都没用上
+                                                                                        age phone没用上
                         select id from student where phone = "121212152"  没用上索引
 
             2.不要再索引列上做任何操作（计算，函数，（自动手动）类型转换），会导致索引失效转向全表扫描

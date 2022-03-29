@@ -16,7 +16,11 @@ kafka
         5.异步通信
             就是异步通信
         
+    主题 分区 机器关系： ***********8
 
+        kafka有三层形式，kafka有多个主题，每个主题有多个分区，每个分区又有多条消息。
+
+        而每个分区可以分布到不同的机器上，这样一来，从服务端来说，分区可以实现高伸缩性，以及负载均衡，动态调节的能力。
 
     kafka 持久化默认存磁盘 存7天 168小时
 
@@ -108,12 +112,38 @@ kafka
         消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者
 
 
+    消费者组消费分区策略：
+
+        Range:
+            通过 Partition 数量 / Consumer数量决定消费者组里每个机器消费多少
+            如果除不净，前面基几个消费者会多消费一个分区
+            e.g. 8 Partition 3 Consumer
+
+            consumer0 -> 1 2 3
+            consumer1 -> 4 5 6
+            consumer2 -> 7 8
+
+            注意：这只是针对一个topic,如果是多个topic，那么头部的消费者会消费过多的请求
+
+            再平衡策略：
+                45秒之后才会更新消费者
+                e.g.
+                    consumer0 宕机
+                    45秒之内 consumer1消费 456 consumer2消费78
+                    45秒之后 consumer1消费 1234 consumer2消费5678 
 
 
 
+        Roundrobin：
+            把所有topic放到一块再根据hashcode值进行轮询分配到concumer
+             e.g. 8 Partition 3 Consumer
 
+            consumer0 -> 1 4 7
+            consumer1 -> 2 5 8
+            consumer2 -> 3 6
 
-
+        Sticky:
+            所有的分区每次都重新分配 不过会考虑上一次的分区情况 减少切换频率
 
 
 

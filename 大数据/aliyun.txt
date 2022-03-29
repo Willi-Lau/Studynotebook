@@ -5,7 +5,10 @@
 启动redis 
     /usr/local/redis/bin/redis-server  /usr/local/redis/redis.conf
 
+SET PASSWORD = PASSWORD('root'); 
 
+重启mysql 
+     service mysqld restart 
 
 
 
