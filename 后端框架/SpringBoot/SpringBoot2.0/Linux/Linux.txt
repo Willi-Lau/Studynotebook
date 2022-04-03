@@ -75,11 +75,13 @@ Linux 指令:
         
         解压文件：
                 进到文件所在目录 
-                tar -xvf 文件名
+                tar -zxvf 文件名 -C 指定位置
 
         windows 访问不到 Linux端口：https://blog.csdn.net/qq_43060870/article/details/110881573
 
+        查找是否包含java   rpm -qa | grep -i java     -i是不区分大小写的意思
 
+        重启 reboot
         启动tomcat 
                 进入tomcat所在目录 
                         cd /opt
@@ -159,10 +161,24 @@ Linux 指令:
 
                 mysql  https://www.runoob.com/mysql/mysql-install.html
 
+        修改vmwarm ip 
 
+                vim /etc/sysconfig/network-scripts/ifcfg-ens33
 
+                替换内容为
 
+                DEVICE=ens33
+                TYPE=Ethernet
+                ONBOOT=yes
+                BOOTPROTO=static
+                NAME="ens33"
+                IPADDR=192.168.10.102     //改这里
+                PREFIX=24
+                GATEWAY=192.168.10.2
+                DNS1=192.168.10.2
 
+        修改主机名字
+                vim /etc/hostname
 
 
 
