@@ -1,0 +1,57 @@
+HDFS
+    hadoop distribute file system 
+
+    HDFS定义：
+        HDFS（Hadoop Distributed File System），它是一个文件系统，用于存储文件，通过目录树来定位文件；其次，它是分布式的，由
+        很多服务器联合起来实现其功能，集群中的服务器有各自的角色。
+    HDFS的使用场景：
+        适合一次写入，多次读出的场景。一个文件经过创建、写入和关闭之后就不需要改变
+
+    shell操作：
+        hadoop fs 或 hdfs fs
+
+        操作文件：
+
+            hadoop fs -mkdir /dirname 或 hdfs fs -mkdir /dirname  创建文件夹
+
+        上传：
+
+            hadoop fs -moveFromLocal ./localname /HDFSdirname 将本地文件 剪切 粘贴到HDFS指定的文件夹上
+
+            hadoop fs -copyFromLocal ./localname /HDFSdirname 将本地文件 复制 粘贴到HDFS指定的文件夹上
+
+            hadoop fs -put ./localname /HDFSdirname 等同于 -copyFromLocal
+
+            hadoop fs -appendToFile ./filename /HDFSdirname/HDFSfilename 将本地文件追加到指定HDFS文件末尾
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

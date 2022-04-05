@@ -2,13 +2,13 @@
 
 
 
-#! /bin/bash
+#!/bin/bash
 
 case $1 in 
 "start")
     echo "---启动kafka---"
-    ssh 192.168.137.137 "bin/zookeeper-server-start.sh config/zookeeper.properties"
-    ssh 192.168.137.137 "bin/kafka-server-start.sh config/server.properties"
+    ssh 192.168.137.137 "/bin/zookeeper-server-start.sh config/zookeeper.properties"
+    ssh 192.168.137.137 "/bin/kafka-server-start.sh config/server.properties"
 ;;
 "stop")
     echo "---关闭kafka---"
