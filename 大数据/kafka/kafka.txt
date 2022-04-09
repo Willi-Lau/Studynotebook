@@ -29,6 +29,11 @@ kafka
             /opt/kafka/kafka/bin/zookeeper-server-start.sh /opt/kafka/kafka/config/zookeeper.properties
             /opt/kafka/kafka/bin/kafka-server-start.sh /opt/kafka/kafka/config/server.properties
 
+            or 
+
+            sh /home/liuweiyi/bin/zookeeper.sh 
+            sh /home/liuweiyi/bin/kafka.sh
+
     kafka 生产者工作流程
         看图
         RecordAccumulator 缓冲区

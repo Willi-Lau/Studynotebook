@@ -7,12 +7,11 @@
 case $1 in 
 "start")
     echo "---启动kafka---"
-    ssh 192.168.137.137 "/bin/zookeeper-server-start.sh config/zookeeper.properties"
-    ssh 192.168.137.137 "/bin/kafka-server-start.sh config/server.properties"
+    ssh 192.168.10.177 "/bin/kafka-server-start.sh config/server.properties"
 ;;
 "stop")
     echo "---关闭kafka---"
-    ssh 192.168.137.137 "/opt/kafka/kafka/kafka-server-stop.sh"
+    192.168.10.177 "/opt/kafka/kafka/kafka-server-stop.sh"
 ;;
 esac
 

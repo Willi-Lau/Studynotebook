@@ -10,9 +10,6 @@ HDFS
     shell操作：
         hadoop fs 或 hdfs fs
 
-        操作文件：
-
-            hadoop fs -mkdir /dirname 或 hdfs fs -mkdir /dirname  创建文件夹
 
         上传：
 
@@ -25,13 +22,33 @@ HDFS
             hadoop fs -appendToFile ./filename /HDFSdirname/HDFSfilename 将本地文件追加到指定HDFS文件末尾
 
 
+        下载：
 
+            hadoop fs -copyToLocal /HDFSname/HDFSfilename ./ 从HDFS指定文件夹下载到本地
 
+            hadoop fs -get /HDFSname/HDFSfilename ./newname 从HDFS指定文件夹下载到本地并重新命名 等同 copyToLocal
 
+        直接操作：
 
+            hadoop fs -ls /HDFSfilename  查看指定HDFS文件夹下面的文件
 
+            hadoop fs -cat /HDFSname/FileNmae 查看指定文件中的内容
 
+            hadoop fs -mkdir /dirname 或 hdfs fs -mkdir /dirname  创建文件夹
 
+            hadoop fs -cp /sanguo/shuguo.txt /jinguo 从HDFS的一个路径拷贝到HDFS的另一个路径
+
+            hadoop fs -mv /sanguo/wuguo.txt /jinguo 在HDFS目录中移动文件
+
+            hadoop fs -tail /jinguo/shuguo.txt 显示一个文件的末尾1kb的数据
+
+            hadoop fs -rm /sanguo/shuguo.txt 删除文件或文件夹
+
+            hadoop fs -rm -r /sanguo 递归删除目录及目录里面内容
+
+            hadoop fs -du -s -h /jinguo 统计文件夹的大小信息
+
+            hadoop fs -setrep 10 /jinguo/shuguo.txt 设置HDFS中文件的副本数量
 
 
 
