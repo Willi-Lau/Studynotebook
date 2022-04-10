@@ -6,14 +6,16 @@
 
 case $1 in 
 "start")
-    echo "---启动kafka---"
-    ssh 192.168.10.177 "/bin/kafka-server-start.sh config/server.properties"
+    echo "---启动canal---"
+    ssh 192.168.10.177 "/opt/module/canal/bin/startup.sh"
 ;;
 "stop")
-    echo "---关闭kafka---"
-    192.168.10.177 "/opt/kafka/kafka/kafka-server-stop.sh"
+    echo "---关闭canal---"
+    ssh 192.168.10.177 "/opt/module/canal/bin/stop.sh"
 ;;
 esac
+
+
 
 
 

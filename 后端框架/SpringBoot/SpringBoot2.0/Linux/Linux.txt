@@ -93,7 +93,7 @@ Linux 指令:
         查看开放的端口：
                 firewall-cmd --list-all
         增加允许访问的端口;
-                firewall-cmd --add-port=3306/tcp --permanent
+                firewall-cmd --add-port=6379/tcp --permanent
         重启防火墙
                 firewall-cmd --reload
         启动sshd
@@ -198,7 +198,8 @@ Linux 指令:
 
                pad8DD-6O#Q&
 
-
+        
+        /opt/module/canal/bin
 
 
 
