@@ -1,0 +1,319 @@
+[33mcommit 70f67988e9176016e6f520fac03837621337ba45[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Sun Apr 10 23:58:01 2022 +0800
+
+    kafka canal
+
+[33mcommit 21313933a6536cb759206acd4af737e3607e598c[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Sat Apr 9 18:53:38 2022 +0800
+
+    hadoop HDFS 操作命令
+
+[33mcommit f7d09cda9868ce74df02e560bcd54e8a8dc6d282[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Tue Apr 5 22:29:23 2022 +0800
+
+    hadoop HDFS shell upload command
+
+[33mcommit 50eaa8711c33501114462bb263adad7f829910cb[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Mon Apr 4 22:56:46 2022 +0800
+
+    hadoop jobHostory
+
+[33mcommit a610dd78c62a207704f29cf30aa7fb7095156361[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Mon Apr 4 22:20:55 2022 +0800
+
+    hadoop
+
+[33mcommit fe2463641707db0aa84cf7c75026274532d18387[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Sun Apr 3 18:25:34 2022 +0800
+
+    linux
+
+[33mcommit 1a51a6abf8ad8bcd9bf65703e6efa420c00666da[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Tue Mar 29 23:49:20 2022 +0800
+
+    kafka
+
+[33mcommit 7f5943e5dd7ac950982871fa81e5b647b4a386eb[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Wed Mar 16 21:04:49 2022 +0800
+
+    kafka
+
+[33mcommit d1eb82b95474051614a5258e32fc66fb37266883[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Fri Mar 4 22:17:29 2022 +0800
+
+    kafka
+
+[33mcommit c0c43217ca78e82f6301428894688f798efdb77c[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Fri Mar 4 19:20:04 2022 +0800
+
+    kafka
+
+[33mcommit 5809b5cf91abaa5dd752b4cfb63148e1dd9163be[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Thu Feb 24 20:33:39 2022 +0800
+
+    offer
+
+[33mcommit f9d29f80fbb8e49d237b3cf7b36f3597c5fe3143[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Thu Feb 24 20:28:40 2022 +0800
+
+    kafka word文档 基础部分
+
+[33mcommit 6a7488925bc69b20951c9ef01501321443a73640[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Thu Feb 24 19:57:45 2022 +0800
+
+    work time
+
+[33mcommit 090d0c4a8e2ac8e9e1dbe2c24a6dabc8aea1fdd8[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Thu Feb 24 18:57:21 2022 +0800
+
+    kafka leader follower 故障处理
+
+[33mcommit 979bcd23d9ec41fd8f76d72d8b115b24cfcfdd48[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Tue Feb 22 16:59:16 2022 +0800
+
+    linux修改ip hostname
+
+[33mcommit a445e166c9a797d07ec52cae37d67b235f491834[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Tue Feb 22 16:22:47 2022 +0800
+
+    kafka zookeeper
+
+[33mcommit 50a40d1dd5b1f6b7ff1e13f0ec6ab5c9018ae24b[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Mon Feb 21 23:00:36 2022 +0800
+
+    kafka 数据重复
+
+[33mcommit e33c9235caacd4363d02343a834179f8e16a5987[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Mon Feb 21 22:14:48 2022 +0800
+
+    kafka producer 可靠性
+
+[33mcommit 1bb0e3e73fa5b69fb8da57015490d4aa78a53cb8[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Fri Feb 18 22:20:21 2022 +0800
+
+    shell
+
+[33mcommit 2a0334cdeaac9abbcd7097410fd2dda3e7d22118[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Thu Feb 17 16:32:54 2022 +0800
+
+    shell
+
+[33mcommit ce01245ebbfe203a41120a3817ff1980a9a26d65[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Wed Feb 16 22:17:40 2022 +0800
+
+    shell kafka
+
+[33mcommit 9c1d33d93ce61c047e90d2686d9522eccbd0684b[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Tue Feb 15 19:59:48 2022 +0800
+
+    hadoop 开始卷
+
+[33mcommit 05f14d5364218cbc323fb45278e4a782ac05881c[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Mon Feb 14 23:37:47 2022 +0800
+
+    hadoop 开始卷
+
+[33mcommit dc8c458694f864a2044268415310e9eb7624cdd1[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Tue Jan 11 23:00:43 2022 +0800
+
+    hadoop 开始卷
+
+[33mcommit 1a9ee1aed5c5a9430eadac24868ae32b758ac614[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Sat Jan 8 15:27:07 2022 +0800
+
+    es原理
+
+[33mcommit 6e9857cb8715bbaaf6d1c8a5b7c099d8e738c615[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Fri Dec 10 16:13:26 2021 +0800
+
+    es
+
+[33mcommit 255705d6b48bd63c0295706495f3b35baf5aa722[m
+Author: liuweiyi <2284069530@qq.com>
+Date:   Mon Nov 29 22:53:28 2021 +0800
+
+    es
+
+[33mcommit 7a5901510b05580a4c525cf6df379f64af5a8b2d[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Tue Oct 12 11:40:20 2021 +0800
+
+    docker
+
+[33mcommit ee23037dbd0235629611cde2aa693192287b9ef3[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Sat Oct 9 11:23:18 2021 +0800
+
+    os 进程通信
+
+[33mcommit 93d5773163495c17c8d50d8714094ed3aaf35ab8[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Sat Oct 9 00:24:24 2021 +0800
+
+    os 进程 共享内存
+
+[33mcommit 0725abacccf4789ef3daa22cf106ed32a86e8754[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Fri Oct 8 16:53:48 2021 +0800
+
+    epoll
+
+[33mcommit f5cea689c995679d9fcf61fbb1c0a23c7adb937f[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Fri Oct 8 11:47:27 2021 +0800
+
+    word
+
+[33mcommit cf0b9ee813d73280312670fa85ed416eb7c4120d[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Mon Oct 4 16:09:11 2021 +0800
+
+    interrupted学习
+
+[33mcommit 2cb91302143d5bbce73039c14822775ada054665[m
+Author: unknown <2284069530@qq.com>
+Date:   Fri Oct 1 22:34:41 2021 +0800
+
+    123
+
+[33mcommit f8e4fae0a7aeea2a104383250e0a5bb8e5f3afad[m
+Author: liuweiyi <705195178@qq.com>
+Date:   Wed Sep 29 16:29:02 2021 +0800
+
+    20210929
+
+[33mcommit 01688938f31420deee1071f45d45ef2517504bf8[m
+Author: liuweiyi <705195178@qq.com>
+Date:   Tue Sep 21 23:58:22 2021 +0800
+
+    study es
+
+[33mcommit 180124960591f6264783c737f34157f86e562bab[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Mon Sep 6 16:46:13 2021 +0800
+
+    123
+
+[33mcommit 528df155629e8d00abe3d2d2933b30983df52203[m
+Author: Willi_Lau <2284069530@qq.com>
+Date:   Thu Jun 17 16:41:55 2021 +0800
+
+    20210617 设计模式
+
+[33mcommit bde3b1fc869815959113658599f2095893983871[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Sun Jun 6 23:32:06 2021 +0800
+
+    20210604
+
+[33mcommit 1ba5fd8c5106dd343ce563b8ae10841e63e35ae5[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Fri Jun 4 18:46:37 2021 +0800
+
+    20210604
+
+[33mcommit 0e196a4c2dd91e947d8abebe5fa78290db1f88dd[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Sat May 29 15:36:20 2021 +0800
+
+    jvm StackOverFlowError OOM
+
+[33mcommit 31e1436891ab5948b37791c6a4d62ad7ea40fdf4[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Fri May 28 14:59:06 2021 +0800
+
+    jvm StackOverFlowError OOM
+
+[33mcommit bbf3bcb78f8431cd1f71563cef757cc13bc26c08[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Wed May 26 18:11:43 2021 +0800
+
+    jvm参数
+
+[33mcommit 6917c644ab01797a428fde707a11ad2e54195f12[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Wed May 26 18:11:00 2021 +0800
+
+    jvm参数
+
+[33mcommit 226f51e900f78e216400bcbeb81c8809912578f3[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Tue May 25 13:29:31 2021 +0800
+
+    死锁
+
+[33mcommit 165069966f93b78455613031c935ddd647f01ee4[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Tue May 25 13:24:36 2021 +0800
+
+    死锁
+
+[33mcommit f1dcab07cc6759ea4b4a60b8dd83fe7b789956b7[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Mon May 24 18:54:31 2021 +0800
+
+    可重入锁 公平锁
+
+[33mcommit 117573347e7fa450e1b8a1c5e9e01a08761f6aa0[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Mon May 24 12:47:27 2021 +0800
+
+    juc
+
+[33mcommit 7a95ad1c60457d8da2b596b930d9eecee369c8e5[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Sat May 22 09:13:44 2021 +0800
+
+    20210522
+
+[33mcommit 31bc0a4c0200079c2ad442cf444e0c712866245a[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Tue May 18 22:37:33 2021 +0800
+
+    redis 分布式 缓存击穿穿透雪崩 分布式锁
+
+[33mcommit 4a8036751fc58306ac71b44cfd58ecd04eab3227[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Mon May 17 22:33:30 2021 +0800
+
+    redis 哨兵
+
+[33mcommit 76ae592534464a75a87ee6a2cb55dc423b663deb[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Sat May 8 20:42:53 2021 +0800
+
+    seata 配置问题
+
+[33mcommit f2e561febad92d75c253a5ef213320ee5c5d05b8[m
+Author: Willi_Lau <705195178@qq.com>
+Date:   Sat May 8 18:28:32 2021 +0800
+
+    sha bi nacos 玄学问题
+
+[33mcommit 81dfd8a9d546d85cb0f796b7fdce1ecb14fa33ab[m
