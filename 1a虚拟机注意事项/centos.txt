@@ -29,4 +29,81 @@ k8s3-100:
 
 
 
+            //quick sort
+            1.冒泡排序
+            2.快速排序 时间： nlogn 空间： logn  
+            每一次操作 都让基准位左边的数比基准位小 右边的比他大
+            arr m1 = [2,4,5,4,3,2,1,0];  -》   base 2
+                     [ ,0,1,2,  2  4,3,5,4,4]
+                     ->
+                     [0,1,2] base 0  [4,3,5,4,4] base 4
+
+            核心：基准位
+            1.基准位
+            2.头部指针
+            3.尾部指针
+
+            var sortArray = function(nums) {
+
+            };         i
+                       j          
+          // 2 1 0 3 0 5 6 7
+            var quickSort = function(arr , left , right){   //arr 就是数组  left 起始index right 终止index
+
+                if(left >right){
+                    return;
+                }
+
+                 arr : 
+
+                 //定义指针
+                 var i = left;  2 index
+                 var j = right;  7 index
+                 var base = arr[left];  5 value
+                 //循环
+                 while(i != j){
+                     //比右边的部分  true
+                        while( arr[j] >= base && i < j ){
+                            j--;   
+                        }
+                     //left  true
+                        while( arr[i] <= base && i < j){
+                            i++;
+                        }
+                     //change 
+                     var changeNum = arr[i];
+                     arr[i] = arr[j];
+                     arr[j] = changeNum;
+                 }
+                 //base 正确的位置上
+                 var changeBase = arr[left];   
+                 arr[left] = arr[i];   
+                 arr[i] = changeBase; 
+
+                quickSort(arr,left,i-1); arr , 0 , 3  -> 2 1 3 3 
+                quickSort(arr,i+1,right);
+
+            }   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

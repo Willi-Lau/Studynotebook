@@ -11,10 +11,12 @@ SET PASSWORD = PASSWORD('root');
      service mysqld restart 
 
 
+git config --global user.name "dip" 
+git config --global user.email "1064366020@qq.com" 
 
+改变字体 emelemt-ui
 
-
-
+https://wenku.baidu.com/view/7888a4afd3d233d4b14e852458fb770bf78a3b12.html
 
 
 
