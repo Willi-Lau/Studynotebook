@@ -1,0 +1,112 @@
+常用命令：  
+    1.列出所有的application
+                                yarn application -list
+    2.根据Application状态过滤
+                                yarn application -list -appStates （所有状态：ALL、NEW、NEW_SAVING、SUBMITTED、ACCEPTED、RUNNING、FINISHED、FAILED、KILLED）
+    3.kill某个application
+                                yarn application -kill <ApplicationId>(这个是从 -list里获取到的application_id)
+    4.查询application日志
+                                yarn logs -applicationId <ApplicationId>
+    5.查询Container日志
+                                yarn logs -applicationId <ApplicationId> -containerId <ContainerId>     
+    6.列出所有Application尝试的列表（正在运行）
+                                yarn applicationattempt -list <ApplicationId>
+    7.打印ApplicationAttemp状态
+                                yarn applicationattempt -status <ApplicationAttemptId>                      
+    8.列出所有Container
+                                yarn container -list <ApplicationAttemptId>
+    9.打印Container状态
+                                yarn container -status <ContainerId>
+    10.列出所有节点
+                                yarn node -list -all
+    11.加载队列配置
+                                yarn rmadmin -refreshQueues
+    12.打印队列信息 
+                                yarn queue -status <QueueName>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
